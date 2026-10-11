@@ -1,0 +1,111 @@
+{
+  "generatedAt": "2026-10-11T10:44:32.840Z",
+  "generator": "scripts/collect-spatial.mjs",
+  "entries": [
+    {
+      "file": "cherbo-hogang-polygon.json",
+      "url": "https://hogangnono.com/api/v2/apts/e8Q5e/polygon",
+      "sha256": "ad9b28b615217ef60f73c9049b2286565ff04b8008254576e497e6276fbfabd5",
+      "bytes": 34345,
+      "license": "No open/commercial reuse license declared; local research reference"
+    },
+    {
+      "file": "cherbo-satellite.png",
+      "url": "https://map.naver.com",
+      "sha256": "083cf85aa69ea31014eab44e1a219400a3d5f622dbd807dfdd2e06dae8e8436a",
+      "bytes": 1161214,
+      "license": "Reference-only Naver map capture; not a redistributable or production texture"
+    },
+    {
+      "file": "haiver-hogang-polygon.json",
+      "url": "https://hogangnono.com/api/v2/apts/31af/polygon",
+      "sha256": "8d50be0f722c3f055896cf9f0ebfc3307024fe15ac14076133386eaae0c176a3",
+      "bytes": 82146,
+      "license": "No open/commercial reuse license declared; local research reference"
+    },
+    {
+      "file": "haiver-reference-map.png",
+      "url": "https://map.naver.com",
+      "sha256": "960697d4c9f945b5bef96171b7dd44fdd3c3b346eb8e13df184d923410a95444",
+      "bytes": 551413,
+      "license": "Reference-only Naver map capture; not a redistributable or production texture"
+    },
+    {
+      "file": "haiver-satellite.png",
+      "url": "https://map.naver.com",
+      "sha256": "134dcbb37001cc3f4eb81156d2f562e2e5b28dd09771d2f68000d1ec20278b48",
+      "bytes": 1166289,
+      "license": "Reference-only Naver map capture; not a redistributable or production texture"
+    },
+    {
+      "file": "haiver-street.png",
+      "url": "https://map.naver.com",
+      "sha256": "60b3ca8c7172464fad7870d37306dc614a185f3ffc9547dbce2c5f79e16a866a",
+      "bytes": 605141,
+      "license": "Reference-only Naver map capture; not a redistributable or production texture"
+    },
+    {
+      "file": "raw/sindang-combined-overpass.json",
+      "url": "https://overpass-api.de/api/interpreter",
+      "sha256": "88f4e49dad109dc09ce4ba17087f0d1deaa29d625fb0d3389776a4971a956b24",
+      "bytes": 3405110,
+      "license": "OpenStreetMap ODbL 1.0"
+    },
+    {
+      "file": "raw/terrarium-z14-13972-6344.png",
+      "url": "https://elevation-tiles-prod.s3.amazonaws.com/terrarium/14/13972/6344.png",
+      "sha256": "4aba59cee96a7d93d33c0bf917191e6b1118aec9eb894aae34ca48057a0da079",
+      "bytes": 81282,
+      "imagerySources": "srtm/N37E127.tif"
+    },
+    {
+      "file": "raw/terrarium-z14-13972-6345.png",
+      "url": "https://elevation-tiles-prod.s3.amazonaws.com/terrarium/14/13972/6345.png",
+      "sha256": "857263442dbb82d4e26c8cc5d8a2132ed8f96fdbd656107199343d2d220a14d5",
+      "bytes": 89767,
+      "imagerySources": "srtm/N37E127.tif"
+    },
+    {
+      "file": "raw/terrarium-z14-13973-6344.png",
+      "url": "https://elevation-tiles-prod.s3.amazonaws.com/terrarium/14/13973/6344.png",
+      "sha256": "0bcc3111b9aad2cd14b4bcab851d36d64c0adf3452fd121a8752016265405fb7",
+      "bytes": 73306,
+      "imagerySources": "srtm/N37E127.tif"
+    },
+    {
+      "file": "raw/terrarium-z14-13973-6345.png",
+      "url": "https://elevation-tiles-prod.s3.amazonaws.com/terrarium/14/13973/6345.png",
+      "sha256": "114bfa2102d305416a4fa994715a5c5f1c14326570a3f45eb34d6005fc2de395",
+      "bytes": 86224,
+      "imagerySources": "srtm/N37E127.tif, gmted/30N120E_20101117_gmted_mea075.tif"
+    },
+    {
+      "file": "xi-hogang-polygon.json",
+      "url": "https://hogangnono.com/api/v2/apts/aEc43/polygon",
+      "sha256": "f1bc17c552e94e4b111127d2c945b46e6f07a59fa3b98fdec9e093ebf59ae21e",
+      "bytes": 14386,
+      "license": "No open/commercial reuse license declared; local research reference"
+    },
+    {
+      "file": "xi-satellite.png",
+      "url": "https://map.naver.com",
+      "sha256": "dacde37f03e95a196f0d54d2c5c8103df2fb8a339676449f0ad8a2bf0b25a1bc",
+      "bytes": 1114678,
+      "license": "Reference-only Naver map capture; not a redistributable or production texture"
+    },
+    {
+      "file": "xi-street.png",
+      "url": "https://map.naver.com",
+      "sha256": "3c17f0a96a44f3af28f4d4ca617916059bb023b484e6433a72e77b0e2b81facb",
+      "bytes": 458529,
+      "license": "Reference-only Naver map capture; not a redistributable or production texture"
+    },
+    {
+      "file": "cherbo-street.png",
+      "url": "https://map.naver.com/p/entry/place/1371782088?isMini=true&p=k-pFAvbSKgIF66LLnhI5BQ,-75,10,80,Float",
+      "sha256": "7ea0f46f0b975163e16ab82a12ee070f2b7701b97963617bb7a5bf6962148937",
+      "bytes": 493337,
+      "license": "Reference-only Naver street view capture; not a redistributable or production texture"
+    }
+  ]
+}

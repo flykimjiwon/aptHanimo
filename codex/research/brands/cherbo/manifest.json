@@ -1,0 +1,163 @@
+{
+  "complex": "라체르보 푸르지오 써밋",
+  "district": "행당7구역",
+  "observedAt": "2026-10-11T14:10:46Z",
+  "deduplication": "SHA-256 checked across counted files; all 11 have distinct hashes.",
+  "counts": {
+    "totalActualComplexPhotos": 11,
+    "exteriorAndSite": 10,
+    "sharedAmenityInteriors": 1,
+    "renderingsCounted": 0
+  },
+  "photos": [
+    {
+      "index": 1,
+      "sourcePage": "https://hogangnono.com/apt/e8Q5e/0/9/review/7075947",
+      "imageUrl": "https://image.hogangnono.com/image/nowatermark/original/review/20250928211217_rxqu65geNN01DpFZvG?q=100&s=720x180&t=outside",
+      "localFile": "photos/community-20250928-gate.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Image asset key starts 2025-09-28; capture date not confirmed.",
+      "category": "exterior/site — entrance and podium",
+      "sha256": "1462943a4f9886ed6e9f8e93a81a756f0d556bd58db604ef10556dd97dde7895",
+      "observations": "Resident-posted night photo. A curved ribbed fascia carries illuminated SUMMIT PRUGIO lettering. Warm continuous edge lighting sits above a pale stone base; dark tower cladding and light vertical strips are visible above, with planted beds and a broad paved walk in front. Actual complex is visually identified by the physical sign."
+    },
+    {
+      "index": 2,
+      "sourcePage": "https://hogangnono.com/apt/e8Q5e/0/9/review/7075947",
+      "imageUrl": "https://image.hogangnono.com/image/nowatermark/original/review/20250928211217_8wrVBMC7fSD7v0D3WD?q=100&s=720x180&t=outside",
+      "localFile": "photos/community-20250928-lounge.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Image asset key starts 2025-09-28; capture date not confirmed.",
+      "category": "exterior/site — shared lounge entrance and courtyard",
+      "sha256": "c41c4a2158486919a37153abd7f6820ce972c4e7eff9bfdebf94ee94f1df9081",
+      "observations": "Resident-posted night photo. The SUMMIT LOUNGE sign fronts a low community building; tower numbers 102, 103, and 106 frame the courtyard. Shows layered tower massing, trimmed pines, paving, warm entry light, and the low podium/community frontage."
+    },
+    {
+      "index": 3,
+      "sourcePage": "https://hogangnono.com/apt/e8Q5e/0/9/review/7075947",
+      "imageUrl": "https://image.hogangnono.com/image/nowatermark/original/review/20250928211217_uZZDdrEQJDA8DprKfz?q=100&s=720x180&t=outside",
+      "localFile": "photos/community-20250928-towers.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Image asset key starts 2025-09-28; capture date not confirmed.",
+      "category": "exterior/site — tower and covered walk",
+      "sha256": "e935a1e38bf97703d039e20ee002b94b4918be701d1bbd8bde6587ba60299055",
+      "observations": "Resident-posted night photo. Building identifiers 103 and 105, a long curved covered community frontage, repeated narrow window bays, illuminated fascia, and planted ground plane are visible. This is a distinct angle from photo 1."
+    },
+    {
+      "index": 4,
+      "sourcePage": "https://hogangnono.com/community/apts/apts-6963164",
+      "imageUrl": "https://image.hogangnono.com/image/nowatermark/original/review/20250822084905_f1kJPpFaVute8g2PcA?q=100&s=720x180&t=outside",
+      "localFile": "photos/community-20250822-view.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Image asset key starts 2025-08-22; capture date not confirmed.",
+      "category": "exterior/site — wide tower and landscape view",
+      "sha256": "843f3b487a9447d3e181f784fa130a99acd0509d34d3077feadb11ebbf8db07f",
+      "observations": "Resident-posted night view in the complex community. Several towers with pale vertical bands and darker window fields rise above a broad planted courtyard. Warm path and podium lighting is visible. Use for massing and landscape composition; nighttime color is not reliable paint evidence."
+    },
+    {
+      "index": 5,
+      "sourcePage": "https://hogangnono.com/apt/e8Q5e",
+      "imageUrl": "https://image.hogangnono.com/image/nowatermark/original/review/20260705234322_Ex1OpmJnxl8EqSBw0O?s=720x180&t=outside&q=100",
+      "localFile": "photos/review-20260705.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Image asset key starts 2026-07-05; resident review is associated with the target apartment page.",
+      "category": "exterior/site — towers above park canopy",
+      "sha256": "42cd56148fc2116ceddea48db235b771b106c70e657a2149d77a39d50a7474f7",
+      "observations": "Resident-posted dusk photo. Tall dark gray tower faces are divided by pale vertical bands; a warm horizontal lighting line marks the landscape/podium edge behind a dense tree canopy. A SUMMIT crown is visible. Strong for silhouette, window rhythm, and night lighting, not daylight color."
+    },
+    {
+      "index": 6,
+      "sourcePage": "https://hogangnono.com/apt/e8Q5e",
+      "imageUrl": "https://image.hogangnono.com/image/nowatermark/original/review/20260419211607_byy0ABO6v9N5HdDBr5?s=720x180&t=outside&q=100",
+      "localFile": "photos/review-20260419.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Image asset key starts 2026-04-19; resident review is associated with the target apartment page.",
+      "category": "exterior/site — night courtyard and landscape",
+      "sha256": "8082b17b5b471e1edb6a57e712af5b904461682da261eaa01ee181db58325edd",
+      "observations": "Resident-posted night site photo with towers at the frame edge, a small illuminated bridge, curved paved routes, planted mounds, and warm low-level lighting. The site context is clear, though tower façade details are partially cropped."
+    },
+    {
+      "index": 7,
+      "sourcePage": "https://hogangnono.com/apt/e8Q5e",
+      "imageUrl": "https://image.hogangnono.com/image/nowatermark/original/review/20251205125317_qJ7OpOltgmhhBSMSc8?s=720x180&t=outside&q=100",
+      "localFile": "photos/review-20251205-a.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Image asset key starts 2025-12-05; resident review is associated with the target apartment page.",
+      "category": "exterior/site — terrace and planted court",
+      "sha256": "961d1d8aa3649bb5fa2fc38494a8ff55edd908660c535625a00486ea70f38657",
+      "observations": "Resident-posted evening terrace image: dark outdoor lounge seating, glass guardrail, linear warm lighting along a curved planted court, and tower faces beyond. Useful for podium/courtyard relationship; nighttime warmth should not be treated as façade paint color."
+    },
+    {
+      "index": 8,
+      "sourcePage": "https://hogangnono.com/apt/e8Q5e",
+      "imageUrl": "https://image.hogangnono.com/image/nowatermark/original/review/20251215085902_IUXLK0puT55fWNC8au?s=720x180&t=outside&q=100",
+      "localFile": "photos/review-20251215.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Image asset key starts 2025-12-15; resident review is associated with the target apartment page.",
+      "category": "exterior/site — internal pedestrian path and towers",
+      "sha256": "2a1d721bc39da5f4b1d29005203611eac10369c7eca8cd6d8c98832299d2500d",
+      "observations": "Resident-posted dusk photo looking along a landscaped pedestrian path between tower blocks. Warm bollards and path-edge lighting trace the route; tower silhouettes and the shared park space are visible. A site/path reference rather than a façade color reference."
+    },
+    {
+      "index": 9,
+      "sourcePage": "https://hogangnono.com/apt/e8Q5e/0/9/review/6779861",
+      "imageUrl": "https://image.hogangnono.com/image/nowatermark/original/review/20250619220207_BOb85b81E1NbzSwDH9?q=100&s=720x180&t=outside",
+      "localFile": "photos/review-20250619-courtyard.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Resident post dated 2025-06-19; text says the photo was shared by the association. Capture date not separately confirmed.",
+      "category": "exterior/site — daylight courtyard and tower bases",
+      "sha256": "0e3550b9e8324e1d97e3ec15be0f4ecb730aae9dec2bdab3c3081f01bf582773",
+      "observations": "Daylight target-specific photo, with tower numbers 104 and 105 visible. Shows dark slate/blue-gray façade fields and black stone podium, pale cool-gray vertical wall blades, regular narrow window grid, dark slim glass railing, curved pale stone sunken-court wall, and small planted trees. Strongest daylight palette reference."
+    },
+    {
+      "index": 10,
+      "sourcePage": "https://m.prugio.com/brand/news-view.aspx?idx=99751",
+      "imageUrl": "https://m.prugio.com/PrugioBoard/TBBS/Life_Premium/01%20%285%29.jpg",
+      "localFile": "photos/official-20260303-sunken.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Official Daewoo/Prugio article dated 2026-03-03; caption identifies the photo as La Cherbo Summit sunken and amenity space.",
+      "category": "exterior/site — sunken courtyard viewed from lounge glazing",
+      "sha256": "1bf9ab3c9ef66b41c927d16819931b3e9f919dd49aa2cb0bd1617e0dab71553a",
+      "observations": "Officially attributed completed-site photograph. A dark interior lounge opens through full-height black mullions to a pale stone sunken court; a planted island with a shaped pine sits beneath a layered soffit/curved walkway. The centered landscape bowl is useful for communal-courtyard structure."
+    },
+    {
+      "index": 11,
+      "sourcePage": "https://m.prugio.com/brand/news-view.aspx?idx=99751",
+      "imageUrl": "https://m.prugio.com/PrugioBoard/TBBS/Life_Premium/02%20%285%29.jpg",
+      "localFile": "photos/official-20260303-amenity.jpg",
+      "observedAt": "2026-10-11T14:10:46Z",
+      "shotDate": null,
+      "sourceDate": "Official Daewoo/Prugio article dated 2026-03-03; caption identifies the photo as Summit amenity interior.",
+      "category": "shared amenity — resident lounge interior",
+      "sha256": "638e82b2e1aebbaf0e994715a4095d76af1b4be467a03d3e5fa395609646731b",
+      "observations": "Officially attributed shared lounge, not a private dwelling. Shows charcoal slatted walls, dark timber, gray stone flooring, floor-to-ceiling black-framed glazing, layered low seating, and a long linear light. Counted as a public communal-space architecture reference only."
+    }
+  ],
+  "excludedCandidates": [
+    { "localFile": "photos/apt-main.jpg", "reason": "Promotional evening rendering; not an actual photo." },
+    { "localFile": "photos/review-20261002-a.jpg", "reason": "Neighboring THE SHARP towers; excluded from target architecture." },
+    { "localFile": "photos/review-20261002-b.jpg", "reason": "Private dwelling interior; excluded." },
+    { "localFile": "photos/review-20261002-c.jpg", "reason": "Neighboring THE SHARP towers at dusk; excluded." },
+    { "localFile": "photos/review-20261002-d.jpg", "reason": "Generic neighboring skyline; target building not identifiable." },
+    { "localFile": "photos/review-20260320.jpg", "reason": "Rail/park view is from the target review page but tower attribution is uncertain; excluded from target-specific count." },
+    { "localFile": "photos/review-20251205-b.jpg", "reason": "Snowy park/bridge view; target tower is not identifiable." },
+    { "localFile": "photos/review-20260102.jpg", "reason": "Infographic, not a site photo." },
+    { "localFile": "photos/review-20251111.jpg", "reason": "Private shared-café interior photograph; duplicate shared-interior category not needed for the 11-photo set." },
+    { "localFile": "photos/review-20251213.jpg", "reason": "Guesthouse interior; excluded as private-room-like and outside the exterior/shared amenity evidence set." },
+    { "localFile": "photos/metro-20240901-model.jpg", "reason": "Scale model, not an actual photo of the built site." },
+    { "localFile": "photos/newsprime-20240830-construction.jpg", "reason": "Real construction photo but near-duplicate angle/date of metro-20240901-construction.jpg; not included in the distinct final set." },
+    { "localFile": "photos/metro-20240901-construction.jpg", "reason": "Actual construction site photo, but not needed in final set because 11 stronger completed/current site images were verified." },
+    { "localFile": "photos/arunews-202203-site.jpg", "reason": "Actual early demolition/site photo, but not needed in final set because 11 stronger completed/current site images were verified." },
+    { "localFile": "photos/review-20250331-daylight.jpg", "reason": "Daylight towers appear target-related but have no visible building number/sign; excluded from target-specific count pending stronger attribution." }
+  ]
+}

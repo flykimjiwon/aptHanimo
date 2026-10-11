@@ -16,3 +16,16 @@
 데이터 출처: OpenStreetMap(ODbL), OpenTopoData SRTM 30m, 네이버부동산·네이버지도·호갱노노 수동 열람 표기값(출처 등급과 함께 `prototype/tools/complexes.json`), 뉴스. 크롤러 없음. `prototype/tools/osm3.json`(Overpass 원본 3.4MB)은 저장소에 넣지 않았고 `overpass_query.ql`로 재생성한다.
 
 캐릭터 `prototype/src/vendor/pixelcrew_sprites.js`는 작성자 본인 프로젝트 PixelCrew Desk의 원문(MIT © 2026 Jiwon Kim, `NOTICE.md`).
+
+## Codex 독립 구현 · 한바퀴 V5
+
+[`codex/`](codex/)에 별도로 구현한 실제 좌표 기반 자유 산책 앱을 추가했다. 기존 Claude `prototype/`과 실행·데이터 파이프라인을 분리했다. Three.js로 세 단지 지형과 건물을 그리고, 캐릭터10종·건물11종·지도11종·3시점, 자유 이동·배속·순간이동과 실제 WebSocket 접속자를 제공한다.
+
+```sh
+cd codex
+bun install --frozen-lockfile
+bun run build
+bun start
+```
+
+브라우저: `http://localhost:5178/` · 스타일 실험실: `http://localhost:5178/style-lab.html`. [제작방법·기술스택·출처·Claude 인계](codex/docs/Claude_V5_전체월드스타일_구현가이드.md), [검증 상태](codex/qa/v5/QA.md)를 참고한다. V5 자동/서버 검증은 통과했으며 새 V5 화면·모바일 입력 QA는 사용자 브라우저 권한 반환 대기다. 공개 웹 서비스 배포는 포함하지 않는다.

@@ -1,0 +1,2482 @@
+{
+  "metric": "호갱노노 지난주 인기 방문자 지표",
+  "period": "2026-09-28~2026-10-04",
+  "checked": "2026-10-11",
+  "districts": [
+    {
+      "district": "종로구",
+      "code": "11110",
+      "source": "https://hogangnono.com/ranking?regionCode=11110&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "경희궁에피트",
+          "dong": "교남동",
+          "visitors": 3214,
+          "hash": "gOl16",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gOl16"
+        },
+        {
+          "rank": 2,
+          "name": "경희궁자이2단지",
+          "dong": "홍파동",
+          "visitors": 1760,
+          "hash": "aCZb6",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aCZb6"
+        },
+        {
+          "rank": 3,
+          "name": "무악현대",
+          "dong": "무악동",
+          "visitors": 1405,
+          "hash": "2627",
+          "status": null,
+          "url": "https://hogangnono.com/apt/2627"
+        },
+        {
+          "rank": 4,
+          "name": "두산",
+          "dong": "창신동",
+          "visitors": 1123,
+          "hash": "Ycc",
+          "status": null,
+          "url": "https://hogangnono.com/apt/Ycc"
+        },
+        {
+          "rank": 5,
+          "name": "창신쌍용2단지",
+          "dong": "창신동",
+          "visitors": 1073,
+          "hash": "1975",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1975"
+        },
+        {
+          "rank": 6,
+          "name": "경희궁자이3단지",
+          "dong": "평동",
+          "visitors": 1051,
+          "hash": "aD0fe",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aD0fe"
+        },
+        {
+          "rank": 7,
+          "name": "인왕산아이파크1차",
+          "dong": "무악동",
+          "visitors": 986,
+          "hash": "274b",
+          "status": null,
+          "url": "https://hogangnono.com/apt/274b"
+        },
+        {
+          "rank": 8,
+          "name": "창신쌍용1단지",
+          "dong": "창신동",
+          "visitors": 956,
+          "hash": "1a48",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1a48"
+        },
+        {
+          "rank": 9,
+          "name": "광화문스페이스본1단지",
+          "dong": "사직동",
+          "visitors": 889,
+          "hash": "a3e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/a3e"
+        },
+        {
+          "rank": 10,
+          "name": "경희궁롯데캐슬",
+          "dong": "무악동",
+          "visitors": 697,
+          "hash": "aZ531",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aZ531"
+        }
+      ]
+    },
+    {
+      "district": "중구",
+      "code": "11140",
+      "source": "https://hogangnono.com/ranking?regionCode=11140&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "충정로역자이르네",
+          "dong": "중림동",
+          "visitors": 23816,
+          "hash": "gMJ44",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gMJ44"
+        },
+        {
+          "rank": 2,
+          "name": "남산타운",
+          "dong": "신당동",
+          "visitors": 2801,
+          "hash": "2O75",
+          "status": null,
+          "url": "https://hogangnono.com/apt/2O75"
+        },
+        {
+          "rank": 3,
+          "name": "약수하이츠",
+          "dong": "신당동",
+          "visitors": 1908,
+          "hash": "3ja7",
+          "status": null,
+          "url": "https://hogangnono.com/apt/3ja7"
+        },
+        {
+          "rank": 4,
+          "name": "서울역센트럴자이",
+          "dong": "만리동2가",
+          "visitors": 1841,
+          "hash": "aF39a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aF39a"
+        },
+        {
+          "rank": 5,
+          "name": "롯데캐슬베네치아",
+          "dong": "황학동",
+          "visitors": 1725,
+          "hash": "3L6c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/3L6c"
+        },
+        {
+          "rank": 6,
+          "name": "중림삼성사이버빌리지",
+          "dong": "중림동",
+          "visitors": 1446,
+          "hash": "42f8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/42f8"
+        },
+        {
+          "rank": 7,
+          "name": "신당동삼성",
+          "dong": "신당동",
+          "visitors": 1268,
+          "hash": "3c4c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/3c4c"
+        },
+        {
+          "rank": 8,
+          "name": "힐스테이트세운센트럴2단지",
+          "dong": "입정동",
+          "visitors": 1097,
+          "hash": "fqOfa",
+          "status": null,
+          "url": "https://hogangnono.com/apt/fqOfa"
+        },
+        {
+          "rank": 9,
+          "name": "청구e편한세상",
+          "dong": "신당동",
+          "visitors": 856,
+          "hash": "3na5",
+          "status": null,
+          "url": "https://hogangnono.com/apt/3na5"
+        },
+        {
+          "rank": 10,
+          "name": "덕수궁롯데캐슬",
+          "dong": "순화동",
+          "visitors": 836,
+          "hash": "aBLe1",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aBLe1"
+        }
+      ]
+    },
+    {
+      "district": "용산구",
+      "code": "11170",
+      "source": "https://hogangnono.com/ranking?regionCode=11170&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "한가람",
+          "dong": "이촌동",
+          "visitors": 2426,
+          "hash": "6l6e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/6l6e"
+        },
+        {
+          "rank": 2,
+          "name": "나인원한남",
+          "dong": "한남동",
+          "visitors": 1900,
+          "hash": "dsw36",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dsw36"
+        },
+        {
+          "rank": 3,
+          "name": "한남더힐",
+          "dong": "한남동",
+          "visitors": 1373,
+          "hash": "70d7",
+          "status": null,
+          "url": "https://hogangnono.com/apt/70d7"
+        },
+        {
+          "rank": 4,
+          "name": "도원삼성래미안",
+          "dong": "도원동",
+          "visitors": 1368,
+          "hash": "5i11",
+          "status": null,
+          "url": "https://hogangnono.com/apt/5i11"
+        },
+        {
+          "rank": 5,
+          "name": "신동아",
+          "dong": "서빙고동",
+          "visitors": 1297,
+          "hash": "7F04",
+          "status": null,
+          "url": "https://hogangnono.com/apt/7F04"
+        },
+        {
+          "rank": 6,
+          "name": "한강맨션",
+          "dong": "이촌동",
+          "visitors": 1264,
+          "hash": "9VF21",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9VF21"
+        },
+        {
+          "rank": 7,
+          "name": "LG한강자이",
+          "dong": "이촌동",
+          "visitors": 1230,
+          "hash": "6b4a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/6b4a"
+        },
+        {
+          "rank": 8,
+          "name": "디에이치한남",
+          "dong": "한남동",
+          "visitors": 1226,
+          "hash": "gvKb5",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gvKb5"
+        },
+        {
+          "rank": 9,
+          "name": "이촌르엘",
+          "dong": "이촌동",
+          "visitors": 1216,
+          "hash": "goV9f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/goV9f"
+        },
+        {
+          "rank": 10,
+          "name": "용산더프라임",
+          "dong": "원효로1가",
+          "visitors": 1187,
+          "hash": "4Id7",
+          "status": null,
+          "url": "https://hogangnono.com/apt/4Id7"
+        }
+      ]
+    },
+    {
+      "district": "성동구",
+      "code": "11200",
+      "source": "https://hogangnono.com/ranking?regionCode=11200&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "행당한진타운",
+          "dong": "행당동",
+          "visitors": 2910,
+          "hash": "8B3c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/8B3c"
+        },
+        {
+          "rank": 2,
+          "name": "e편한세상옥수파크힐스",
+          "dong": "옥수동",
+          "visitors": 2492,
+          "hash": "aCvdf",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aCvdf"
+        },
+        {
+          "rank": 3,
+          "name": "성동자이리버뷰",
+          "dong": "용답동",
+          "visitors": 2441,
+          "hash": "elNa9",
+          "status": null,
+          "url": "https://hogangnono.com/apt/elNa9"
+        },
+        {
+          "rank": 4,
+          "name": "래미안옥수리버젠",
+          "dong": "옥수동",
+          "visitors": 2152,
+          "hash": "9la8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9la8"
+        },
+        {
+          "rank": 5,
+          "name": "센트라스",
+          "dong": "하왕십리동",
+          "visitors": 2062,
+          "hash": "aCm4a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aCm4a"
+        },
+        {
+          "rank": 6,
+          "name": "행당대림",
+          "dong": "행당동",
+          "visitors": 1813,
+          "hash": "8Ef7",
+          "status": null,
+          "url": "https://hogangnono.com/apt/8Ef7"
+        },
+        {
+          "rank": 7,
+          "name": "트리마제",
+          "dong": "성수동1가",
+          "visitors": 1775,
+          "hash": "aDQ1a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aDQ1a"
+        },
+        {
+          "rank": 8,
+          "name": "옥수삼성",
+          "dong": "옥수동",
+          "visitors": 1699,
+          "hash": "9t70",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9t70"
+        },
+        {
+          "rank": 9,
+          "name": "두산",
+          "dong": "금호동3가",
+          "visitors": 1675,
+          "hash": "94b6",
+          "status": null,
+          "url": "https://hogangnono.com/apt/94b6"
+        },
+        {
+          "rank": 10,
+          "name": "라체르보푸르지오써밋",
+          "dong": "행당동",
+          "visitors": 1609,
+          "hash": "e8Q5e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/e8Q5e"
+        }
+      ]
+    },
+    {
+      "district": "광진구",
+      "code": "11215",
+      "source": "https://hogangnono.com/ranking?regionCode=11215&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "강변역센트럴아이파크",
+          "dong": "구의동",
+          "visitors": 6851,
+          "hash": "gv08f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gv08f"
+        },
+        {
+          "rank": 2,
+          "name": "롯데캐슬이스트폴",
+          "dong": "자양동",
+          "visitors": 2301,
+          "hash": "ggg5c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ggg5c"
+        },
+        {
+          "rank": 3,
+          "name": "현대프라임",
+          "dong": "구의동",
+          "visitors": 1688,
+          "hash": "bBba",
+          "status": null,
+          "url": "https://hogangnono.com/apt/bBba"
+        },
+        {
+          "rank": 4,
+          "name": "롯데캐슬리버파크시그니처",
+          "dong": "자양동",
+          "visitors": 1588,
+          "hash": "dAz90",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dAz90"
+        },
+        {
+          "rank": 5,
+          "name": "광장극동2차",
+          "dong": "광장동",
+          "visitors": 1587,
+          "hash": "bW6b",
+          "status": null,
+          "url": "https://hogangnono.com/apt/bW6b"
+        },
+        {
+          "rank": 6,
+          "name": "구의현대2단지",
+          "dong": "구의동",
+          "visitors": 1329,
+          "hash": "bde3",
+          "status": null,
+          "url": "https://hogangnono.com/apt/bde3"
+        },
+        {
+          "rank": 7,
+          "name": "광장극동1차",
+          "dong": "광장동",
+          "visitors": 1284,
+          "hash": "bV51",
+          "status": null,
+          "url": "https://hogangnono.com/apt/bV51"
+        },
+        {
+          "rank": 8,
+          "name": "자양현대한창가로주택정비사업",
+          "dong": "자양동",
+          "visitors": 1208,
+          "hash": "gNsdc",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gNsdc"
+        },
+        {
+          "rank": 9,
+          "name": "광장현대파크빌10차",
+          "dong": "광장동",
+          "visitors": 1119,
+          "hash": "c31e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/c31e"
+        },
+        {
+          "rank": 10,
+          "name": "더샵스타시티",
+          "dong": "자양동",
+          "visitors": 1084,
+          "hash": "cG59",
+          "status": null,
+          "url": "https://hogangnono.com/apt/cG59"
+        }
+      ]
+    },
+    {
+      "district": "동대문구",
+      "code": "11230",
+      "source": "https://hogangnono.com/ranking?regionCode=11230&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "이문아이파크자이",
+          "dong": "이문동",
+          "visitors": 4456,
+          "hash": "ekr26",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ekr26"
+        },
+        {
+          "rank": 2,
+          "name": "래미안라그란데",
+          "dong": "이문동",
+          "visitors": 2575,
+          "hash": "b5n94",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5n94"
+        },
+        {
+          "rank": 3,
+          "name": "래미안위브",
+          "dong": "답십리동",
+          "visitors": 2458,
+          "hash": "9Wodf",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9Wodf"
+        },
+        {
+          "rank": 4,
+          "name": "래미안크레시티",
+          "dong": "전농동",
+          "visitors": 2439,
+          "hash": "9Wkce",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9Wkce"
+        },
+        {
+          "rank": 5,
+          "name": "청량리역롯데캐슬SKY-L65",
+          "dong": "전농동",
+          "visitors": 2128,
+          "hash": "b5I8e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5I8e"
+        },
+        {
+          "rank": 6,
+          "name": "휘경자이디센시아",
+          "dong": "휘경동",
+          "visitors": 1547,
+          "hash": "ekB85",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ekB85"
+        },
+        {
+          "rank": 7,
+          "name": "힐스테이트청계",
+          "dong": "답십리동",
+          "visitors": 1289,
+          "hash": "aIya3",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aIya3"
+        },
+        {
+          "rank": 8,
+          "name": "청량리역한양수자인그라시엘",
+          "dong": "용두동",
+          "visitors": 1280,
+          "hash": "ds227",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ds227"
+        },
+        {
+          "rank": 9,
+          "name": "전농우성",
+          "dong": "전농동",
+          "visitors": 1226,
+          "hash": "ez9f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ez9f"
+        },
+        {
+          "rank": 10,
+          "name": "이문e편한세상",
+          "dong": "이문동",
+          "visitors": 1180,
+          "hash": "hX04",
+          "status": null,
+          "url": "https://hogangnono.com/apt/hX04"
+        }
+      ]
+    },
+    {
+      "district": "중랑구",
+      "code": "11260",
+      "source": "https://hogangnono.com/ranking?regionCode=11260&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "중화역라온프라이빗센트로",
+          "dong": "중화동",
+          "visitors": 2281,
+          "hash": "elM07",
+          "status": null,
+          "url": "https://hogangnono.com/apt/elM07"
+        },
+        {
+          "rank": 2,
+          "name": "사가정센트럴아이파크",
+          "dong": "면목동",
+          "visitors": 1681,
+          "hash": "b5f46",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5f46"
+        },
+        {
+          "rank": 3,
+          "name": "신내6단지시영",
+          "dong": "신내동",
+          "visitors": 1508,
+          "hash": "m47f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/m47f"
+        },
+        {
+          "rank": 4,
+          "name": "한신",
+          "dong": "중화동",
+          "visitors": 1466,
+          "hash": "k8c9",
+          "status": null,
+          "url": "https://hogangnono.com/apt/k8c9"
+        },
+        {
+          "rank": 5,
+          "name": "리버센SKVIEW롯데캐슬",
+          "dong": "중화동",
+          "visitors": 1453,
+          "hash": "em846",
+          "status": null,
+          "url": "https://hogangnono.com/apt/em846"
+        },
+        {
+          "rank": 6,
+          "name": "더샵퍼스트월드",
+          "dong": "상봉동",
+          "visitors": 1184,
+          "hash": "gBl39",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gBl39"
+        },
+        {
+          "rank": 7,
+          "name": "신내4단지",
+          "dong": "묵동",
+          "visitors": 1042,
+          "hash": "kM8e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/kM8e"
+        },
+        {
+          "rank": 8,
+          "name": "건영2차",
+          "dong": "신내동",
+          "visitors": 950,
+          "hash": "jr6e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/jr6e"
+        },
+        {
+          "rank": 9,
+          "name": "면목한신",
+          "dong": "면목동",
+          "visitors": 939,
+          "hash": "iB78",
+          "status": null,
+          "url": "https://hogangnono.com/apt/iB78"
+        },
+        {
+          "rank": 10,
+          "name": "e편한세상화랑대",
+          "dong": "묵동",
+          "visitors": 832,
+          "hash": "aDk68",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aDk68"
+        }
+      ]
+    },
+    {
+      "district": "성북구",
+      "code": "11290",
+      "source": "https://hogangnono.com/ranking?regionCode=11290&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "장위자이레디언트",
+          "dong": "장위동",
+          "visitors": 2722,
+          "hash": "drm04",
+          "status": null,
+          "url": "https://hogangnono.com/apt/drm04"
+        },
+        {
+          "rank": 2,
+          "name": "한신한진",
+          "dong": "돈암동",
+          "visitors": 2668,
+          "hash": "mJf3",
+          "status": null,
+          "url": "https://hogangnono.com/apt/mJf3"
+        },
+        {
+          "rank": 3,
+          "name": "롯데캐슬클라시아",
+          "dong": "길음동",
+          "visitors": 2375,
+          "hash": "dsla0",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dsla0"
+        },
+        {
+          "rank": 4,
+          "name": "래미안길음센터피스",
+          "dong": "길음동",
+          "visitors": 2182,
+          "hash": "aQr4c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aQr4c"
+        },
+        {
+          "rank": 5,
+          "name": "푸르지오라디우스파크",
+          "dong": "장위동",
+          "visitors": 1761,
+          "hash": "b5s05",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5s05"
+        },
+        {
+          "rank": 6,
+          "name": "두산",
+          "dong": "석관동",
+          "visitors": 1617,
+          "hash": "pra9",
+          "status": null,
+          "url": "https://hogangnono.com/apt/pra9"
+        },
+        {
+          "rank": 7,
+          "name": "장위푸르지오마크원",
+          "dong": "장위동",
+          "visitors": 1548,
+          "hash": "dryd8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dryd8"
+        },
+        {
+          "rank": 8,
+          "name": "창경궁롯데캐슬시그니처",
+          "dong": "삼선동2가",
+          "visitors": 1427,
+          "hash": "elI33",
+          "status": null,
+          "url": "https://hogangnono.com/apt/elI33"
+        },
+        {
+          "rank": 9,
+          "name": "꿈의숲아이파크",
+          "dong": "장위동",
+          "visitors": 1407,
+          "hash": "dpTba",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dpTba"
+        },
+        {
+          "rank": 10,
+          "name": "정릉풍림아이원",
+          "dong": "정릉동",
+          "visitors": 1404,
+          "hash": "nU27",
+          "status": null,
+          "url": "https://hogangnono.com/apt/nU27"
+        }
+      ]
+    },
+    {
+      "district": "강북구",
+      "code": "11305",
+      "source": "https://hogangnono.com/ranking?regionCode=11305&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "SK북한산시티",
+          "dong": "미아동",
+          "visitors": 3985,
+          "hash": "q194",
+          "status": null,
+          "url": "https://hogangnono.com/apt/q194"
+        },
+        {
+          "rank": 2,
+          "name": "벽산라이브파크",
+          "dong": "미아동",
+          "visitors": 1107,
+          "hash": "pO29",
+          "status": null,
+          "url": "https://hogangnono.com/apt/pO29"
+        },
+        {
+          "rank": 3,
+          "name": "두산위브트레지움",
+          "dong": "미아동",
+          "visitors": 1106,
+          "hash": "pCf5",
+          "status": null,
+          "url": "https://hogangnono.com/apt/pCf5"
+        },
+        {
+          "rank": 4,
+          "name": "꿈의숲해링턴플레이스",
+          "dong": "미아동",
+          "visitors": 1008,
+          "hash": "b5V4d",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5V4d"
+        },
+        {
+          "rank": 5,
+          "name": "한화포레나미아",
+          "dong": "미아동",
+          "visitors": 929,
+          "hash": "f9ed0",
+          "status": null,
+          "url": "https://hogangnono.com/apt/f9ed0"
+        },
+        {
+          "rank": 6,
+          "name": "번동주공1단지",
+          "dong": "번동",
+          "visitors": 908,
+          "hash": "qna9",
+          "status": null,
+          "url": "https://hogangnono.com/apt/qna9"
+        },
+        {
+          "rank": 7,
+          "name": "삼각산아이원",
+          "dong": "미아동",
+          "visitors": 867,
+          "hash": "pRc3",
+          "status": null,
+          "url": "https://hogangnono.com/apt/pRc3"
+        },
+        {
+          "rank": 8,
+          "name": "북서울자이폴라리스",
+          "dong": "미아동",
+          "visitors": 811,
+          "hash": "dPNc3",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dPNc3"
+        },
+        {
+          "rank": 9,
+          "name": "삼성래미안트리베라2차",
+          "dong": "미아동",
+          "visitors": 799,
+          "hash": "pT55",
+          "status": null,
+          "url": "https://hogangnono.com/apt/pT55"
+        },
+        {
+          "rank": 10,
+          "name": "래미안트리베라1차",
+          "dong": "미아동",
+          "visitors": 640,
+          "hash": "pE58",
+          "status": null,
+          "url": "https://hogangnono.com/apt/pE58"
+        }
+      ]
+    },
+    {
+      "district": "도봉구",
+      "code": "11320",
+      "source": "https://hogangnono.com/ranking?regionCode=11320&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "창동주공3단지",
+          "dong": "창동",
+          "visitors": 1769,
+          "hash": "ub10",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ub10"
+        },
+        {
+          "rank": 2,
+          "name": "주공19단지",
+          "dong": "창동",
+          "visitors": 1311,
+          "hash": "9Xo54",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9Xo54"
+        },
+        {
+          "rank": 3,
+          "name": "동아청솔",
+          "dong": "창동",
+          "visitors": 1260,
+          "hash": "tz7e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/tz7e"
+        },
+        {
+          "rank": 4,
+          "name": "도봉한신",
+          "dong": "도봉동",
+          "visitors": 1146,
+          "hash": "uFcb",
+          "status": null,
+          "url": "https://hogangnono.com/apt/uFcb"
+        },
+        {
+          "rank": 5,
+          "name": "삼성",
+          "dong": "창동",
+          "visitors": 1032,
+          "hash": "tGb0",
+          "status": null,
+          "url": "https://hogangnono.com/apt/tGb0"
+        },
+        {
+          "rank": 6,
+          "name": "신동아1단지",
+          "dong": "방학동",
+          "visitors": 1001,
+          "hash": "t235",
+          "status": null,
+          "url": "https://hogangnono.com/apt/t235"
+        },
+        {
+          "rank": 7,
+          "name": "주공17단지",
+          "dong": "창동",
+          "visitors": 888,
+          "hash": "tWfa",
+          "status": null,
+          "url": "https://hogangnono.com/apt/tWfa"
+        },
+        {
+          "rank": 8,
+          "name": "북한산아이파크",
+          "dong": "창동",
+          "visitors": 885,
+          "hash": "tDbb",
+          "status": null,
+          "url": "https://hogangnono.com/apt/tDbb"
+        },
+        {
+          "rank": 9,
+          "name": "창동주공4단지",
+          "dong": "창동",
+          "visitors": 790,
+          "hash": "9Xq9c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9Xq9c"
+        },
+        {
+          "rank": 10,
+          "name": "창동주공18단지",
+          "dong": "창동",
+          "visitors": 642,
+          "hash": "9Xnb1",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9Xnb1"
+        }
+      ]
+    },
+    {
+      "district": "노원구",
+      "code": "11350",
+      "source": "https://hogangnono.com/ranking?regionCode=11350&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "서울원아이파크",
+          "dong": "월계동",
+          "visitors": 3908,
+          "hash": "gvF2d",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gvF2d"
+        },
+        {
+          "rank": 2,
+          "name": "월계미성미륭삼호",
+          "dong": "월계동",
+          "visitors": 3099,
+          "hash": "vw71",
+          "status": null,
+          "url": "https://hogangnono.com/apt/vw71"
+        },
+        {
+          "rank": 3,
+          "name": "중계그린",
+          "dong": "중계동",
+          "visitors": 2658,
+          "hash": "zS53",
+          "status": null,
+          "url": "https://hogangnono.com/apt/zS53"
+        },
+        {
+          "rank": 4,
+          "name": "상계주공6단지",
+          "dong": "상계동",
+          "visitors": 2466,
+          "hash": "9XK8d",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9XK8d"
+        },
+        {
+          "rank": 5,
+          "name": "월계한진한화그랑빌",
+          "dong": "월계동",
+          "visitors": 2298,
+          "hash": "uY5d",
+          "status": null,
+          "url": "https://hogangnono.com/apt/uY5d"
+        },
+        {
+          "rank": 6,
+          "name": "상계주공7단지",
+          "dong": "상계동",
+          "visitors": 2156,
+          "hash": "ycc9",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ycc9"
+        },
+        {
+          "rank": 7,
+          "name": "중계본동주택재개발(백사마을)",
+          "dong": "중계동",
+          "visitors": 1806,
+          "hash": "fcY2a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/fcY2a"
+        },
+        {
+          "rank": 8,
+          "name": "상계주공3단지",
+          "dong": "상계동",
+          "visitors": 1647,
+          "hash": "ya36",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ya36"
+        },
+        {
+          "rank": 9,
+          "name": "태강",
+          "dong": "공릉동",
+          "visitors": 1589,
+          "hash": "wP08",
+          "status": null,
+          "url": "https://hogangnono.com/apt/wP08"
+        },
+        {
+          "rank": 9,
+          "name": "장미",
+          "dong": "하계동",
+          "visitors": 1589,
+          "hash": "xf21",
+          "status": null,
+          "url": "https://hogangnono.com/apt/xf21"
+        }
+      ]
+    },
+    {
+      "district": "은평구",
+      "code": "11380",
+      "source": "https://hogangnono.com/ranking?regionCode=11380&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "힐스테이트메디알레",
+          "dong": "대조동",
+          "visitors": 5470,
+          "hash": "e6335",
+          "status": null,
+          "url": "https://hogangnono.com/apt/e6335"
+        },
+        {
+          "rank": 2,
+          "name": "DMC센트럴자이",
+          "dong": "증산동",
+          "visitors": 2114,
+          "hash": "dzJ4f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dzJ4f"
+        },
+        {
+          "rank": 3,
+          "name": "녹번역e편한세상캐슬",
+          "dong": "응암동",
+          "visitors": 2087,
+          "hash": "b5K85",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5K85"
+        },
+        {
+          "rank": 4,
+          "name": "힐스테이트녹번",
+          "dong": "녹번동",
+          "visitors": 1657,
+          "hash": "aRD11",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aRD11"
+        },
+        {
+          "rank": 5,
+          "name": "DMC롯데캐슬더퍼스트",
+          "dong": "수색동",
+          "visitors": 1360,
+          "hash": "b5g7c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5g7c"
+        },
+        {
+          "rank": 6,
+          "name": "미성",
+          "dong": "불광동",
+          "visitors": 1294,
+          "hash": "B11b",
+          "status": null,
+          "url": "https://hogangnono.com/apt/B11b"
+        },
+        {
+          "rank": 7,
+          "name": "증산4도심공공주택복합지구",
+          "dong": "증산동",
+          "visitors": 1243,
+          "hash": "gEK97",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gEK97"
+        },
+        {
+          "rank": 8,
+          "name": "DMCSKVIEW아이파크포레",
+          "dong": "수색동",
+          "visitors": 1102,
+          "hash": "dLeec",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dLeec"
+        },
+        {
+          "rank": 9,
+          "name": "래미안베라힐즈",
+          "dong": "녹번동",
+          "visitors": 1067,
+          "hash": "aQn68",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aQn68"
+        },
+        {
+          "rank": 10,
+          "name": "은평뉴타운박석고개1단지힐스테이트",
+          "dong": "진관동",
+          "visitors": 1054,
+          "hash": "HF1c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/HF1c"
+        }
+      ]
+    },
+    {
+      "district": "서대문구",
+      "code": "11410",
+      "source": "https://hogangnono.com/ranking?regionCode=11410&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "DMC파크뷰자이",
+          "dong": "남가좌동",
+          "visitors": 3691,
+          "hash": "9YLdc",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9YLdc"
+        },
+        {
+          "rank": 2,
+          "name": "DMC래미안e편한세상",
+          "dong": "북가좌동",
+          "visitors": 1975,
+          "hash": "Me23",
+          "status": null,
+          "url": "https://hogangnono.com/apt/Me23"
+        },
+        {
+          "rank": 3,
+          "name": "천연뜨란채",
+          "dong": "천연동",
+          "visitors": 1610,
+          "hash": "Iy19",
+          "status": null,
+          "url": "https://hogangnono.com/apt/Iy19"
+        },
+        {
+          "rank": 4,
+          "name": "e편한세상신촌",
+          "dong": "북아현동",
+          "visitors": 1575,
+          "hash": "aD647",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aD647"
+        },
+        {
+          "rank": 5,
+          "name": "서대문푸르지오센트럴파크",
+          "dong": "홍제동",
+          "visitors": 1525,
+          "hash": "dsffd",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dsffd"
+        },
+        {
+          "rank": 6,
+          "name": "독립문극동",
+          "dong": "현저동",
+          "visitors": 1420,
+          "hash": "IA9c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/IA9c"
+        },
+        {
+          "rank": 7,
+          "name": "경희궁유보라",
+          "dong": "영천동",
+          "visitors": 1414,
+          "hash": "dCy2d",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dCy2d"
+        },
+        {
+          "rank": 8,
+          "name": "홍제역해링턴플레이스",
+          "dong": "홍제동",
+          "visitors": 1365,
+          "hash": "cMN34",
+          "status": null,
+          "url": "https://hogangnono.com/apt/cMN34"
+        },
+        {
+          "rank": 9,
+          "name": "홍은벽산",
+          "dong": "홍은동",
+          "visitors": 1316,
+          "hash": "LQ1a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/LQ1a"
+        },
+        {
+          "rank": 10,
+          "name": "드파인연희",
+          "dong": "연희동",
+          "visitors": 1306,
+          "hash": "fa562",
+          "status": null,
+          "url": "https://hogangnono.com/apt/fa562"
+        }
+      ]
+    },
+    {
+      "district": "마포구",
+      "code": "11440",
+      "source": "https://hogangnono.com/ranking?regionCode=11440&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "마포래미안푸르지오",
+          "dong": "아현동",
+          "visitors": 5496,
+          "hash": "9YO50",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9YO50"
+        },
+        {
+          "rank": 2,
+          "name": "마포자이힐스테이트라첼스",
+          "dong": "공덕동",
+          "visitors": 2798,
+          "hash": "dAy9e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dAy9e"
+        },
+        {
+          "rank": 3,
+          "name": "성산시영",
+          "dong": "성산동",
+          "visitors": 2738,
+          "hash": "R6e5",
+          "status": null,
+          "url": "https://hogangnono.com/apt/R6e5"
+        },
+        {
+          "rank": 4,
+          "name": "마포프레스티지자이",
+          "dong": "염리동",
+          "visitors": 2006,
+          "hash": "b4N6f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b4N6f"
+        },
+        {
+          "rank": 5,
+          "name": "대흥동태영",
+          "dong": "대흥동",
+          "visitors": 1698,
+          "hash": "NJea",
+          "status": null,
+          "url": "https://hogangnono.com/apt/NJea"
+        },
+        {
+          "rank": 6,
+          "name": "마포더클래시",
+          "dong": "아현동",
+          "visitors": 1617,
+          "hash": "dsdb3",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dsdb3"
+        },
+        {
+          "rank": 7,
+          "name": "마포한화오벨리스크",
+          "dong": "도화동",
+          "visitors": 1599,
+          "hash": "No79",
+          "status": null,
+          "url": "https://hogangnono.com/apt/No79"
+        },
+        {
+          "rank": 8,
+          "name": "공덕자이",
+          "dong": "아현동",
+          "visitors": 1256,
+          "hash": "9YN90",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9YN90"
+        },
+        {
+          "rank": 8,
+          "name": "마포삼성",
+          "dong": "도화동",
+          "visitors": 1256,
+          "hash": "Nse0",
+          "status": null,
+          "url": "https://hogangnono.com/apt/Nse0"
+        },
+        {
+          "rank": 10,
+          "name": "e편한세상마포리버파크",
+          "dong": "용강동",
+          "visitors": 1141,
+          "hash": "9YR91",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9YR91"
+        }
+      ]
+    },
+    {
+      "district": "양천구",
+      "code": "11470",
+      "source": "https://hogangnono.com/ranking?regionCode=11470&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "목동센트럴아이파크위브",
+          "dong": "신월동",
+          "visitors": 2710,
+          "hash": "b5b77",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5b77"
+        },
+        {
+          "rank": 2,
+          "name": "목동신시가지7단지",
+          "dong": "목동",
+          "visitors": 2021,
+          "hash": "V42c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/V42c"
+        },
+        {
+          "rank": 3,
+          "name": "목동윤슬자이",
+          "dong": "목동",
+          "visitors": 1919,
+          "hash": "gQTb8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gQTb8"
+        },
+        {
+          "rank": 4,
+          "name": "래미안목동아델리체",
+          "dong": "신정동",
+          "visitors": 1656,
+          "hash": "b521e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b521e"
+        },
+        {
+          "rank": 5,
+          "name": "목동한신청구",
+          "dong": "목동",
+          "visitors": 1583,
+          "hash": "Vb68",
+          "status": null,
+          "url": "https://hogangnono.com/apt/Vb68"
+        },
+        {
+          "rank": 6,
+          "name": "신트리1단지",
+          "dong": "신정동",
+          "visitors": 1080,
+          "hash": "T7ff",
+          "status": null,
+          "url": "https://hogangnono.com/apt/T7ff"
+        },
+        {
+          "rank": 7,
+          "name": "목동2차우성",
+          "dong": "신정동",
+          "visitors": 1071,
+          "hash": "Sg17",
+          "status": null,
+          "url": "https://hogangnono.com/apt/Sg17"
+        },
+        {
+          "rank": 8,
+          "name": "목동신시가지8단지",
+          "dong": "신정동",
+          "visitors": 1015,
+          "hash": "Ueeb",
+          "status": null,
+          "url": "https://hogangnono.com/apt/Ueeb"
+        },
+        {
+          "rank": 9,
+          "name": "목동신시가지11단지",
+          "dong": "신정동",
+          "visitors": 1005,
+          "hash": "Sm74",
+          "status": null,
+          "url": "https://hogangnono.com/apt/Sm74"
+        },
+        {
+          "rank": 10,
+          "name": "신정뉴타운롯데캐슬",
+          "dong": "신월동",
+          "visitors": 966,
+          "hash": "Zt85",
+          "status": null,
+          "url": "https://hogangnono.com/apt/Zt85"
+        }
+      ]
+    },
+    {
+      "district": "강서구",
+      "code": "11500",
+      "source": "https://hogangnono.com/ranking?regionCode=11500&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "힐스테이트등촌역",
+          "dong": "등촌동",
+          "visitors": 2647,
+          "hash": "dAe6c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dAe6c"
+        },
+        {
+          "rank": 2,
+          "name": "가양6단지",
+          "dong": "가양동",
+          "visitors": 2488,
+          "hash": "16b14",
+          "status": null,
+          "url": "https://hogangnono.com/apt/16b14"
+        },
+        {
+          "rank": 3,
+          "name": "우장산힐스테이트",
+          "dong": "내발산동",
+          "visitors": 2028,
+          "hash": "17q0f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/17q0f"
+        },
+        {
+          "rank": 4,
+          "name": "우장산아이파크이편한세상",
+          "dong": "화곡동",
+          "visitors": 1763,
+          "hash": "13Hba",
+          "status": null,
+          "url": "https://hogangnono.com/apt/13Hba"
+        },
+        {
+          "rank": 5,
+          "name": "마곡엠밸리7단지",
+          "dong": "마곡동",
+          "visitors": 1643,
+          "hash": "16N38",
+          "status": null,
+          "url": "https://hogangnono.com/apt/16N38"
+        },
+        {
+          "rank": 6,
+          "name": "가양2단지성지",
+          "dong": "가양동",
+          "visitors": 1527,
+          "hash": "16a2b",
+          "status": null,
+          "url": "https://hogangnono.com/apt/16a2b"
+        },
+        {
+          "rank": 7,
+          "name": "방화5단지",
+          "dong": "방화동",
+          "visitors": 1494,
+          "hash": "18Hb3",
+          "status": null,
+          "url": "https://hogangnono.com/apt/18Hb3"
+        },
+        {
+          "rank": 8,
+          "name": "강서힐스테이트",
+          "dong": "화곡동",
+          "visitors": 1474,
+          "hash": "9ZK3c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/9ZK3c"
+        },
+        {
+          "rank": 9,
+          "name": "염창동아1차",
+          "dong": "염창동",
+          "visitors": 1433,
+          "hash": "10n14",
+          "status": null,
+          "url": "https://hogangnono.com/apt/10n14"
+        },
+        {
+          "rank": 10,
+          "name": "염창동아3차",
+          "dong": "염창동",
+          "visitors": 1393,
+          "hash": "10kef",
+          "status": null,
+          "url": "https://hogangnono.com/apt/10kef"
+        }
+      ]
+    },
+    {
+      "district": "구로구",
+      "code": "11530",
+      "source": "https://hogangnono.com/ranking?regionCode=11530&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "한마을",
+          "dong": "개봉동",
+          "visitors": 2401,
+          "hash": "1jR0d",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1jR0d"
+        },
+        {
+          "rank": 2,
+          "name": "신도림태영타운",
+          "dong": "구로동",
+          "visitors": 2180,
+          "hash": "1aYc1",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1aYc1"
+        },
+        {
+          "rank": 3,
+          "name": "현대1단지",
+          "dong": "개봉동",
+          "visitors": 1883,
+          "hash": "1jS7c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1jS7c"
+        },
+        {
+          "rank": 4,
+          "name": "구로두산",
+          "dong": "구로동",
+          "visitors": 1733,
+          "hash": "1a857",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1a857"
+        },
+        {
+          "rank": 5,
+          "name": "신도림대림1,2차",
+          "dong": "신도림동",
+          "visitors": 1722,
+          "hash": "19Pdf",
+          "status": null,
+          "url": "https://hogangnono.com/apt/19Pdf"
+        },
+        {
+          "rank": 6,
+          "name": "고척푸르지오힐스테이트",
+          "dong": "고척동",
+          "visitors": 1473,
+          "hash": "fb97e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/fb97e"
+        },
+        {
+          "rank": 7,
+          "name": "천왕역모아엘가트레뷰",
+          "dong": "오류동",
+          "visitors": 1344,
+          "hash": "fG3b0",
+          "status": null,
+          "url": "https://hogangnono.com/apt/fG3b0"
+        },
+        {
+          "rank": 8,
+          "name": "구로주공1차",
+          "dong": "구로동",
+          "visitors": 1309,
+          "hash": "1ada8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1ada8"
+        },
+        {
+          "rank": 9,
+          "name": "신도림4차e편한세상",
+          "dong": "신도림동",
+          "visitors": 1221,
+          "hash": "19L36",
+          "status": null,
+          "url": "https://hogangnono.com/apt/19L36"
+        },
+        {
+          "rank": 10,
+          "name": "구로두산위브",
+          "dong": "구로동",
+          "visitors": 1040,
+          "hash": "1aab8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1aab8"
+        }
+      ]
+    },
+    {
+      "district": "금천구",
+      "code": "11545",
+      "source": "https://hogangnono.com/ranking?regionCode=11545&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "금천롯데캐슬골드파크1차",
+          "dong": "독산동",
+          "visitors": 1710,
+          "hash": "aCu11",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aCu11"
+        },
+        {
+          "rank": 2,
+          "name": "금천롯데캐슬골드파크3차",
+          "dong": "독산동",
+          "visitors": 1309,
+          "hash": "aQie0",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aQie0"
+        },
+        {
+          "rank": 3,
+          "name": "벽산5단지",
+          "dong": "시흥동",
+          "visitors": 1193,
+          "hash": "1nge1",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1nge1"
+        },
+        {
+          "rank": 4,
+          "name": "남서울힐스테이트",
+          "dong": "시흥동",
+          "visitors": 1162,
+          "hash": "1n53c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1n53c"
+        },
+        {
+          "rank": 5,
+          "name": "두산위브",
+          "dong": "가산동",
+          "visitors": 956,
+          "hash": "1lj25",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1lj25"
+        },
+        {
+          "rank": 6,
+          "name": "금천현대",
+          "dong": "독산동",
+          "visitors": 936,
+          "hash": "1lA31",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1lA31"
+        },
+        {
+          "rank": 7,
+          "name": "주공14단지",
+          "dong": "독산동",
+          "visitors": 764,
+          "hash": "1mh24",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1mh24"
+        },
+        {
+          "rank": 8,
+          "name": "한신",
+          "dong": "독산동",
+          "visitors": 757,
+          "hash": "1mq00",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1mq00"
+        },
+        {
+          "rank": 9,
+          "name": "벽산1단지",
+          "dong": "시흥동",
+          "visitors": 560,
+          "hash": "1nf6e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1nf6e"
+        },
+        {
+          "rank": 10,
+          "name": "금천롯데캐슬골드파크2차",
+          "dong": "독산동",
+          "visitors": 546,
+          "hash": "aFlc2",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aFlc2"
+        }
+      ]
+    },
+    {
+      "district": "영등포구",
+      "code": "11560",
+      "source": "https://hogangnono.com/ranking?regionCode=11560&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "당산삼성래미안4차",
+          "dong": "당산동5가",
+          "visitors": 2630,
+          "hash": "1pa09",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1pa09"
+        },
+        {
+          "rank": 2,
+          "name": "래미안에스티움",
+          "dong": "신길동",
+          "visitors": 2376,
+          "hash": "aDhc2",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aDhc2"
+        },
+        {
+          "rank": 3,
+          "name": "양평동한신",
+          "dong": "양평동5가",
+          "visitors": 2121,
+          "hash": "1qz3f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1qz3f"
+        },
+        {
+          "rank": 4,
+          "name": "영등포푸르지오",
+          "dong": "영등포동",
+          "visitors": 2036,
+          "hash": "1nV0b",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1nV0b"
+        },
+        {
+          "rank": 5,
+          "name": "신길AK푸르지오(오)",
+          "dong": "신길동",
+          "visitors": 1902,
+          "hash": "eiG18",
+          "status": null,
+          "url": "https://hogangnono.com/apt/eiG18"
+        },
+        {
+          "rank": 6,
+          "name": "보라매SK뷰",
+          "dong": "신길동",
+          "visitors": 1732,
+          "hash": "cq8d5",
+          "status": null,
+          "url": "https://hogangnono.com/apt/cq8d5"
+        },
+        {
+          "rank": 7,
+          "name": "현대3차",
+          "dong": "대림동",
+          "visitors": 1677,
+          "hash": "1rFa0",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1rFa0"
+        },
+        {
+          "rank": 8,
+          "name": "써밋클라비온",
+          "dong": "신길동",
+          "visitors": 1659,
+          "hash": "gwIc8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gwIc8"
+        },
+        {
+          "rank": 9,
+          "name": "문래자이",
+          "dong": "문래동3가",
+          "visitors": 1588,
+          "hash": "1pNa8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1pNa8"
+        },
+        {
+          "rank": 10,
+          "name": "e편한세상당산리버파크",
+          "dong": "당산동4가",
+          "visitors": 1513,
+          "hash": "gv3e5",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gv3e5"
+        }
+      ]
+    },
+    {
+      "district": "동작구",
+      "code": "11590",
+      "source": "https://hogangnono.com/ranking?regionCode=11590&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "이수더써밋",
+          "dong": "사당동",
+          "visitors": 7933,
+          "hash": "gLDfe",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gLDfe"
+        },
+        {
+          "rank": 2,
+          "name": "아크로리버스카이",
+          "dong": "대방동",
+          "visitors": 6108,
+          "hash": "grh23",
+          "status": null,
+          "url": "https://hogangnono.com/apt/grh23"
+        },
+        {
+          "rank": 3,
+          "name": "센트릭사당",
+          "dong": "사당동",
+          "visitors": 5286,
+          "hash": "gQRb4",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gQRb4"
+        },
+        {
+          "rank": 4,
+          "name": "동작두산위브트레지움",
+          "dong": "상도동",
+          "visitors": 4727,
+          "hash": "gMs18",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gMs18"
+        },
+        {
+          "rank": 5,
+          "name": "신동아리버파크",
+          "dong": "노량진동",
+          "visitors": 2321,
+          "hash": "1rPe9",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1rPe9"
+        },
+        {
+          "rank": 6,
+          "name": "아크로리버하임",
+          "dong": "흑석동",
+          "visitors": 2167,
+          "hash": "aYF20",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aYF20"
+        },
+        {
+          "rank": 7,
+          "name": "힐스테이트이수역센트럴",
+          "dong": "사당동",
+          "visitors": 2021,
+          "hash": "dre1d",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dre1d"
+        },
+        {
+          "rank": 8,
+          "name": "래미안상도3차",
+          "dong": "상도동",
+          "visitors": 1888,
+          "hash": "1s433",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1s433"
+        },
+        {
+          "rank": 9,
+          "name": "상도역롯데캐슬파크엘",
+          "dong": "상도동",
+          "visitors": 1740,
+          "hash": "ctY90",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ctY90"
+        },
+        {
+          "rank": 10,
+          "name": "e편한세상상도노빌리티",
+          "dong": "상도동",
+          "visitors": 1585,
+          "hash": "aWA48",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aWA48"
+        }
+      ]
+    },
+    {
+      "district": "관악구",
+      "code": "11620",
+      "source": "https://hogangnono.com/ranking?regionCode=11620&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "신림스카이",
+          "dong": "신림동",
+          "visitors": 10509,
+          "hash": "e9u73",
+          "status": null,
+          "url": "https://hogangnono.com/apt/e9u73"
+        },
+        {
+          "rank": 2,
+          "name": "관악드림타운",
+          "dong": "봉천동",
+          "visitors": 3841,
+          "hash": "1vC9b",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1vC9b"
+        },
+        {
+          "rank": 3,
+          "name": "봉천두산1,2단지",
+          "dong": "봉천동",
+          "visitors": 2159,
+          "hash": "1w247",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1w247"
+        },
+        {
+          "rank": 4,
+          "name": "관악푸르지오",
+          "dong": "봉천동",
+          "visitors": 2089,
+          "hash": "1vIcb",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1vIcb"
+        },
+        {
+          "rank": 5,
+          "name": "봉천벽산블루밍1차",
+          "dong": "봉천동",
+          "visitors": 2018,
+          "hash": "1wab9",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1wab9"
+        },
+        {
+          "rank": 6,
+          "name": "신림현대",
+          "dong": "신림동",
+          "visitors": 1681,
+          "hash": "1yNfb",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1yNfb"
+        },
+        {
+          "rank": 7,
+          "name": "관악현대",
+          "dong": "봉천동",
+          "visitors": 1630,
+          "hash": "1xc32",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1xc32"
+        },
+        {
+          "rank": 8,
+          "name": "힐스테이트관악센트씨엘",
+          "dong": "봉천동",
+          "visitors": 1474,
+          "hash": "emT7a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/emT7a"
+        },
+        {
+          "rank": 9,
+          "name": "관악우성",
+          "dong": "봉천동",
+          "visitors": 1335,
+          "hash": "1wlac",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1wlac"
+        },
+        {
+          "rank": 10,
+          "name": "힐스테이트뉴포레",
+          "dong": "신림동",
+          "visitors": 1243,
+          "hash": "ds9a6",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ds9a6"
+        }
+      ]
+    },
+    {
+      "district": "서초구",
+      "code": "11650",
+      "source": "https://hogangnono.com/ranking?regionCode=11650&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "반포디에이치클래스트",
+          "dong": "반포동",
+          "visitors": 14519,
+          "hash": "f9G07",
+          "status": null,
+          "url": "https://hogangnono.com/apt/f9G07"
+        },
+        {
+          "rank": 2,
+          "name": "래미안원베일리",
+          "dong": "반포동",
+          "visitors": 5317,
+          "hash": "dBPa6",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dBPa6"
+        },
+        {
+          "rank": 3,
+          "name": "디에이치방배",
+          "dong": "방배동",
+          "visitors": 4159,
+          "hash": "dCz14",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dCz14"
+        },
+        {
+          "rank": 4,
+          "name": "반포래미안트리니원",
+          "dong": "반포동",
+          "visitors": 4150,
+          "hash": "fbn6a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/fbn6a"
+        },
+        {
+          "rank": 5,
+          "name": "반포자이",
+          "dong": "반포동",
+          "visitors": 4019,
+          "hash": "1HUe4",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1HUe4"
+        },
+        {
+          "rank": 6,
+          "name": "래미안퍼스티지",
+          "dong": "반포동",
+          "visitors": 2910,
+          "hash": "1Hq6f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1Hq6f"
+        },
+        {
+          "rank": 7,
+          "name": "메이플자이",
+          "dong": "잠원동",
+          "visitors": 2653,
+          "hash": "dEL38",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dEL38"
+        },
+        {
+          "rank": 8,
+          "name": "아크로리버파크",
+          "dong": "반포동",
+          "visitors": 2206,
+          "hash": "aBP2b",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aBP2b"
+        },
+        {
+          "rank": 9,
+          "name": "래미안원페를라",
+          "dong": "방배동",
+          "visitors": 1992,
+          "hash": "drxa8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/drxa8"
+        },
+        {
+          "rank": 10,
+          "name": "서초그랑자이",
+          "dong": "서초동",
+          "visitors": 1876,
+          "hash": "drl11",
+          "status": null,
+          "url": "https://hogangnono.com/apt/drl11"
+        }
+      ]
+    },
+    {
+      "district": "강남구",
+      "code": "11680",
+      "source": "https://hogangnono.com/ranking?regionCode=11680&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "은마",
+          "dong": "대치동",
+          "visitors": 5205,
+          "hash": "1T2af",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1T2af"
+        },
+        {
+          "rank": 2,
+          "name": "도곡렉슬",
+          "dong": "도곡동",
+          "visitors": 3418,
+          "hash": "1Wl74",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1Wl74"
+        },
+        {
+          "rank": 3,
+          "name": "디에이치퍼스티어아이파크",
+          "dong": "개포동",
+          "visitors": 3144,
+          "hash": "dGkb8",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dGkb8"
+        },
+        {
+          "rank": 4,
+          "name": "청담르엘",
+          "dong": "청담동",
+          "visitors": 2721,
+          "hash": "b5Pf7",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5Pf7"
+        },
+        {
+          "rank": 5,
+          "name": "개포자이프레지던스",
+          "dong": "개포동",
+          "visitors": 2118,
+          "hash": "ds61e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ds61e"
+        },
+        {
+          "rank": 6,
+          "name": "현대",
+          "dong": "압구정동",
+          "visitors": 2025,
+          "hash": "1Vkf9",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1Vkf9"
+        },
+        {
+          "rank": 7,
+          "name": "신동아",
+          "dong": "수서동",
+          "visitors": 1922,
+          "hash": "1W2bf",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1W2bf"
+        },
+        {
+          "rank": 8,
+          "name": "개포래미안포레스트",
+          "dong": "개포동",
+          "visitors": 1747,
+          "hash": "b4Ye5",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b4Ye5"
+        },
+        {
+          "rank": 9,
+          "name": "까치마을",
+          "dong": "수서동",
+          "visitors": 1717,
+          "hash": "1VW6c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1VW6c"
+        },
+        {
+          "rank": 10,
+          "name": "푸른마을",
+          "dong": "일원동",
+          "visitors": 1711,
+          "hash": "1VN48",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1VN48"
+        }
+      ]
+    },
+    {
+      "district": "송파구",
+      "code": "11710",
+      "source": "https://hogangnono.com/ranking?regionCode=11710&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "헬리오시티",
+          "dong": "가락동",
+          "visitors": 12111,
+          "hash": "aAh37",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aAh37"
+        },
+        {
+          "rank": 2,
+          "name": "잠실엘스",
+          "dong": "잠실동",
+          "visitors": 6591,
+          "hash": "1Xe5f",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1Xe5f"
+        },
+        {
+          "rank": 3,
+          "name": "파크리오",
+          "dong": "신천동",
+          "visitors": 6431,
+          "hash": "1Xyb5",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1Xyb5"
+        },
+        {
+          "rank": 4,
+          "name": "리센츠",
+          "dong": "잠실동",
+          "visitors": 6266,
+          "hash": "1Xa59",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1Xa59"
+        },
+        {
+          "rank": 5,
+          "name": "힐스테이트송파더그리드",
+          "dong": "장지동",
+          "visitors": 5270,
+          "hash": "gS8bc",
+          "status": null,
+          "url": "https://hogangnono.com/apt/gS8bc"
+        },
+        {
+          "rank": 6,
+          "name": "잠실주공5단지",
+          "dong": "잠실동",
+          "visitors": 4630,
+          "hash": "1Xhb6",
+          "status": null,
+          "url": "https://hogangnono.com/apt/1Xhb6"
+        },
+        {
+          "rank": 7,
+          "name": "올림픽선수기자촌",
+          "dong": "방이동",
+          "visitors": 3698,
+          "hash": "21J8e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/21J8e"
+        },
+        {
+          "rank": 8,
+          "name": "올림픽훼밀리타운",
+          "dong": "문정동",
+          "visitors": 3596,
+          "hash": "20P29",
+          "status": null,
+          "url": "https://hogangnono.com/apt/20P29"
+        },
+        {
+          "rank": 9,
+          "name": "잠실르엘",
+          "dong": "신천동",
+          "visitors": 3594,
+          "hash": "fa371",
+          "status": null,
+          "url": "https://hogangnono.com/apt/fa371"
+        },
+        {
+          "rank": 10,
+          "name": "송파꿈에그린위례24단지",
+          "dong": "장지동",
+          "visitors": 3314,
+          "hash": "21k9c",
+          "status": null,
+          "url": "https://hogangnono.com/apt/21k9c"
+        }
+      ]
+    },
+    {
+      "district": "강동구",
+      "code": "11740",
+      "source": "https://hogangnono.com/ranking?regionCode=11740&tab=popular&period=lastWeek",
+      "period": "2026-09-28~2026-10-04",
+      "observed": "2026-10-11",
+      "items": [
+        {
+          "rank": 1,
+          "name": "올림픽파크포레온",
+          "dong": "둔촌동",
+          "visitors": 12500,
+          "hash": "dC7df",
+          "status": null,
+          "url": "https://hogangnono.com/apt/dC7df"
+        },
+        {
+          "rank": 2,
+          "name": "고덕그라시움",
+          "dong": "고덕동",
+          "visitors": 5778,
+          "hash": "aYO6d",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aYO6d"
+        },
+        {
+          "rank": 3,
+          "name": "고덕아르테온",
+          "dong": "상일동",
+          "visitors": 3497,
+          "hash": "b5y9a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/b5y9a"
+        },
+        {
+          "rank": 4,
+          "name": "선사현대",
+          "dong": "암사동",
+          "visitors": 2995,
+          "hash": "27t0e",
+          "status": null,
+          "url": "https://hogangnono.com/apt/27t0e"
+        },
+        {
+          "rank": 5,
+          "name": "강동롯데캐슬퍼스트",
+          "dong": "암사동",
+          "visitors": 2968,
+          "hash": "2799a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/2799a"
+        },
+        {
+          "rank": 6,
+          "name": "래미안힐스테이트고덕",
+          "dong": "고덕동",
+          "visitors": 2451,
+          "hash": "aD44a",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aD44a"
+        },
+        {
+          "rank": 7,
+          "name": "래미안솔베뉴",
+          "dong": "명일동",
+          "visitors": 2430,
+          "hash": "aYWdc",
+          "status": null,
+          "url": "https://hogangnono.com/apt/aYWdc"
+        },
+        {
+          "rank": 8,
+          "name": "고덕자이",
+          "dong": "상일동",
+          "visitors": 2123,
+          "hash": "drZ09",
+          "status": null,
+          "url": "https://hogangnono.com/apt/drZ09"
+        },
+        {
+          "rank": 9,
+          "name": "고덕강일3단지토지임대부분양",
+          "dong": "강일동",
+          "visitors": 2101,
+          "hash": "ghl91",
+          "status": null,
+          "url": "https://hogangnono.com/apt/ghl91"
+        },
+        {
+          "rank": 10,
+          "name": "삼익그린맨션2차",
+          "dong": "명일동",
+          "visitors": 1960,
+          "hash": "247d2",
+          "status": null,
+          "url": "https://hogangnono.com/apt/247d2"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "complex": {
+    "project_id": "xi",
+    "canonical_name": "왕십리자이",
+    "hogangnono_id": "aEc43",
+    "identity_scope": "서울특별시 성동구 하왕십리동 1071의 왕십리자이",
+    "excluded_namesakes": [
+      "왕십리센트라스",
+      "왕십리뉴타운",
+      "서울숲리버뷰자이",
+      "왕십리KCC스위첸"
+    ]
+  },
+  "observed_at": "2026-10-11",
+  "collection_method": {
+    "browser": "Existing Ego TaskSpace 53 page p2 was used only until the shared space returned to user control; no takeover, new TaskSpace, or other page was used.",
+    "follow_up": "After browser control changed, only already downloaded files and public non-Ego search/download results were used.",
+    "acceptance_rule": "A counted item must be a genuine, distinct exterior or on-site photograph of exact 왕십리자이. Floor plans, renderings, maps, interiors, neighboring complexes, duplicate crops, and uncertain off-site views are excluded."
+  },
+  "photo_count": 11,
+  "photos": [
+    {
+      "id": "P01",
+      "file": "photos/01-main-entrance-wide.jpg",
+      "sha256": "e8789f9e181ecaa20f364cec4cf52e84102bb1147ed8c8ce14bddcff7ea4da9e",
+      "width": 720,
+      "height": 540,
+      "source_page_url": "https://hogangnono.com/apt/aEc43",
+      "image_url": "https://image.hogangnono.com/image/original/apt/aEc43/20240419141235_IIcjXTP1JPEBCFbiWm?s=720x180&t=outside&q=100",
+      "source_kind": "complex profile photograph",
+      "source_date": "2024-04-19",
+      "date_basis": "date embedded in source filename; exact shot date not independently verified",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Wide vehicle entrance with towers 103 and 106",
+        "Off-white and light-gray facade fields with charcoal and muted orange vertical bays",
+        "Dark stone portal carries Xi and 왕십리자이 signage",
+        "Flat rooflines and low dark podium/base are visible"
+      ]
+    },
+    {
+      "id": "P02",
+      "file": "photos/02-night-tower-landscape.jpg",
+      "sha256": "e7b6fe3a4768c2a686cf6b76376a69a455c224d452869abf23486c3d44a5ad82",
+      "width": 720,
+      "height": 960,
+      "source_page_url": "https://hogangnono.com/apt/aEc43",
+      "image_url": "https://image.hogangnono.com/image/nowatermark/original/review/20250805021002_wmLRjt8CDX2CqKstBV?s=720x180&t=outside&q=100",
+      "source_kind": "resident review photograph",
+      "source_date": "2025-08-05",
+      "date_basis": "upload timestamp embedded in image path; exact shot date unknown",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Low-angle night view of a tower rising behind mature trees",
+        "White, charcoal, and warm orange facade bands remain legible",
+        "Warm-white path and landscape lighting forms small pools rather than uniform floodlight",
+        "Night exposure is not a reliable source for exact material color"
+      ]
+    },
+    {
+      "id": "P03",
+      "file": "photos/03-internal-road-towers.jpg",
+      "sha256": "89ee0e0c2f75fd86a4a5c2d9dd19b20756511a2810c0880556c2c88e991999b7",
+      "width": 720,
+      "height": 960,
+      "source_page_url": "https://hogangnono.com/apt/aEc43",
+      "image_url": "https://image.hogangnono.com/image/nowatermark/original/review/20210511152839_K2BwFf87mjsiEYoPK8?q=100&s=720x180&t=outside",
+      "source_kind": "resident review photograph",
+      "source_date": "2021-05-11",
+      "date_basis": "upload timestamp embedded in image path; exact shot date unknown",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Internal brick-paved road between three tower faces",
+        "Yellow 천천히 pavement marking and a narrow contrasting center strip",
+        "Dense low hedges, shrubs, and young deciduous trees soften the tower bases",
+        "Windows read as regular flush openings rather than deep projecting balconies"
+      ]
+    },
+    {
+      "id": "P04",
+      "file": "photos/04-tower-101-street-base.jpg",
+      "sha256": "9dcea211572ed06e0a02145f3d964be73352692d9aef487539d8e0ae077776de",
+      "width": 720,
+      "height": 1153,
+      "source_page_url": "https://hogangnono.com/apt/aEc43/0/3/review/6547084",
+      "image_url": "https://image.hogangnono.com/image/nowatermark/original/review/20250328090214_OC9DUEaBNQCCYpf3vC?q=100&s=720x180&t=outside",
+      "source_kind": "resident review photograph",
+      "source_date": "2025-03-28",
+      "date_basis": "upload timestamp embedded in image path; exact shot date unknown",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Street-facing blind wall of tower 101 with large dark sans-serif number",
+        "Darker gray tiled base occupies several lower floors",
+        "CU retail frontage, service pipes, railings, and a small planted terrace sit at street level",
+        "Upper wall uses subtle vertical gray strips without decorative roof pitch"
+      ]
+    },
+    {
+      "id": "P05",
+      "file": "photos/05-tower-cluster-upper-site.jpg",
+      "sha256": "2bce286630dc16bcfc32e91b563a7db58c5fa50b9eb0fa1dce032127a8850e9f",
+      "width": 720,
+      "height": 960,
+      "source_page_url": "https://hogangnono.com/apt/aEc43",
+      "image_url": "https://image.hogangnono.com/image/nowatermark/original/review/20201026211122_dywTllV3MwhSbkNjlC?q=100&s=720x180&t=outside",
+      "source_kind": "resident review photograph looking across the complex",
+      "source_date": "2020-10-26",
+      "date_basis": "upload timestamp embedded in image path; exact shot date unknown",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Multiple towers show the repeated off-white, gray, charcoal, and orange vertical grammar",
+        "A curved internal drive and playground canopy are visible between the towers",
+        "Rooflines are flat parapets with restrained mechanical or frame-like caps",
+        "The blue window-glass cast affects apparent color and should not be sampled as facade paint"
+      ]
+    },
+    {
+      "id": "P06",
+      "file": "photos/06-pedestrian-entry-crosswalk.jpg",
+      "sha256": "63e1d95b679717d49d23d3807e89728439fe57d9456c962a6a217ae67982ad25",
+      "width": 720,
+      "height": 1016,
+      "source_page_url": "https://hogangnono.com/apt/aEc43/0/3/review/7107916",
+      "image_url": "https://image.hogangnono.com/image/nowatermark/original/review/20251010001428_1l1BUNTrEeyzk444JH?q=100&s=720x180&t=outside",
+      "source_kind": "resident review photograph",
+      "source_date": "2025-10-10",
+      "date_basis": "upload timestamp embedded in image path; exact shot date unknown",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Pedestrian-facing site edge with 왕십리자이 ground sign",
+        "Crosswalk, yellow tactile paving, metal pedestrian rails, steps, and sloped access are visible",
+        "Orange facade bays repeat behind the street edge",
+        "The neighboring church is context and must not be modeled as part of the complex"
+      ]
+    },
+    {
+      "id": "P07",
+      "file": "photos/07-main-gate-guardhouse.jpg",
+      "sha256": "c36f7de776776dc347dc71cfae3e96c362fc599dec2ab0f543ce5aea9ea63b55",
+      "width": 720,
+      "height": 540,
+      "source_page_url": "https://hogangnono.com/apt/aEc43/0/3/review/6125861",
+      "image_url": "https://image.hogangnono.com/image/nowatermark/original/review/20241018035640_EyoPkQEofXXcmwHMmV?q=100&s=720x180&t=outside",
+      "source_kind": "resident review photograph",
+      "source_date": "2024-10-18",
+      "date_basis": "upload timestamp embedded in image path; exact shot date unknown",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Close view of the dark speckled-stone main vehicle portal",
+        "Complex-era cyan/blue Xi symbol and white 왕십리자이 letters appear on both portal and booth",
+        "Star and snowflake-like motifs decorate the long lintel",
+        "Glass guard booth, keypad, accordion barrier, orange cones, and black railings define the gate sequence"
+      ]
+    },
+    {
+      "id": "P08",
+      "file": "photos/08-branded-access-gate.jpg",
+      "sha256": "37220099a5c92a24e780df809accb1d461e2486d9eaf6f32a289a6737f0d03ac",
+      "width": 1920,
+      "height": 2560,
+      "source_page_url": "https://kbland.kr/se/otd/1250183",
+      "image_url": "https://file.kbland.kr/image/kbstar/land/img/revw/userseq/2622712/20240418/4aa5013ca5b3d4f9.jpeg",
+      "source_kind": "KB부동산 on-site visit photograph",
+      "source_date": "2024-04-18",
+      "date_basis": "date embedded in source directory; exact shot date not separately stated",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Separate gray metal-and-glass pedestrian access gate with card/keypad reader",
+        "Installed Xi sign uses cyan/blue symbol and white Korean wordmark on a medium-gray panel",
+        "Pink, salmon, gray, and cream square pavers form a visible grid",
+        "Granite canopy, clipped hedge, and bare deciduous tree frame the entrance"
+      ]
+    },
+    {
+      "id": "P09",
+      "file": "photos/09-playground-path.jpg",
+      "sha256": "38e1a7b443d6ce58a08df681d875b883b7e23d2f54b4ab7731fad343628c8e72",
+      "width": 800,
+      "height": 600,
+      "source_page_url": "https://kbland.kr/se/otd/1250183",
+      "image_url": "https://file.kbland.kr/image/kbstar/land/img/revw/userseq/2622712/20240418/YzRmOTk5NTkwOGZhOTM3MTcy.jpg",
+      "source_kind": "KB부동산 on-site visit photograph",
+      "source_date": "2024-04-18",
+      "date_basis": "date embedded in source directory; exact shot date not separately stated",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Playground uses wood-look brown structures with restrained green, yellow, and red accents",
+        "Curved rubber path combines tan and dusty mauve fields",
+        "Low clipped hedges, pine, deciduous trees, and shrubs make a dense landscaped room",
+        "Tower base behind the play area is dark gray with regular punched windows"
+      ]
+    },
+    {
+      "id": "P10",
+      "file": "photos/10-playground-towers-wide.jpg",
+      "sha256": "9cf66f5fbde4ccdd4b351297201ebd75d45aebccbb4027f6debe7f51729875a8",
+      "width": 2560,
+      "height": 1920,
+      "source_page_url": "https://kbland.kr/se/otd/1250183",
+      "image_url": "https://file.kbland.kr/image/kbstar/land/img/revw/userseq/2622712/20240418/907695eadb740d73.jpeg",
+      "source_kind": "KB부동산 on-site visit photograph",
+      "source_date": "2024-04-18",
+      "date_basis": "date embedded in source directory; exact shot date not separately stated",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Wide playground view shows target 왕십리자이 towers 105 and 106; the background building numbered 110 belongs to a neighboring complex",
+        "Facade evidence is taken only from target towers 105 and 106, which repeat the off-white, light gray, charcoal, and muted orange system",
+        "Mature central tree, pine, shrubs, hedges, and wood play equipment create a layered courtyard",
+        "Dark vertical wayfinding sign and brick-paved path are useful small-scale site markers; background 110 is not an Xi tower or facade reference"
+      ]
+    },
+    {
+      "id": "P11",
+      "file": "photos/11-front-gate-towers.png",
+      "sha256": "c9ede36cad70736b10d9e88e6583c9aaeaf1958aca26956294dc5341d69578d6",
+      "width": 630,
+      "height": 473,
+      "source_page_url": "https://www.mk.co.kr/en/realestate/11347108",
+      "image_url": "https://wimg.mk.co.kr/news/cms/202506/19/news-p.v1.20250619.17cd224ccf9b4f599d75b0f2d0bde453_P1.png",
+      "source_kind": "news article photograph",
+      "source_date": "2025-06-19",
+      "date_basis": "article image path date; exact shot date unknown",
+      "shot_date": null,
+      "viewed": true,
+      "visible_notes": [
+        "Front view confirms the main stone portal, guard booth, painted lane arrows, and tower relationship",
+        "Facade window rhythm remains regular and mostly flush",
+        "Green canopy and layered shrubs sit immediately beside the vehicle entrance",
+        "This is a lower-resolution corroborating angle, not the primary material reference"
+      ]
+    }
+  ],
+  "brand_assets": [
+    {
+      "id": "B01",
+      "file": "brand/xi-logo-current.png",
+      "sha256": "5e6419523eb9185cae5cbe78ef370a9f63289f71c654664671ecd051d97ce251",
+      "width": 71,
+      "height": 37,
+      "source_page_url": "https://www.xi.co.kr/",
+      "image_url": "https://www.xi.co.kr/Content/static/images/common/logo_on.png",
+      "source_kind": "current official Xi website header asset",
+      "viewed": true,
+      "usage_note": "Reference asset only. It is a flat cyan current-site mark and is not pixel-identical to the photographed complex-era installed signs."
+    },
+    {
+      "id": "B02",
+      "file": null,
+      "source_page_url": "https://www.gsenc.com/Pr/PrBi.aspx",
+      "image_url": null,
+      "source_kind": "official GS건설 Xi BI guidance",
+      "viewed": true,
+      "official_color": {
+        "name": "XI DEEP Blue",
+        "pantone": "2189 C",
+        "rgb": [18, 45, 67],
+        "hex": "#122D43"
+      },
+      "usage_note": "This is the current corporate BI. Do not retroactively replace the photographed 2017-complex signage without an explicit modernization decision."
+    }
+  ],
+  "hash_audit": {
+    "algorithm": "SHA-256",
+    "accepted_photo_count": 11,
+    "unique_hash_count": 11,
+    "duplicate_groups": []
+  },
+  "rejected_candidates": [
+    {
+      "file": "candidates/h03.jpg",
+      "reason": "apartment kitchen/dining interior"
+    },
+    {
+      "file": "candidates/h04.jpg",
+      "reason": "apartment living-room interior"
+    },
+    {
+      "file": "candidates/h05.jpg",
+      "reason": "skyline view; insufficient complex exterior/site detail"
+    },
+    {
+      "file": "candidates/h06.jpg",
+      "reason": "elevator control panel; not exterior/site design"
+    },
+    {
+      "file": "candidates/h07.jpg",
+      "reason": "neighboring park path; not reliably inside the complex"
+    },
+    {
+      "file": "candidates/h08.jpg",
+      "reason": "interior dining scene"
+    },
+    {
+      "file": "candidates/h09.jpg",
+      "reason": "video infographic/map, not a photograph of the complex"
+    },
+    {
+      "file": "candidates/h10.jpg",
+      "reason": "map infographic, not a photograph"
+    },
+    {
+      "file": "candidates/h11.jpg",
+      "reason": "video infographic, not a photograph"
+    }
+  ]
+}

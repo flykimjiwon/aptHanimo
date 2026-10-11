@@ -1,0 +1,198 @@
+{
+  "checked": "2026-10-11T15:27:02.632Z",
+  "surface": "HTTP and WebSocket service, not browser UI",
+  "http": [
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 1269,
+      "sha256": "ccc5f0b70a768319ae262314a775491ab00cbad1e0b121e8383e4fee5acd3229"
+    },
+    {
+      "path": "/style-lab.html",
+      "status": 200,
+      "bytes": 1012,
+      "sha256": "8f5e62d0c903732c77e96e3993a391ceba302ea76fc05d0cbb63ae33d6b0b81d"
+    },
+    {
+      "path": "/worlds/haiver.json",
+      "status": 200,
+      "bytes": 836465,
+      "sha256": "9d85b6f27439be1503ca04611b5e6192dd35eed03a70802451b020443b145cc9"
+    },
+    {
+      "path": "/worlds/xi.json",
+      "status": 200,
+      "bytes": 778981,
+      "sha256": "c6320953639d5874cfe3ba0dfa4b89f77073261138f626cad999da0c339fe83a"
+    },
+    {
+      "path": "/worlds/cherbo.json",
+      "status": 200,
+      "bytes": 1111452,
+      "sha256": "fb2f4e10629c3842dbb3bc4599691d4bcaa5adbac0e8fd9911fae75d61606a55"
+    },
+    {
+      "path": "/context/haiver.json",
+      "status": 200,
+      "bytes": 8385,
+      "sha256": "70c5e6fb4fac19db5a2e4bc483f78369469a4de6f1464e6a4a79fca271fdc748"
+    },
+    {
+      "path": "/context/xi.json",
+      "status": 200,
+      "bytes": 8690,
+      "sha256": "254fa01c273caaf926a7cebf2955e4cae07275ed41d4a8beb5843681234614c9"
+    },
+    {
+      "path": "/context/cherbo.json",
+      "status": 200,
+      "bytes": 21530,
+      "sha256": "79bc34830c3df48a9f6ba5051fe68e6086b7f99f46c892cff157a00f69a7c957"
+    },
+    {
+      "path": "/data/seoul-complexes.json",
+      "status": 200,
+      "bytes": 1686878,
+      "sha256": "06701d3c98b6b0548f110c13ee52e50bf2d250b884de7c147726c816f7e0226e"
+    },
+    {
+      "path": "/data/seoul-popular-weekly.json",
+      "status": 200,
+      "bytes": 77270,
+      "sha256": "c71f77d1194994f7f27dc8303c054050a7d51dc50c59e574cd2e14bdfbbfc137"
+    },
+    {
+      "path": "/brands/raemian-heritage.png",
+      "status": 200,
+      "bytes": 21992,
+      "sha256": "5afc888876d75454525e6c9b23dce89e35a463ec4cc853daef737cd22789b618"
+    },
+    {
+      "path": "/brands/xi-signature.png",
+      "status": 200,
+      "bytes": 20498,
+      "sha256": "b182d88cec0a033e664ee4a45762efb99164c4c3c5caaf033225a25fe2db958a"
+    },
+    {
+      "path": "/brands/cherbo-footer.png",
+      "status": 200,
+      "bytes": 5729,
+      "sha256": "8eb1619d3707a29e50e8db9bf464715a2ac15568619df86c7f39f9631c966198"
+    },
+    {
+      "path": "/assets/world-DSsXX1r7.css",
+      "status": 200,
+      "bytes": 36402,
+      "sha256": "19620654f57b06ce42e99c3be0a59b38d9848a0701f575ce5516d4a00691bd03"
+    },
+    {
+      "path": "/assets/catalog-B2w8DKuV.js",
+      "status": 200,
+      "bytes": 4396,
+      "sha256": "f03154b91f3a68cd51adfb0498462aebfe305fa50c79cf8a0beb26c5f2d4512b"
+    },
+    {
+      "path": "/assets/map-catalog-CeITbEAB.js",
+      "status": 200,
+      "bytes": 6617,
+      "sha256": "9258d7ab1f4503781a3bf4ec590acce27eafe2c4c3dbaea82fb3b5f253f213fe"
+    },
+    {
+      "path": "/assets/lab-pGi_OfPN.css",
+      "status": 200,
+      "bytes": 11961,
+      "sha256": "f89890b1cb80a9cee8f32300ede0ec5c6e7bd28b724ceb62b3b6f455407f12b9"
+    },
+    {
+      "path": "/assets/world-CGe1YdF9.js",
+      "status": 200,
+      "bytes": 41606,
+      "sha256": "9fe084eb2e40c6e4ec0f78e4d2f5e7b9f08e4e16fc2818059b57804b6d2ae72d"
+    },
+    {
+      "path": "/assets/graph-D-x86rEu.js",
+      "status": 200,
+      "bytes": 2933,
+      "sha256": "94e6d76a53e4d93a7e3328c3f99f94a6f6125d542098e20fc1b00efa1c13383b"
+    },
+    {
+      "path": "/assets/map-themes-4L9h3spa.js",
+      "status": 200,
+      "bytes": 11758,
+      "sha256": "c204df2333b34899e776848619546191a5ae6dd09d121d5fff2a18d9106bde44"
+    },
+    {
+      "path": "/assets/index-Z9UjmDhD.js",
+      "status": 200,
+      "bytes": 31256,
+      "sha256": "2f06f1f94417bf1d0d870214a87510a2a3650540f86588f5153d40cef6a64dec"
+    },
+    {
+      "path": "/assets/ui-CFSOOcsA.js",
+      "status": 200,
+      "bytes": 26066,
+      "sha256": "88bbbc4cd788821ea8df754366a2c125b159d84b5bb5b125f2349d7a9bb64f67"
+    },
+    {
+      "path": "/assets/character-catalog-C_BNbyzG.js",
+      "status": 200,
+      "bytes": 7124,
+      "sha256": "f286e1eaf3aa77d9780f52455b9ffd412443f2321b336f68b7dba6018de38f7c"
+    },
+    {
+      "path": "/assets/storage-BARgYD7N.js",
+      "status": 200,
+      "bytes": 8385,
+      "sha256": "7b286c9d57172df12f72f7401faedfec9926ecc166d9c9610eb6200803baab6c"
+    },
+    {
+      "path": "/assets/world-CN3IMbKT.js",
+      "status": 200,
+      "bytes": 622494,
+      "sha256": "fcb32caef443d3806e78b00abf1a78f5db7158e8596b3bd7ca2bd1d6aa108487"
+    },
+    {
+      "path": "/assets/lab-ClnO-KK8.js",
+      "status": 200,
+      "bytes": 42285,
+      "sha256": "fdb4e9968b08d72496ed6c7d66e9a691c79c2cdc086c2e7e836884023e85f105"
+    },
+    {
+      "path": "/assets/schemas-DMONizVm.js",
+      "status": 200,
+      "bytes": 91987,
+      "sha256": "ddcbd3a1dbca4f71c0688afe21fc606fb6c3b71e986e538fb60a53a84f6a5938"
+    },
+    {
+      "path": "/missing-v5-file",
+      "status": 404
+    },
+    {
+      "path": "/%E0%A4%A",
+      "status": 400
+    },
+    {
+      "path": "/presence",
+      "case": "foreign Origin",
+      "status": 403
+    },
+    {
+      "path": "/worlds/haiver.json",
+      "method": "HEAD",
+      "status": 200,
+      "encoding": "gzip"
+    }
+  ],
+  "websocket": {
+    "twoClientsJoined": true,
+    "positionReceivedByPeer": true,
+    "separateRoomIsolated": true,
+    "invalidPositionCloseCode": 1008
+  },
+  "worldHashes": {
+    "haiver": "9d85b6f27439be1503ca04611b5e6192dd35eed03a70802451b020443b145cc9",
+    "xi": "c6320953639d5874cfe3ba0dfa4b89f77073261138f626cad999da0c339fe83a",
+    "cherbo": "fb2f4e10629c3842dbb3bc4599691d4bcaa5adbac0e8fd9911fae75d61606a55"
+  }
+}

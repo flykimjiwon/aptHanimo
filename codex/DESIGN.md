@@ -1,0 +1,95 @@
+# 한바퀴 V3 · Design contract
+
+## 0. Research Log
+- Provided reference: miniature neighborhood illustration embedded in 서울_아파트_임장월드_기획서.docx (image1.png). Warm architectural models, soft trees, walkable paths and layered interiors inform the world. This is a visual direction reference, not a pixel clone; the user explicitly requests a separate original prototype.
+- Existing brief: 서울_아파트_임장월드_통합개발기획서.md. Preserve complex-centered exploration, source transparency and movement differences.
+- Ego browser task 40: opened the user-provided Naver and Hogangnono pages and Seoul apartment portal. Facts recorded in research/SOURCES.md.
+- V2 spatial direction: core tower footprints are the current 15/7/7 public apartment-map polygons; surrounding buildings and paths come from OSM; terrain comes from SRTM. Reference map captures are for visual comparison only and are not shipped as world textures.
+- Reference-derived direction, rather than fresh greenfield style selection: no third-party game UI, character or building art is copied. World geometry is rendered live in Three.js with an original palette and procedural detail.
+- V3: Claude's local prototype guide/screenshots inform restrained building outlines, cream walls, inviting paths and night windows. Preserve continuous DEM: its 8m visual terraces and synthetic towers are excluded. Hosted Claude links required login.
+- PixelCrew confirmed by user: their own <LOCAL_HOME>/Desktop/kimjiwon/my-projects/pixelcrew-desk. References are src/shared/crew.js, src/renderer/shared/sprites.js and assets/icon.png: stepped dome, white square eyes, pink cheeks, three block feet and yellow scarf. The unrelated external namesake is excluded. Original walking atlas is derived from the user's character grammar.
+
+## 1. Visual Theme & Atmosphere
+A little real neighborhood on a field notebook. Warm ivory paper, ink green, coral route threads, matte apartment models and leafy tree canopies. The signature is a real-coordinate diorama that you can enter and roam freely, with a coral guide route available when wanted. It should carry the warmth and legibility of a cozy life game while keeping original characters, architecture treatment, UI and sound. Compact editorial controls frame a large world; it should feel like a Sunday walk, not a property dashboard.
+
+## 2. Color
+UI tokens: paper #f7f6ef, panel #fffef9, ink #253b34, muted #59645c, line #dce0d3, green #315c46, green-hover #254b39, lime #dfe9c7, coral #d87857, coral-light #f8e6dd, sky #e8eee3, white #ffffff, black #172c25, error #a34331.
+World material palette: grass #c6d69a / #adc389 / #dce4b9; trees #638d5b / #83a969 / #a8bd7a; bark #8e7255; path #eee4cc; road #acb5a4; lane #f8f5df; building #f4e8d3 / #e5d5bb / #d4bd9f; roof gray-blue #7c8f94 with warm contextual variants; glass #779da5 / #c1d4cd; metal #738479; flowers #e4af96 / #f0dca1; water #97c2bf; dark #35463d. Shadows green-black 8–18%.
+
+## 3. Typography
+Korean: locally available Apple SD Gothic Neo, Noto Sans KR, Malgun Gothic, sans-serif. Display labels use Georgia for Latin accent only. No remote font dependency. Sizes: 10, 11, 12, 13, 14, 16, 18, 20, 24, 28, 32px. Body 14px/1.6, note14px, heading28px/1.25 weight700, brand20px weight800. Word-break keep-all; wrap long URLs anywhere.
+
+## 4. Spacing & Grid
+Base4px. Spacing4/8/12/16/20/24/32/40/48/64. Desktop topbar76px, left rail292px, world fills remaining width. Bottom floating mode dock. At ≤700px topbar64px and world calc(100svh - 64px), min590px/max760px. Information flows below the world and the document scrolls. Controls stay within the world, sheets scroll inside the viewport. Tablet uses reduced rail and spacing rules. Primary controls target44px. Corner radii8/12/16/24/pill. Main height100dvh desktop; no horizontal overflow at375px.
+
+## 5. Layout & Composition
+Desktop app header then split navigation/details rail and living diorama. Notebook count and live connection state sit in the header and world chrome. The ground layer preserves real local coordinates: east is +X, north is -Z and one world unit is one metre. The world has layer tabs, party controls, compass/camera controls, a minimap/evidence entry and a unified transport strip. Scene layers change world and supporting details together. Mobile places the world first, keeps joystick and essential camera/layer actions reachable, then exposes a readable information sheet below it. Dense minor labels may hide on small screens, but the selected place and required actions remain available.
+
+## 6. Components
+- Button: primary green, secondary paper, quiet icon. Default/hover/focus/pressed/disabled. Hover tonal change, press translateY(1px), visible focus2px. Native button semantics; min44px.
+- SegmentedControl: modes and party. Selected background/ink plus aria-pressed; no color-only indication.
+- PlaceRow: icon disc, name, category/source distance, selection arrow. Full row button, selected paper/green inset indicator. No nested click targets.
+- EvidenceBadge: sourced / model / community report text. Always accessible text, not color-only.
+- Dialog: native dialog, titled header, close44px, modal focus and Escape support. Scrollable body max80dvh. Notebook form, source ledger, invite, ad preview and help reuse it.
+- WorldLabel: projected DOM native buttons, pointed anchor, selected coral. Camera changes projection. Off-canvas labels hidden, no blocking of camera gestures.
+- RouteSummary: destination, game-space metrics, note, single primary action. States ready/moving/paused/arrived/unreachable. “등록 계단 없음” only means the active route model has no registered stair segment; it is not an accessibility guarantee.
+- MiniMapEvidence: north-up geometry preview, source legend, 1unit=1m statement, DEM and estimated width/height limits.
+- Joystick: camera-relative analogue movement with pointer capture, keyboard focus, release/cancel reset and an accessible label.
+- Scene primitives: real footprint extrusions plus reusable tree/car/person/bike/bench/path meshes with shared palette and low polygon geometry. Core facade windows, bands and rooftop pieces are procedural visual detail, not surveyed fenestration.
+- OriginalPixelPerson: nearest-filtered 32×40 atlas frames, cyan stepped dome, white eyes, pink cheeks, three block feet, yellow scarf and pen, derived from the user's own PixelCrew. Four facing directions and distance-driven walking frames. Visual size is exaggerated for readability; collisions and actual metres stay unchanged. Vehicles retain lightweight geometry.
+- WorldTools: zoom percent, night/day toggle, and economical render option. Controls retain labels and pressed state; no automatic ad interruption during movement.
+
+## 7. Motion & Interaction
+UI150ms transform/opacity. Camera zoom/rotation is eased; reduced-motion applies camera changes immediately. Ground movement uses a 60Hz fixed simulation step rather than graph-edge interpolation. WASD, arrow keys and the joystick produce camera-relative continuous movement; pointer drag rotates the camera; tapping terrain plans a route to that point. Destination buttons plan a 2m-cell route and the user can interrupt it immediately by moving manually. Building collision and mode rules provide physical feedback. Interior examples continue to use the authored V1 graph. No decorative looping UI animations.
+V3 pinch: two captured canvas pointers scale proportionally; a gesture remains consumed after one finger lifts, so it cannot become a tap-to-walk. Wheel/trackpad and +/- buttons share bounded continuous zoom. Animation is distance-driven; stationary collisions do not walk in place. Reduced motion uses still poses. Mobile defaults cap pixel ratio and render cadence; physics remains fixed60Hz and hidden pages suspend rendering.
+
+## 8. Voice & Brand
+Friendly precise Korean. Distances from sources are labelled 출처 표기 and routes are identified as game-space or 체험 경로. “실제 좌표 기반” never expands into survey, photogrammetry or digital-twin claims. No invented current defects or ratings. Community statements remain reports, not established conditions. Ads explicitly say 광고 데모. Other users only appear after real server connections. Couple/family companions explicitly say 동행 캐릭터.
+
+## 9. Anti-patterns
+No fake live-user count, no raster scene pretending to be interactive, no copied property map tiles, no direct imitation of a commercial game's characters/UI/buildings, no invented cockroaches/cracks on a real complex. Official apartment-brand marks may now be used on the user's explicit request, with original proportions and source provenance; do not invent a mark or imply endorsement. No precise real-world ETA from game navigation. No claims that the DEM resolves curbs or that missing OSM steps proves accessibility. No claims that prototype interiors reproduce actual layouts. No claim that procedural facade windows match real fenestration. No purchase/login barrier.
+
+## Accessibility & depth
+Mixed depth: paper panels with thin olive-gray hairline, 0 8px 24px rgba(23,44,37,.08), world ambient/directional light. Keyboard movement and destination buttons duplicate important canvas actions. Dialog focus handling is native. Reduced motion is supported. WebGL failure shows the place/source/notebook interface and an explicit graphics error. V2 accessibility and viewport behavior require current browser evidence; historical V1 QA does not establish the V2 result.
+
+Accessibility correction: selected coral map labels use deep ink #172c25. Mobile header icon buttons keep permanent aria-labels. World ad plaque is a disclosed interactive demo.
+
+## V3 people and QA
+Phone explorer: one thumb moves and two fingers zoom; map legend and information sheet remain usable. Desktop explorer: WASD can interrupt routes, scroll zooms, focus in a dialog does not move the character. Motion-sensitive explorer: reduced-motion gives immediate camera changes and still sprites. Night mode is cosmetic, never a time-of-day safety assessment. QA requires actual input/capture evidence and measured render cadence, not a claim about untested physical phones.
+
+## V3 style laboratory
+The user's explicit additional deliverable is 10 character + 10 building + 10 world-map design prototypes. `/style-lab.html` is a separate Canvas2D comparison surface, with 30 static gallery canvases and one live mixed preview. Each family has stable IDs and a C/B/M code. Exact catalog metadata lives in `src/style-lab/*-catalog.ts`. Character variations change silhouette/material/line grammar, not just color. Buildings share test footprints to compare rendering, and live maps consume real source polygons with deliberately compressed height. The distinction from the full collision-aware main world is stated next to the preview.
+
+Desktop: warm paper header76px, content max1512px, live world +268px recipe sidebar, five-column gallery. Tablet3columns, phone2columns with the world before the recipe. No autoplay by default. Start/stop demonstration, manual movement, pinch/drag/zoom, day/night, 3complexes, recommendations, JSON/PNG export and querystring share. PNG is the current canvas snapshot, not a prerecorded scene.
+
+Personas: returning PixelCrew owner recognizes the stepped dome/whiteeyes/pinkcheeks/threefeet; mobile user can compare and save a combination without a keyboard; Claude implementation recipient can trace every style to source and distinguish preview art from spatial truth. Reference icon copied unmodified from user's project, no unrelated namesake assets shipped.
+
+Style lab embedded-canvas navigation: plain wheel scrolls the long catalog page; Ctrl/Command + wheel zooms the preview. Two-finger pinch and zoom buttons remain immediate. This prevents the comparison page from trapping page scrolling. Source PixelCrew grid24×22 differs from the derived32×40 walking atlas.
+
+## Photo-backed complex identity and travel speed
+
+The user likes the current surface: preserve cozy 2D/2.5D rendering, PixelCrew and the thirty-style laboratory. Research at least ten distinct actual architectural/site photographs per implemented complex (verified communal interiors may be included and counted separately) before deriving facade profiles. Store photographed and inferred details separately under research/brands/{haiver,xi,cherbo}; diagrams, CGI, duplicated crops and logos do not count as photographs. Original reference photos remain research artifacts and are not used as world textures.
+
+Real complex identity uses a shared profile over the existing footprint/DEM: observed wall/base/roof/window palette, floor bands/vertical panels, roof treatment and official mark. Raemian belongs to Haiver, Xi to Wangsimni Xi, and PRUGIO SUMMIT to Cherbo. IPARK is an additional researched brand reference, never relabels one of these three sites. Style variants preserve their drawing grammar while inheriting the selected real complex's identity. No new surveyed doorway, gate, landscaping location or walkability claim may be invented from a photograph.
+
+TravelSpeedControl: visibly labelled 이동 속도, values 1×/2×/4×/8×/16×, default2×, independent from 25–250% camera zoom and render-economy mode. Reuse existing paper/ink/green tokens, min44px primary touch area, native select or segmented buttons with keyboard semantics, visible current value, focus/selected/disabled states. Offer it in both main world and style preview. Preserve selection across complex/layer changes and reload. Scale manual, tap/destination and demo travel coherently without changing geographic metres, slopes or real-world time claims. At16× collision sweeps and route arrival still apply, released input stops normally, reduced-motion remains supported. Existing speed at1× remains available.
+
+Photo palette interpretation (not measured paint codes): Haiver wall#ecece2, side#bcc6c2, stone base#baa99b, roof#697675, teal crown#6aa5a2, glazing#769b9e, mullions#d6dcd3. Xi wall#e2e3df, side#b8bfc0, base#68716f, roof#637575, terracotta vertical bay#b78262, glazing#6a9295, mullions#e7e6dc. Warm world light and existing restrained outlines remain. Brand marks keep their official source colors and original aspect ratio. The source artwork stays byte-identical; a declared crop selects an isolated legacy symbol from an official historical brand sheet, without re-drawing or distorting it.
+
+Cherbo: daytime photo of104/105 from the2025-06-19 resident post, association-photo attribution, corroborates cool light vertical wall blades and dark window fields; July2026 dusk contributes crown and lighting form only. Palette wall#d9ded8, side#7e8c88, base#56615f, roof#4f5e5a, crown accent#a49678, glazing#4f737b, mullions#e5e7db. Warm nighttime photography is not used to infer a brown daytime paint color. Photo count and exact exterior/community mix are recorded in its manifest; spatial ring/height data remains untouched.
+
+## V5 full-world art direction selection
+
+The user explicitly asks for the non-pixel alternatives and both2.5D/3D feel. All existing C01–C10/B01–B10/M01–M10 become selectable in the collision-aware main world. Keep the laboratory comparison page. New users start with round-buddy + soft-isometric + soft-village + isometric; explicit saved/query selections win. Provide flat north-up orthographic, familiar isometric orthographic, and true perspective3D cameras independently from material choice.
+
+StyleDrawer reuses the existing native dialog, paper/ink/green tokens, min44px touch controls, visible selected state and Escape/focus behavior. Three labelled selectors cover character/building/map, a fourth covers projection. Preset buttons choose cozy2.5D, clay3D, voxel3D, paper2.5D, ink2D and watercolor2.5D. The world chrome has one labelled 스타일 button; avoid putting four more selects over the small mobile canvas. Selecting a style applies without teleporting, clearing the route, changing speed or modifying meters/DEM/collisions. The lab offers an explicit button to open the current combination in the main world.
+
+Characters: original pixel and deliberately graphic paper/ink/sticker treatments may use crisp/high-resolution directional atlases. Round, voxel, plush, bead, rubber-hose and leaf styles use actual low-polygon geometry with a recognizable dome, eyes, cheeks, scarf and feet, animated by traveled distance. Preserve companions and vehicles. Do not substitute an unrelated human for the user's PixelCrew. 3D mesh styles retain depth/shadow/side/back silhouettes. No new downloaded character assets.
+
+Building styles alter material/line/window/edge grammar, not merely the label: pixel has stepped bands; paper layered edge/rim; clay bevel/soft gloss; ink structural outlines/hatching; wood grain; flat-roof suppresses elevated mass for plan reading with explicit visual compression; watercolor translucent-looking painted texture over opaque geometry; cel hard shading/heavy outline; white-model neutral mass and restrained brand accent. Core footprint/source heights remain immutable. Photo-backed profile identity and official marks remain attached to the correct complex. Surface patterns are lightweight procedural textures, not captured real photos.
+
+World map palettes inherit the existing style-lab map themes in src/style-lab/map-themes.ts. Render ground with actual elevation positions and only change vertex colors, surface texture, paths/contours and decorative style; camera projection is independent. Evening theme is an art palette, not a claim about actual site lighting. Pattern textures max128–256px, shared per rebuilt surface, no full-screen postprocessing passes, no30simultaneous renderers. Scene geometry/material/texture disposal remains mandatory. Rebuild only the visual layer on style selection; movement motor, navigation and selection stay intact.
+
+Verification debt: previous Ego53 location prompt remains under user control until explicit confirmation. No new browser or TaskSpace bypass. Automated geometry/camera/style integration and source-preservation checks may proceed, but rendered/gesture/mobile QA cannot be marked complete before actual browser access returns.
+
+V5 steering: add an extra realistic building treatment and realistic-neighborhood map beyond the ten existing styles, titled 현장풍3D/실제사진참고. Use neutral slate/stone/asphalt, fine surface grain and darker glass preserving the three photograph-backed palettes. Terrain relief stays in meters, with stronger natural slope shading, visible topographic sections and DEM-draped building plinths so sloped sites do not leave floating towers. A plinth is procedural support, not a surveyed retaining wall; disclose that distinction. New 지점에서시작/순간이동 controls jump to known POIs or a chosen passable map point, clear the previous route, snap the camera and preserve style/speed/mode. Rejected/unsafe points give an explicit message, never put the player inside a footprint. No fabricated higher-resolution DEM claim.

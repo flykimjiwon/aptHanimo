@@ -1,0 +1,19 @@
+{
+  "checked": "2026-10-11T15:29:48.724Z",
+  "repository": "https://github.com/flykimjiwon/aptHanimo",
+  "branch": "main",
+  "implementationCommit": "64e2b494687e298247c0696951b38028fe2ecbf3",
+  "priorClaudeCommit": "055d06c98eb4b4fce92cc5832bf4855c80106b3d",
+  "subtree": "codex/",
+  "browserQa": "pending user control return",
+  "freshCheckout": {
+    "install": "bun install --frozen-lockfile PASS",
+    "tests": 74,
+    "assertions": 2861,
+    "build": "tsc + vite + gzip PASS",
+    "compressedAssets": 26
+  },
+  "excluded": "node_modules, dist, credentials, local automation state, external research photos and map captures",
+  "remoteImplementationHead": "64e2b494687e298247c0696951b38028fe2ecbf3",
+  "remoteMatched": true
+}

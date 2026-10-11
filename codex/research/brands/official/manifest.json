@@ -1,0 +1,95 @@
+{
+  "observedAt": "2026-10-11",
+  "assets": [
+    {
+      "id": "raemian",
+      "file": "public/brands/raemian-heritage.png",
+      "sourcePage": "https://www.raemian.co.kr/community/times/style/view.do?seq=82",
+      "imageUrl": "https://www.raemian.co.kr/upload/editor/image/images/000221/02_1.png",
+      "edition": "Official before/after historical BI comparison; left-hand original three-stripe 來美安 mark only",
+      "use": "Haiver façade; matches site photo h02",
+      "crop": {
+        "x": 130,
+        "y": 96,
+        "width": 126,
+        "height": 158
+      },
+      "size": {
+        "width": 800,
+        "height": 350
+      },
+      "sha256": "5afc888876d75454525e6c9b23dce89e35a463ec4cc853daef737cd22789b618",
+      "bytes": 21992,
+      "originalBytesUnmodified": true
+    },
+    {
+      "id": "xi",
+      "file": "public/brands/xi-signature.png",
+      "sourcePage": "https://www.xi.co.kr/brand/intro",
+      "imageUrl": "https://www.xi.co.kr/Content/static/images/sub/brand/intro/logo_slide_cont_03.png",
+      "edition": "Official preserved curved Xi signature; legacy image URL retained in brand introduction page",
+      "use": "Wangsimni Xi façade; curved mark matches gate photos P07/P08; this is not the current angular BI",
+      "crop": {
+        "x": 64,
+        "y": 138,
+        "width": 250,
+        "height": 102
+      },
+      "size": {
+        "width": 367,
+        "height": 367
+      },
+      "sha256": "b182d88cec0a033e664ee4a45762efb99164c4c3c5caaf033225a25fe2db958a",
+      "bytes": 20498,
+      "originalBytesUnmodified": true
+    },
+    {
+      "id": "summit",
+      "file": "public/brands/cherbo-footer.png",
+      "sourcePage": "https://www.prugio.com/lacervo/",
+      "imageUrl": "https://www.prugio.com/lacervo/img/common/footer_logo.png",
+      "edition": "Project-era SUMMIT PRUGIO lockup from La Cherbo official microsite",
+      "use": "La Cherbo façade; local crop shows upper wordmark only",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 164,
+        "height": 48
+      },
+      "size": {
+        "width": 164,
+        "height": 96
+      },
+      "sha256": "8eb1619d3707a29e50e8db9bf464715a2ac15568619df86c7f39f9631c966198",
+      "bytes": 5729,
+      "originalBytesUnmodified": true
+    },
+    {
+      "id": "ipark",
+      "file": "public/brands/ipark.svg",
+      "sourcePage": "https://www.i-park.com/brand/brand-design",
+      "imageUrl": "https://www.i-park.com/assets/img/brand/logo_brand.svg",
+      "edition": "Current official IPARK brand-design wordmark",
+      "use": "Brand reference for future complex; no current world is relabeled IPARK",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 490,
+        "height": 100
+      },
+      "size": {
+        "width": 490,
+        "height": 100
+      },
+      "sha256": "0c6f8115ab1cb82dade0c119d2aa795208dfa9daa17ef02ea2c460332851faf1",
+      "bytes": 2215,
+      "originalBytesUnmodified": true
+    }
+  ],
+  "limits": [
+    "Local prototype references; no redistribution license or brand endorsement asserted.",
+    "World sign placement and scale are authored visual interpretations, not surveyed site coordinates.",
+    "New 2026 RAEMIAN BI is reference only; no claim of retrofit at Haiver.",
+    "Original logo image files are preserved; runtime drawImage crops are recorded above."
+  ]
+}

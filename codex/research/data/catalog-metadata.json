@@ -1,0 +1,114 @@
+{
+  "title": "서울시 공동주택 아파트 정보 전체 공개 레코드",
+  "dataset": "OA-15818 / OpenAptInfo",
+  "source": "https://data.seoul.go.kr/dataList/OA-15818/A/1/datasetView.do",
+  "download": "https://datafile.seoul.go.kr/bigfile/iot/sheet/json/download.do",
+  "license": "공공누리 제1유형 · 서울특별시 출처표시",
+  "checked": "2026-10-11",
+  "count": 2893,
+  "districtCount": 25,
+  "sourceSha256": "b3c92de583d587e0efa5d46be6ff975a344daf86acc6b03e3394385a72974ca9",
+  "scope": "원본 공개 데이터셋 전량. 서울 소재 모든 건축물의 완전목록을 뜻하지 않음. 임대 관리구분 등 별도 레코드가 있으며 주상복합·연립주택 등도 포함.",
+  "districts": [
+    {
+      "name": "강남구",
+      "count": 230
+    },
+    {
+      "name": "강동구",
+      "count": 128
+    },
+    {
+      "name": "강북구",
+      "count": 49
+    },
+    {
+      "name": "강서구",
+      "count": 168
+    },
+    {
+      "name": "관악구",
+      "count": 75
+    },
+    {
+      "name": "광진구",
+      "count": 72
+    },
+    {
+      "name": "구로구",
+      "count": 145
+    },
+    {
+      "name": "금천구",
+      "count": 41
+    },
+    {
+      "name": "노원구",
+      "count": 215
+    },
+    {
+      "name": "도봉구",
+      "count": 105
+    },
+    {
+      "name": "동대문구",
+      "count": 118
+    },
+    {
+      "name": "동작구",
+      "count": 121
+    },
+    {
+      "name": "마포구",
+      "count": 123
+    },
+    {
+      "name": "서대문구",
+      "count": 84
+    },
+    {
+      "name": "서초구",
+      "count": 166
+    },
+    {
+      "name": "성동구",
+      "count": 117
+    },
+    {
+      "name": "성북구",
+      "count": 136
+    },
+    {
+      "name": "송파구",
+      "count": 147
+    },
+    {
+      "name": "양천구",
+      "count": 118
+    },
+    {
+      "name": "영등포구",
+      "count": 163
+    },
+    {
+      "name": "용산구",
+      "count": 68
+    },
+    {
+      "name": "은평구",
+      "count": 131
+    },
+    {
+      "name": "종로구",
+      "count": 27
+    },
+    {
+      "name": "중구",
+      "count": 45
+    },
+    {
+      "name": "중랑구",
+      "count": 101
+    }
+  ]
+}
