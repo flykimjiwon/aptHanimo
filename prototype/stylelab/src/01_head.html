@@ -1,0 +1,111 @@
+<title>임장월드 스타일 랩</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: 수첩 톤 머리글 → 4부(캐릭터·건물·월드맵·조합). 카드 격자는 폰에서 1열, 캔버스는 비율 고정 */
+:root{
+  --bg:#f6f1e3; --paper:#fffdf6; --paper2:#f4ecd8; --fg:#4a3b2f; --muted:#8c7a68; --line:#e2d6bd; --line2:#cdbf9f;
+  --accent:#5aa469; --accent-ink:#ffffff; --accent2:#f08a66; --signal:#e8b43a;
+  --display:"Jua","Noto Sans KR",system-ui,sans-serif; --body:"Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif; --mono:ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#1d1915; --paper:#2a241e; --paper2:#332c25; --fg:#f1e8d8; --muted:#b3a38f; --line:#4a4035; --line2:#5c5044; --accent:#7cc98a; --accent-ink:#17251a; --accent2:#f29b7c; --signal:#f0c050; color-scheme:dark } }
+:root[data-theme="dark"]{ --bg:#1d1915; --paper:#2a241e; --paper2:#332c25; --fg:#f1e8d8; --muted:#b3a38f; --line:#4a4035; --line2:#5c5044; --accent:#7cc98a; --accent-ink:#17251a; --accent2:#f29b7c; --signal:#f0c050; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.55;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:22px 64px}
+header.top{border-bottom:2px solid var(--line2);padding-bottom:16px;margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,5.5vw,46px);line-height:1.1;margin:6px 0 8px;text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent2)}
+.lede{max-width:70ch;color:var(--muted);margin:0 0 12px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0 0 6px}
+.fact{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:8px 11px}
+.fact b{display:block;font-family:var(--display);font-weight:400;font-size:22px;line-height:1.1}
+.fact span{font-size:12px;color:var(--muted)}
+h2{font-family:var(--display);font-weight:400;font-size:26px;margin:34px 0 4px;text-wrap:balance}
+h2 small{font-family:var(--body);font-size:13px;color:var(--muted);margin-left:8px}
+.sub{color:var(--muted);margin:0 0 12px;max-width:80ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:12px}
+.card{background:var(--paper);border:2px solid var(--line2);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card[aria-selected="true"]{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(240,138,102,.25)}
+.card canvas{width:100%;height:auto;display:block;border-radius:10px;background:var(--paper2);border:1px solid var(--line)}
+.card h3{margin:2px 0 0;font-size:15px;display:flex;align-items:baseline;gap:6px}
+.card h3 .no{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card p{margin:0;font-size:12.5px;color:var(--muted);min-height:0}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:10.5px;border:1px solid var(--line2);border-radius:999px;padding:0 7px;line-height:17px;color:var(--muted);background:var(--paper2)}
+.tag.hi{color:var(--accent-ink);background:var(--accent);border-color:transparent}
+button{font:500 13px var(--body);color:var(--fg);background:var(--paper);border:2px solid var(--line2);border-radius:12px;padding:6px 10px;cursor:pointer;min-height:34px;box-shadow:0 2px 0 var(--line2)}
+button:active{transform:translateY(1px);box-shadow:0 1px 0 var(--line2)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+button[aria-pressed="true"]{background:var(--accent2);color:#fff;border-color:transparent}
+button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
+.card .pick{margin-top:auto;align-self:flex-start}
+.combo{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:760px){ .combo{grid-template-columns:1fr} }
+.combo canvas{width:100%;height:auto;display:block;border-radius:14px;border:2px solid var(--line2);background:var(--paper2)}
+.panel{background:var(--paper);border:2px solid var(--line2);border-radius:16px;padding:12px}
+.panel h3{margin:0 0 6px;font-size:15px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+select{font:14px var(--body);padding:6px 8px;border-radius:10px;border:1.5px solid var(--line2);background:var(--paper);color:var(--fg);max-width:100%}
+textarea{width:100%;min-height:120px;font:12px/1.5 var(--mono);background:var(--paper2);color:var(--fg);border:1.5px solid var(--line2);border-radius:10px;padding:8px}
+.note{font-size:12px;color:var(--muted)}
+.presets button{font-size:12.5px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500;white-space:nowrap}
+.tbl{overflow-x:auto;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);margin:8px 0}
+@media (prefers-reduced-motion: reduce){ .card canvas{transition:none} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">임장월드 스타일 랩 · 2026-10-11 · 캐릭터 10 × 건물 10 × 월드맵 10 · 실제 신당 하이베르 주변 24×16 타일로 렌더</div>
+    <h1>어떤 <em>그림체</em>로 갈까</h1>
+    <p class="lede">같은 데이터(OSM 건물 42동·SRTM 고도 32~88m·도로·공원·학교)를 서른 가지 방식으로 그렸다. 캐릭터·건물·월드맵에서 하나씩 고르면 아래 조합 미리보기에 함께 나오고, 선택을 JSON으로 복사해 Codex·기획서에 넘길 수 있다. 전부 코드로 그린 것이라 고른 스타일은 그대로 프로토타입에 이식된다.</p>
+    <div class="facts">
+      <div class="fact"><b>30</b><span>스타일 샘플 (10·10·10)</span></div>
+      <div class="fact"><b>1,000</b><span>조합 가능 (10×10×10)</span></div>
+      <div class="fact"><b>42동 · 24×16</b><span>실제 하이베르 주변 타일</span></div>
+      <div class="fact"><b>0 의존성</b><span>Canvas 2D, 외부 이미지 없음</span></div>
+    </div>
+    <p class="note">태그 뜻 — 난이도: 양산 제작 품(1 쉬움~3 어려움) · 성능: 모바일 부담(1 가벼움~3 무거움) · 정합: 실제 폴리곤·고도를 유지하는지 · 동숲: 동물의숲 느낌(1~5).</p>
+  </header>
+
+  <h2 id="s1">1. 캐릭터 10 <small>걷기 애니메이션 · 가운데 캐릭터가 선택 색, 양옆은 동행 색</small></h2>
+  <p class="sub">3등신·도트·복셀·종이 등 서로 다른 조형 언어. 전부 캔버스 명령으로 그려 색·방향·걷기만 바꾸면 1인·커플·가족 구성이 나온다.</p>
+  <div class="grid" id="gridChars"></div>
+
+  <h2 id="s2">2. 건물 10 <small>15층 아파트 1동 + 집 2채 + 나무 1그루, 같은 바닥</small></h2>
+  <p class="sub">벽·지붕·창·윤곽·그림자 규칙만 바꾼 것. 아파트의 단지색(하이베르 분홍) 처리와 저층 집의 지붕 처리를 같이 본다.</p>
+  <div class="grid" id="gridBlds"></div>
+
+  <h2 id="s3">3. 월드맵 10 <small>하이베르 주변 24×16 타일, 고도·도로·공원·학교 동일</small></h2>
+  <p class="sub">아이소메트릭 5종(단 지형·디오라마·네온·틸트시프트·스케치)과 탑뷰 5종(픽셀 RPG·수채 지도·양피지·블루프린트·헥스). 정합 '유지'는 실제 폴리곤과 고도를 그대로 쓰는 것, '단순화'는 타일 단위로 뭉갠 것.</p>
+  <div class="grid" id="gridWorlds"></div>
+
+  <h2 id="s4">4. 조합 미리보기 <small>월드 안에 선택한 건물 스타일과 캐릭터가 걷는다</small></h2>
+  <div class="combo">
+    <canvas id="comboCv" width="720" height="440" aria-label="조합 미리보기"></canvas>
+    <div class="panel">
+      <h3>선택</h3>
+      <div class="row"><label>캐릭터 <select id="selChar"></select></label></div>
+      <div class="row"><label>건물 <select id="selBld"></select></label></div>
+      <div class="row"><label>월드맵 <select id="selWorld"></select></label></div>
+      <div class="row presets"><span class="note">세트:</span><button data-set="pixelcrew,v2,terrace">현행(픽셀크루·크림·단지형)</button><button data-set="villager,cottage,terrace">동숲풍</button><button data-set="lowpoly,lowpoly,diorama">디오라마</button><button data-set="rpg16,pixel,pixelrpg">레트로 픽셀</button><button data-set="clay,clay,tiltshift">클레이 미니어처</button></div>
+      <h3 style="margin-top:10px">내보내기</h3>
+      <textarea id="exportTxt" readonly></textarea>
+      <div class="row"><button class="primary" id="copyBtn">선택 조합 복사</button><span class="note" id="copyMsg">Codex·기획서에 붙여넣기용 JSON + 설명</span></div>
+    </div>
+  </div>
+
+  <h2 id="s5">5. 한눈에 비교</h2>
+  <div class="tbl" id="cmpTable"></div>
+  <p class="note">모두 모델·연출 샘플이며 실제 건물 외관·색을 재현한 것이 아니다. 단지색은 프로토타입과 같은 구분용 색. 캐릭터 1번은 사용자 프로젝트 PixelCrew Desk의 도트 유령(MIT, 본인 저작)을 원문 그대로 쓴다.</p>
+</div>
+
+<script id="crop" type="application/json">/*__CROP__*/</script>
+<script>
+window.__errs = []; window.addEventListener('error', e => window.__errs.push((e.message||'err') + ' @' + e.lineno + ':' + e.colno)); window.addEventListener('unhandledrejection', e => window.__errs.push('rej ' + (e.reason && e.reason.message || e.reason)));
+(() => {
+'use strict';

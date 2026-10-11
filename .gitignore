@@ -1,0 +1,6 @@
+.omc/
+**/.omc/
+__pycache__/
+*.pyc
+.DS_Store
+prototype/tools/osm3.json
