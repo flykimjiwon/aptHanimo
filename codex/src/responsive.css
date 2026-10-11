@@ -1,0 +1,554 @@
+@media (max-width: 1100px) {
+  .brand-caption {
+    display: none;
+  }
+  .app-main {
+    grid-template-columns: 280px 1fr;
+  }
+  .sidebar {
+    padding: 24px 20px 16px;
+  }
+  .world-top {
+    left: 24px;
+    right: 20px;
+  }
+  .party-control {
+    left: 24px;
+  }
+  .layer-control {
+    right: 20px;
+  }
+  .camera-controls {
+    right: 20px;
+  }
+  .trip-status {
+    bottom: 140px;
+    max-width: calc(100% - 100px);
+    white-space: normal;
+    text-align: center;
+  }
+  .world-caption {
+    left: 24px;
+    font-size: 9px;
+  }
+  .touch-pad {
+    left: 20px;
+    bottom: 182px;
+  }
+  .mode-dock {
+    min-width: 324px;
+  }
+  .mode-controls button {
+    min-width: 68px;
+  }
+  .header-actions {
+    gap: 8px;
+  }
+  .app-header {
+    padding: 0 24px;
+  }
+}
+@media (max-width: 760px) {
+  .app-header {
+    height: 64px;
+    padding: 0 16px;
+    gap: 8px;
+  }
+  .brand {
+    gap: 8px;
+  }
+  .brand strong {
+    font-size: 22px;
+  }
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+  .brand-mark svg {
+    width: 20px;
+    height: 20px;
+  }
+  .header-actions {
+    gap: 4px;
+  }
+  .header-actions .quiet {
+    padding: 8px;
+  }
+  .header-actions .quiet span,
+  .header-divider {
+    display: none;
+  }
+  .notebook-button {
+    padding: 10px 12px;
+  }
+  .notebook-button span {
+    display: none;
+  }
+  .notebook-button b {
+    padding-left: 8px;
+  }
+  .app-main {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100dvh - 64px);
+  }
+  .world {
+    order: 0;
+    height: 560px;
+    min-height: 480px;
+    max-height: 72dvh;
+    flex-shrink: 0;
+  }
+  .sidebar {
+    order: 1;
+    padding: 24px 20px;
+    border-right: 0;
+    border-top: 1px solid var(--line);
+    overflow: visible;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+  }
+  .world-top {
+    top: 20px;
+    left: 20px;
+    right: 16px;
+  }
+  .scene-title strong {
+    font-size: 16px;
+  }
+  .tiny-label {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+  }
+  .presence-button {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+  .party-control {
+    top: 92px;
+    left: 20px;
+  }
+  .layer-control {
+    top: 92px;
+    right: 16px;
+  }
+  .layer-control button {
+    min-height: 40px;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+  .layer-control small {
+    display: none;
+  }
+  .camera-controls {
+    bottom: 138px;
+    right: 16px;
+    gap: 4px;
+  }
+  .camera-controls .icon-button {
+    width: 40px;
+    min-height: 40px;
+  }
+  .camera-controls > .icon-button:last-child {
+    display: none;
+  }
+  .mode-dock {
+    bottom: 20px;
+    padding: 6px 8px;
+    min-width: 304px;
+    border-radius: 16px;
+  }
+  .mode-controls button {
+    min-width: 66px;
+    min-height: 52px;
+    gap: 4px;
+    font-size: 10px;
+  }
+  .mode-controls svg {
+    width: 20px;
+    height: 20px;
+  }
+  .dock-hint {
+    font-size: 9px;
+  }
+  .world-caption {
+    display: none;
+  }
+  .trip-status {
+    bottom: 119px;
+    max-width: calc(100% - 160px);
+    font-size: 10px;
+    padding: 8px 12px;
+  }
+  .touch-pad {
+    left: 16px;
+    bottom: 135px;
+    grid-template-columns: 40px 40px 40px;
+    grid-template-rows: 40px 40px 40px;
+  }
+  .touch-pad button {
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .map-label {
+    font-size: 10px;
+    padding: 6px 8px;
+    min-height: 32px;
+  }
+  .complex-picker h1 {
+    font-size: 24px;
+  }
+  #complex-intro {
+    grid-column: 1;
+  }
+  #journey {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+  .complex-facts {
+    margin-bottom: 16px;
+  }
+  .places-heading,
+  .filters,
+  #place-list,
+  .sponsor,
+  .sidebar-foot {
+    grid-column: 1 / -1;
+  }
+  .place-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 12px;
+    max-height: none;
+  }
+  .sponsor {
+    margin-top: 20px;
+  }
+  .journey {
+    margin: 0 0 20px;
+  }
+  .dialog-head {
+    padding: 12px 16px;
+  }
+  .dialog-head h2 {
+    font-size: 18px;
+  }
+  .dialog-body {
+    padding: 20px;
+  }
+  .complex-grid {
+    grid-template-columns: 1fr;
+  }
+  .complex-option {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 6px 16px;
+  }
+  .mini-building {
+    grid-column: 1;
+    grid-row: 1 / span 5;
+    height: 110px;
+    margin: 0;
+  }
+  .mini-building b {
+    width: 20px;
+  }
+  .complex-option > .eyebrow,
+  .complex-option > strong,
+  .complex-option > span:not(.mini-building),
+  .complex-option > small {
+    grid-column: 2;
+  }
+  .complex-option-cta {
+    padding-top: 4px;
+  }
+  .dialog-lead {
+    font-size: 14px;
+  }
+  .help-row {
+    gap: 12px;
+  }
+  .catalog-form {
+    grid-template-columns: 110px 1fr;
+  }
+}
+@media (max-width: 520px) {
+  .world {
+    height: 520px;
+    min-height: 440px;
+    max-height: 65dvh;
+  }
+  .world-top {
+    left: 16px;
+    top: 16px;
+  }
+  .scene-title strong {
+    font-size: 14px;
+  }
+  .scene-title {
+    gap: 6px;
+  }
+  .presence-button span:not(.live-dot) {
+    max-width: 72px;
+    white-space: nowrap;
+  }
+  .party-control {
+    top: 80px;
+    left: 16px;
+  }
+  .segmented {
+    gap: 0;
+    padding: 3px;
+  }
+  .segmented button {
+    font-size: 10px;
+    min-height: 34px;
+    padding: 6px 10px;
+  }
+  .party-control > span {
+    font-size: 8px;
+  }
+  .layer-control {
+    top: 80px;
+    padding: 4px;
+    right: 12px;
+  }
+  .layer-control button {
+    gap: 4px;
+    min-height: 34px;
+    padding: 6px;
+    font-size: 9px;
+  }
+  .layer-control svg {
+    width: 14px;
+    height: 14px;
+  }
+  .layer-control button span {
+    max-width: 55px;
+  }
+  .camera-controls {
+    right: 12px;
+    bottom: 129px;
+  }
+  .camera-controls .icon-button {
+    width: 36px;
+    min-height: 36px;
+    border-radius: 8px;
+  }
+  .compass-button {
+    display: none;
+  }
+  .touch-pad {
+    grid-template-columns: 32px 32px 32px;
+    grid-template-rows: 32px 32px 32px;
+    left: 12px;
+    bottom: 129px;
+  }
+  .touch-pad button {
+    min-width: 32px;
+    min-height: 32px;
+  }
+  .trip-status {
+    bottom: 117px;
+    max-width: calc(100% - 150px);
+    padding: 6px 10px;
+    font-size: 9px;
+  }
+  .mode-dock {
+    bottom: 16px;
+    min-width: 292px;
+  }
+  .mode-controls button {
+    min-width: 64px;
+  }
+  .sidebar {
+    display: block;
+    padding: 24px 20px;
+  }
+  .complex-facts {
+    margin-bottom: 20px;
+  }
+  #journey .journey {
+    margin-bottom: 24px;
+  }
+  .journey-actions .primary-button {
+    justify-content: center;
+  }
+  .journey-actions .primary-button > svg:last-child:not(:first-child) {
+    margin-left: 8px;
+  }
+  .journey-stats {
+    gap: 20px;
+  }
+  .journey-stats > span:last-child {
+    font-size: 12px;
+  }
+  .model-label {
+    font-size: 11px;
+  }
+  .place-list {
+    display: block;
+    max-height: 400px;
+  }
+  .place-text strong {
+    font-size: 14px;
+  }
+  .place-text small {
+    font-size: 11px;
+  }
+  .place-row {
+    min-height: 72px;
+  }
+  .places-heading h2 {
+    font-size: 16px;
+  }
+  .filters button {
+    min-height: 44px;
+  }
+  .map-label {
+    font-size: 9px;
+    padding: 5px 7px;
+    min-height: 28px;
+  }
+  .dialog-actions {
+    gap: 12px;
+  }
+  .dialog-head h2 {
+    font-size: 16px;
+  }
+  .catalog-form {
+    grid-template-columns: 1fr;
+  }
+  .toast {
+    bottom: 16px;
+    font-size: 12px;
+  }
+  .note-location {
+    font-size: 12px;
+  }
+  .saved-note {
+    padding: 16px;
+  }
+  .dialog-body {
+    padding: 16px;
+  }
+  .dialog-lead {
+    margin-bottom: 20px;
+  }
+}
+@media (max-height: 740px) and (min-width: 761px) {
+  .app-main {
+    min-height: calc(100dvh - 76px);
+  }
+  .sidebar {
+    padding-top: 20px;
+  }
+  .complex-facts {
+    padding: 12px 0;
+    margin-bottom: 16px;
+  }
+  .journey {
+    margin-bottom: 16px;
+  }
+  .place-list {
+    max-height: 220px;
+  }
+  .world-top {
+    top: 20px;
+  }
+  .party-control,
+  .layer-control {
+    top: 88px;
+  }
+}
+@media (max-width: 760px) {
+  .quick-start {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    position: absolute;
+    bottom: 118px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    width: 168px;
+    min-height: 52px;
+    padding: 8px 12px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .quick-start small {
+    display: block;
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .quick-start svg {
+    width: 18px;
+    color: var(--green);
+  }
+  .quick-start:active {
+    transform: translateX(-50%) translateY(1px);
+  }
+  .trip-status {
+    display: none;
+  }
+  .map-label.minor:not(.selected) {
+    display: none;
+  }
+  .map-label {
+    min-height: 36px;
+    font-size: 10px;
+  }
+  .touch-pad {
+    grid-template-columns: 40px 40px 40px;
+    grid-template-rows: 40px 40px 40px;
+    bottom: 182px;
+  }
+  .touch-pad button {
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .camera-controls {
+    bottom: 182px;
+  }
+}
+@media (max-width: 760px) {
+  .map-ad {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .touch-pad {
+    grid-template-columns: repeat(3, 44px);
+    grid-template-rows: repeat(3, 44px);
+  }
+  .touch-pad button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .camera-controls .icon-button {
+    width: 44px;
+    min-height: 44px;
+  }
+  .layer-control button,
+  .segmented button,
+  .map-label {
+    min-height: 44px;
+  }
+}
+@media (min-width: 701px) and (max-width: 1000px) {
+  .map-label.minor:not(.selected) {
+    display: none;
+  }
+}

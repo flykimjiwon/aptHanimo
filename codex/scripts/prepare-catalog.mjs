@@ -1,0 +1,21 @@
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { z } from 'zod';
+const sourcePath=process.argv[2]??'/tmp/seoul-apt-full.json';
+const raw=await readFile(sourcePath,'utf8');
+const value=z.union([z.string(),z.number(),z.null()]);
+const schema=z.object({DATA:z.array(z.record(z.string(),value))});
+const source=schema.parse(JSON.parse(raw));
+const text=(value)=>typeof value==='string'?value.trim():typeof value==='number'?String(value):'';
+const number=(value)=>typeof value==='number'&&Number.isFinite(value)?value:null;
+const day=(value)=>typeof value==='number'?new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}).format(value):null;
+const rows=source.DATA.map(r=>({id:text(r.apt_cd),name:text(r.apt_nm),district:text(r.sgg_addr),dong:text(r.emd_addr),address:text(r.apt_rdn_addr),type:text(r.cmpx_clsf),households:number(r.tnohsh),buildings:number(r.whol_dong_cnt),parking:number(r.prk_cntom),approved:day(r.use_aprv_ymd),heating:text(r.mn_mthd),builder:text(r.bldr),developer:text(r.dvlr),corridor:text(r.road_type),management:text(r.mng_mthd),tenure:text(r.hh_type),grossArea:number(r.gfa),residentialArea:number(r.rsdt_xuar),modified:day(r.mdfcn_ymd),longitude:text(r.xcrd),latitude:text(r.ycrd),url:`https://openapt.seoul.go.kr/openApt/index.do?aptCode=${encodeURIComponent(text(r.apt_cd))}`})).sort((a,b)=>a.district.localeCompare(b.district,'ko')||a.name.localeCompare(b.name,'ko'));
+const districts=[...new Set(rows.map(r=>r.district))].sort((a,b)=>a.localeCompare(b,'ko'));
+const metadata={title:'서울시 공동주택 아파트 정보 전체 공개 레코드',dataset:'OA-15818 / OpenAptInfo',source:'https://data.seoul.go.kr/dataList/OA-15818/A/1/datasetView.do',download:'https://datafile.seoul.go.kr/bigfile/iot/sheet/json/download.do',license:'공공누리 제1유형 · 서울특별시 출처표시',checked:'2026-10-11',count:rows.length,districtCount:districts.length,sourceSha256:createHash('sha256').update(raw).digest('hex'),scope:'원본 공개 데이터셋 전량. 서울 소재 모든 건축물의 완전목록을 뜻하지 않음. 임대 관리구분 등 별도 레코드가 있으며 주상복합·연립주택 등도 포함.',districts:districts.map(d=>({name:d,count:rows.filter(r=>r.district===d).length}))};
+await mkdir('public/data',{recursive:true});await mkdir('docs/districts',{recursive:true});
+await writeFile('public/data/seoul-complexes.json',JSON.stringify({metadata,rows}));
+await writeFile('research/data/catalog-metadata.json',JSON.stringify(metadata,null,2));
+const safe=(value)=>String(value??'미등록').replaceAll('|','/').replaceAll('\n',' ');
+for(const district of districts){const selected=rows.filter(r=>r.district===district);const lines=[`# ${district} 공동주택 단지 목록`, '',`조사일 2026-10-11 · ${selected.length}개 공개 레코드`, '',`출처: [서울열린데이터광장 OA-15818](${metadata.source}) · 서울특별시 / 공공누리 제1유형.`, '',metadata.scope,'','세대수 0, 빈 사용승인일 등은 원본 누락·미등록 가능성이 있으므로 실제 0세대나 미준공으로 해석하지 않는다. 사용승인일과 입주시점은 다른 개념이다. 관리 단위가 분리된 동일 주소를 임의로 합치지 않았다.','','| 단지 / 원본 | 동 | 도로명주소 | 분류 | 세대 | 동수 | 승인일 | 주차 | 난방 | 시공사 |','|---|---|---|---|---:|---:|---|---:|---|---|',...selected.map(r=>`| [${safe(r.name)}](${r.url}) | ${safe(r.dong)} | ${safe(r.address)} | ${safe(r.type)} | ${safe(r.households)} | ${safe(r.buildings)} | ${safe(r.approved)} | ${safe(r.parking)} | ${safe(r.heating)} | ${safe(r.builder)} |`)];await writeFile(`docs/districts/${district}.md`,lines.join('\n')+'\n');}
+await writeFile('docs/서울25개구_전체단지목록.md',['# 서울 25개 구 · 전체 공개 단지 목록','',`조사일 2026-10-11. 서울시 공식 데이터 ${rows.length}개 레코드를 25개 구별로 모두 정리했다.`, '',metadata.scope,'',`[원본 데이터셋](${metadata.source}) · 서울특별시 / 공공누리 제1유형. 원문 항목을 선별·정규화했으며 단지명과 주소 등 원본 값을 유지했다. 연락처와 보험관리번호 등 제품에 필요 없는 열은 제외했다.`,'','| 구 | 공개 레코드 수 | 상세 목록 |','|---|---:|---|',...metadata.districts.map(d=>`| ${d.name} | ${d.count} | [${d.name} 전체](districts/${d.name}.md) |`),'','## 파일과 데이터 품질','', '- 웹앱의 서울 단지 도감: 구별 필터·검색·페이지 이동 및 원본 링크. 3D 월드는 별도로 구현한 3개 단지만 지원한다.', '- ../public/data/seoul-complexes.json: 전체 단지와 원본코드, 주소, 세대, 동수, 승인일, 주차, 난방, 시공사, 시행사, 복도유형, 관리방식, 분양형태, 연면적, 주거전용면적, 수정일, 좌표.','- 관리 레코드는 법적 단지/브랜드 단지와 일대일 관계가 아니다. 같은 주소의 분양·임대 레코드가 분리되거나 원본 값이 상이할 수 있다.','- 신축·소규모 미등록 단지 등 원본에 없는 단지는 이 목록에도 없다. 전체 서울 법적 단지 완전성을 주장하지 않는다.','- 좌표는 원본 문자열을 보존했다. 지도·내비게이션에 사용하기 전 좌표계와 결측·이상치를 검증해야 한다.','- 인기 지표는 별도 조사 문서와 데이터에 있으며, 이 공식 목록 자체에는 인기 순위가 없다.','',`원본 응답 SHA-256: ${metadata.sourceSha256}`].join('\n')+'\n');
+console.log(JSON.stringify(metadata,null,2));
