@@ -13,7 +13,8 @@
 | 스타일 랩(캐릭터·건물·월드맵 각 10종) | `prototype/stylelab/dev.html` · `STYLE_LAB_2026-10-11.md` | 조합 미리보기 + JSON 내보내기 |
 | **3D 스타일 랩**(three.js: 실제 단지 '떠 있는 섬' 3곳 × 귀여운 캐릭터 풍 6 × 월드 풍 5 × 시점 4) | `prototype/stylelab3d/index.html` · `STYLE_LAB_3D_2026-10-12.md` | CDN ESM(인터넷 필요). 섬 데이터는 `build_island_data.py`로 셀에서 굽는다. 고른 조합 JSON을 3D 본편(`codex/`)에 전달 |
 | 25구 단지 카탈로그 | `SEOUL_25GU_COMPLEX_CATALOG_2026-10-11.md` | [검증] 표시는 K-apt 확인 전 |
-| 검증 캡처 | `prototype/qa/` | v1~v7, 크로미움 에뮬레이션 |
+| 검증 캡처 | `prototype/qa/` | v1~v12 이력, 크로미움 에뮬레이션 |
+| 자동 검사·서버 운영 | [검증·운영 가이드](codex/docs/VERIFICATION_2026-10-12.md) · `.github/workflows/verify.yml` | Codex와 Prototype을 별도 job으로 검사. 브라우저 회귀·실기 검증은 별도 |
 | 테스트·재굽기 | [검증 가이드](prototype/tests/README.md) · 규칙149개 + 검증기 회귀11개 · `bash prototype/tools/bake.sh [--refresh]` | 본편·스타일랩 동시 생성, 골든·방향 자료 오류 실패 처리. v8 일방통행·v9 렌더링 계약 유지 / v10: 카드·사실 정정 요청(GitHub 이슈 사전 작성)·노트 이미지 저장·공유·가림 이진탐색 |
 | 검수 반영(v7, 2026-10-12) | `prototype/PROTOTYPE_NOTES.md` 머리말 v7 | roundRect 폴리필·계단 규칙·카드 매핑·주차 타임라인·charset·ODbL 고지 등. 검수 보고서는 메타 repo `docs/analysis/APTHANIMO_CLAUDE_PROTO_REVIEW_2026-10-12.md` |
 
@@ -29,7 +30,10 @@
 cd codex
 bun install --frozen-lockfile
 bun run build
+bun run smoke
 bun start
 ```
 
-브라우저: `http://localhost:5178/` · 스타일 실험실: `http://localhost:5178/style-lab.html`. [AI 인계 가이드](codex/docs/AI_HANDOFF_2026-10-12.md), [제작방법·기술스택·출처](codex/docs/Claude_V5_전체월드스타일_구현가이드.md), [QA 인덱스](codex/qa/v5/QA.md)·[후속 수정 검증](codex/qa/v5/repair-2026-10-12.md)을 참고한다. 2026-10-12 Codex 세션이 브라우저 전체 검수 뒤 결함 5건(도착 UI·차량 경로 완주·순간이동 취소·모바일 조작부·초기화 오류 복구)을 수정했고 Bun 81테스트·엔진 80경로·브라우저 차량 17목적지·화면 8조건으로 검증했다. 실기 iOS/Android와 공개 웹 서비스 배포는 미검증·미포함이다.
+브라우저: `http://localhost:5178/` · [스타일 실험실](http://localhost:5178/style-lab.html) · [왕십리자이 단지 섬](http://localhost:5178/island.html). 현재 Codex 기준은 **105테스트·9,539 assertions·21파일**, 서비스 검사는 **HTTP 54건·WebSocket 6건**이다. `smoke`는 빌드 후 자체 임시 포트에서 실행하고 종료한다.
+
+[AI 인계 가이드](codex/docs/AI_HANDOFF_2026-10-12.md), [제작방법·기술스택·출처](codex/docs/Claude_V5_전체월드스타일_구현가이드.md), [QA 인덱스](codex/qa/v5/QA.md)를 참고한다. 과거 이동 수정의 81테스트·80경로·브라우저 17목적지·8화면 기록은 [당시 검증](codex/qa/v5/repair-2026-10-12.md)에 보존했다. 실기 iOS/Android와 공개 웹 서비스 배포는 미검증·미포함이다.

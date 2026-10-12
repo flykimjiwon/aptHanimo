@@ -1,12 +1,12 @@
 # 임장월드 프로토타입(Claude 레인) · AI 인계 — 2026-10-12
 
 > 대상: `prototype/`와 루트 기획서·카탈로그를 이어받을 AI. 저장소 전체 입구는 [`../AI_HANDOFF.md`](../AI_HANDOFF.md), Codex 레인(`codex/`)은 별도 구현이라 섞지 않는다.
-> 기준: `5c67025`(v9), 이후 생성물·검증기 보강은 [검증 가이드](tests/README.md). 이력 정본은 [`PROTOTYPE_NOTES.md`](PROTOTYPE_NOTES.md), 구조는 [`CODEX_PROTOTYPE_GUIDE_2026-10-11.md`](CODEX_PROTOTYPE_GUIDE_2026-10-11.md)(이름과 달리 이 폴더 안내).
+> 현재 기준: `683f272`(v12, 실제 단지 섬 3곳). 규칙149·검증기11은 [검증 가이드](tests/README.md), 분리된 CI와 생성물 일치 검사는 [운영 가이드](../codex/docs/VERIFICATION_2026-10-12.md)를 따른다. 이력 정본은 [`PROTOTYPE_NOTES.md`](PROTOTYPE_NOTES.md), 구조는 [`CODEX_PROTOTYPE_GUIDE_2026-10-11.md`](CODEX_PROTOTYPE_GUIDE_2026-10-11.md)(이름과 달리 이 폴더 안내).
 
 ## 0. 30초 요약
 - 세 단지(래미안신당하이베르·왕십리자이·라체르보푸르지오써밋)를 한 클러스터 셀(99×58 타일, 25m)로 굽고, 도보·유모차·자전거·차의 **실제 환산 시간(추정)**, 출처 등급 이슈 카드, 컨셉별 체크리스트, 임장 노트, 세 단지 비교, 출근 레그, 단지 내부, 모의 광고까지 **끝까지 동작**하는 단일 HTML 체험판. PC·모바일.
 - **수치 기준점**: 가족·하이베르, 신당역 3번 출구→정문 **유모차 11분·496m·↑19m**, 비교표 유모차 **11/19/8분**. `node prototype/tests/run.mjs`(149건)의 골든값이 지킨다.
-- 오늘(10-12) 변경: v7 검수 반영(`f7da8c1`), v8 재굽기·일방통행·테스트(`bd240cc`). 둘 다 `PROTOTYPE_NOTES.md` 머리말에 요약.
+- 오늘(10-12) 변경: v7 검수 반영부터 v12 실제 섬까지. v10 정정 요청·노트 이미지, v11 3D 랩, v12 실제 단지 섬은 아래 §3과 `PROTOTYPE_NOTES.md` 머리말에 요약.
 
 ## 1. 파일 지도 (정본 vs 생성물)
 | 경로 | 역할 |
@@ -25,7 +25,7 @@
 | `tests/run.mjs`, `tests/golden.json` | 검사 149건·골든값 |
 | `stylelab/` | 캐릭터·건물·월드맵 각 10종 선택기(`src/`→`build_stylelab.py`) |
 | `stylelab3d/index.html` + `STYLE_LAB_3D_2026-10-12.md` + `build_island_data.py`→`island_data.js` | **3D 스타일 랩**(three.js CDN ESM): **실제 단지 '떠 있는 섬' 3곳**(셀에서 잘라 굽기, OSM 건물 돌출·사진 팔레트) + 가상 디오라마 × 캐릭터 풍 6×종족 4×월드 풍 5×시점 4×컨셉·탈것·낮밤. 고른 조합 JSON을 3D 본편(Codex 레인)에 전달. 본편 코드와 무관, 인터넷 필요 |
-| `qa/` | v1~v8 캡처 |
+| `qa/` | v1~v12 캡처 이력 |
 
 ## 2. 설계 계약 (고치기 전에)
 1. **데이터 ≠ 연출**: 경로·시간은 원본 고도·타일 종류·등급·계단·일방통행으로 계산. 단 지형·나무·NPC·불빛은 연출. 수치에 영향 없음.
@@ -62,6 +62,7 @@ node --test prototype/tests/harness.test.mjs
 python3 prototype/assemble.py
 python3 prototype/build.py
 python3 prototype/stylelab/build_stylelab.py
+python3 prototype/stylelab3d/build_island_data.py
 python3 -m http.server 8793 --bind 127.0.0.1 --directory prototype
 ```
 규칙149개와 검증기 회귀11개가 기준이다. `bash prototype/tools/bake.sh`는 본편·스타일랩 빌드와 두 검사를 연결한다. 원자료가 없으면 다운로드하고 `--refresh`는 재취득한다. 문서 뷰어를 변경했을 때만 루트 `build_html.py`, `prototype/build_guide_html.py`를 실행한다.
@@ -86,7 +87,7 @@ python3 -m http.server 8793 --bind 127.0.0.1 --directory prototype
 
 ## 7. 인수 문구
 ```text
-aptHanimo의 prototype/(Claude 레인)을 이어서 작업한다. ../AI_HANDOFF.md 로 범위를 확인하고 이 문서와 PROTOTYPE_NOTES.md 머리말 v7~v9·검증기 후속을 읽어라.
+aptHanimo의 prototype/(Claude 레인)을 이어서 작업한다. ../AI_HANDOFF.md 로 범위를 확인하고 이 문서와 PROTOTYPE_NOTES.md 머리말 v7~v12·검증기 후속을 읽어라.
 수정 범위는 최신 사용자 지시·병행 담당 경로로 정하고 다른 작업의 dirty를 보존한다. 규칙149개와 검증기 회귀11개부터 확인한다.
 src/ 만 고치고 assemble.py→build.py 로 재생성한 뒤 브라우저(서버로 띄워서)에서 기준 흐름을 실측해라.
 수치 기준점(정문 유모차 11분·496m, 비교표 유모차 11/19/8분)이 바뀌면 원인을 먼저 설명하고 의도한 변화만 --update 해라.
