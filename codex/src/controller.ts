@@ -1,7 +1,6 @@
 import { refreshApplication } from "./application-ui";
 import { COMPLEXES, type Complex, placesFor } from "./complexes";
 import type { Layer, Mode, Party, Place } from "./data";
-import { updateGameHUD } from "./game-ui";
 import { START } from "./graph";
 import { type ConnectionStatus, Presence } from "./presence";
 import type { Peer } from "./protocol";
@@ -9,7 +8,9 @@ import type { World } from "./scene/world";
 import { loadSpatial } from "./spatial/load";
 import type { GroundPoint, SpatialWorld } from "./spatial/types";
 import { teleportToKnownPlace } from "./teleport-ui";
-import { controls, getElement, journey, presenceIndicator, toast, worldUnavailable } from "./ui";
+import { controls, getElement, journey, presenceIndicator, toast } from "./ui";
+import { monitorWorldHUD } from "./world-hud";
+import { worldLoading, worldUnavailable } from "./world-loading";
 export class Controller {
   complex: Complex;
   places: readonly Place[];
@@ -22,6 +23,7 @@ export class Controller {
   peers: readonly Peer[] = [];
   connection: ConnectionStatus = "connecting";
   onGround: (point: GroundPoint) => boolean = () => false;
+  onSelectPlace: () => void = () => {};
   private spatial: SpatialWorld | null = null;
   private presence: Presence | null = null;
   private request = 0;
@@ -45,6 +47,7 @@ export class Controller {
   readonly refresh = (): void => refreshApplication(this, this.spatial);
   selectPlace(id: string): void {
     if (!this.places.some((p) => p.id === id)) return;
+    this.onSelectPlace();
     this.world?.stop();
     this.selected = id;
     this.refresh();
@@ -153,7 +156,9 @@ export class Controller {
     peers: this.peers,
   });
   async initialize(): Promise<void> {
+    if (this.world) return;
     const request = ++this.request;
+    worldLoading();
     this.refresh();
     try {
       const [{ World }, spatial] = await Promise.all([
@@ -216,26 +221,14 @@ export class Controller {
           presenceIndicator(state, this.peers.length);
         },
       );
-      this.hudTimer = setInterval(() => {
-        if (this.world) {
-          updateGameHUD({
-            position: this.world.position,
-            following: this.world.rig.following,
-            screen: this.world.screenPosition,
-            ground: this.layer === "ground",
-            night: this.world.presentation.night,
-            economy: this.world.presentation.economy,
-            zoomPercent: this.world.rig.zoomPercent,
-            requestedZoom: this.world.rig.requestedZoom,
-            fps: this.world.presentation.fps,
-            drawCalls: this.world.presentation.drawCalls,
-            triangles: this.world.presentation.triangles,
-            pixelRatio: this.world.presentation.pixelRatio,
-          });
-        }
-      }, 250);
+      this.hudTimer = monitorWorldHUD(this.world, () => this.layer === "ground");
     } catch (error) {
       if (request !== this.request) return;
+      clearInterval(this.hudTimer);
+      this.presence?.dispose();
+      this.presence = null;
+      this.world?.dispose();
+      this.world = null;
       if (error instanceof Error) worldUnavailable(error);
       else throw error;
     }

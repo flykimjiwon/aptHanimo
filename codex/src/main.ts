@@ -19,6 +19,7 @@ mountGameUI();
 const app = new Controller();
 const mapTeleport = createMapTeleport(app);
 app.onGround = mapTeleport.onGround;
+app.onSelectPlace = mapTeleport.cancel;
 document.addEventListener("click", (event) => {
   if (!(event.target instanceof Element)) return;
   const button = event.target.closest<HTMLButtonElement>("button");
@@ -40,7 +41,8 @@ document.addEventListener("click", (event) => {
     toast("동네 자료를 읽고 있어요. 잠시 후 선택해 주세요.");
     return;
   }
-  if (data.action === "teleport-map") mapTeleport.arm();
+  if (data.action === "retry-world") void app.initialize();
+  else if (data.action === "teleport-map") mapTeleport.arm();
   else if (data.action === "map-evidence") mapEvidence();
   else if (data.action === "world-style") {
     if (!app.world) return;

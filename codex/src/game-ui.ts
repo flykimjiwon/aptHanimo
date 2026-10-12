@@ -42,6 +42,15 @@ export function mountGameUI(): void {
   topActions.append(presence);
   getElement("#trip-status", HTMLElement).textContent =
     "WASD · 방향키 · 조이스틱으로 자유롭게 산책해요";
+  const settings = document.createElement("div");
+  settings.className = "world-settings";
+  const party = getElement(".party-control", HTMLElement);
+  party.before(settings);
+  settings.append(
+    party,
+    getElement(".layer-control", HTMLElement),
+    getElement(".world-tools", HTMLElement),
+  );
   icons();
 }
 function svgWorld(data: SpatialWorld, marker: boolean): string {

@@ -272,5 +272,6 @@ export class World {
     this.surface.dispose();
     this.peers.dispose();
     this.renderer.dispose();
+    this.renderer.domElement.remove();
   }
 }

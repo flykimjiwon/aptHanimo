@@ -1,4 +1,5 @@
 import { ACESFilmicToneMapping, Color, PCFSoftShadowMap, WebGLRenderer } from "three";
+import { GraphicsUnavailableError } from "../world-errors";
 import type { CameraRig } from "./camera";
 import type { WorldPresentation } from "./presentation";
 
@@ -23,11 +24,17 @@ export function observeWorldSize(
 }
 
 export function createSceneRenderer(host: HTMLElement): WebGLRenderer {
-  const renderer = new WebGLRenderer({
-    antialias: true,
-    alpha: true,
-    powerPreference: "high-performance",
-  });
+  let renderer: WebGLRenderer;
+  try {
+    renderer = new WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
+    });
+  } catch (error) {
+    if (!(error instanceof Error)) throw error;
+    throw new GraphicsUnavailableError(error);
+  }
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
   renderer.toneMapping = ACESFilmicToneMapping;

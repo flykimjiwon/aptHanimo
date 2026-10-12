@@ -1,6 +1,7 @@
 import ky from "ky";
 import { z } from "zod";
 import type { ComplexId } from "../complexes";
+import { SpatialLoadError } from "../world-errors";
 import type { SpatialWorld } from "./types";
 
 const finiteNumber = z.number().finite();
@@ -70,6 +71,14 @@ export function parseSpatial(input: unknown): SpatialWorld {
 }
 
 export async function loadSpatial(id: ComplexId): Promise<SpatialWorld> {
-  const input = await ky.get(`/worlds/${id}.json`, { retry: 2, timeout: 15_000 }).json<unknown>();
-  return parseSpatial(input);
+  try {
+    const input = await ky.get(`/worlds/${id}.json`, { retry: 2, timeout: 15_000 }).json<unknown>();
+    return parseSpatial(input);
+  } catch (error) {
+    if (!(error instanceof Error)) throw error;
+    throw new SpatialLoadError(
+      error instanceof z.ZodError || error instanceof SyntaxError ? "invalid" : "network",
+      error,
+    );
+  }
 }
