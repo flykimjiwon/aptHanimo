@@ -147,7 +147,7 @@ function drawParty(g, wx, wy, ts, walking, face, mode, concept) {
   drawVillager(g, wx, wy - (mode === 'bike' ? 4 : 0), Object.assign({}, cast[0], {face, state:st, t}));
   if (mode === 'stroller') drawStroller(g, wx + 3 * face, wy, face, 1, Object.assign({}, baby, {t}));
 }
-function drawActorOccluded(g, wx, wy, key, w, hgt, fn) { fn(g); const x0 = wx - w, x1 = wx + w, y0 = wy - hgt, y1 = wy + 4; for (const o of OCC) { if (o.key <= key + 0.35) continue; if (o.x1 < x0 || o.x0 > x1 || o.y1 < y0 || o.y0 > y1) continue; o.draw(g); } }
+function drawActorOccluded(g, wx, wy, key, w, hgt, fn) { fn(g); const x0 = wx - w, x1 = wx + w, y0 = wy - hgt, y1 = wy + 4; const th = key + 0.35; let lo = 0, hi = OCC.length; while (lo < hi) { const mid = (lo + hi) >> 1; if (OCC[mid].key <= th) lo = mid + 1; else hi = mid; } /* OCC는 key 오름차순(buildStatic 끝 정렬) → 이진탐색으로 시작점(v10) */ for (let k = lo; k < OCC.length; k++) { const o = OCC[k]; if (o.x1 < x0 || o.x0 > x1 || o.y1 < y0 || o.y0 > y1) continue; o.draw(g); } }
 
 // ---------- 주민 NPC(연출): 10명이 골목·보도를 걷는다. 주민 스타일이면 종족 10, 픽셀크루면 나머지 크루. 실제 이용자 아님 ----------
 const NPC_CAST = [{sp:'dog', col:'#f6a99a', crew:'purple'}, {sp:'frog', col:'#fff1b8', crew:'green'}, {sp:'fox', col:'#9fd3c7', crew:'yellow'}, {sp:'panda', col:'#f2a7b8', crew:'lime'}, {sp:'mouse', col:'#b9c6f2', crew:'red'}, {sp:'deer', col:'#c6e3a1', crew:'blue'}, {sp:'koala', col:'#ffd9a8', crew:'pink'}, {sp:'bunny', col:'#d9c5f0', crew:'cyan'}, {sp:'cat', col:'#ffe08a', crew:'orange'}, {sp:'bear', col:'#a8d8ea', crew:'green'}];
