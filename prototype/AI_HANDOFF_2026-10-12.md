@@ -24,6 +24,7 @@
 | `tools/build_cell.py`, `tools/bake.sh`, `tools/overpass_query.ql`, `tools/elev_srtm*.json` | 굽기. `osm3.json`은 gitignore(로컬만) |
 | `tests/run.mjs`, `tests/golden.json` | 검사 149건·골든값 |
 | `stylelab/` | 캐릭터·건물·월드맵 각 10종 선택기(`src/`→`build_stylelab.py`) |
+| `stylelab3d/index.html` + `STYLE_LAB_3D_2026-10-12.md` | **3D 스타일 랩**(three.js CDN ESM): 캐릭터 풍 6×종족 4×월드 풍 5×시점 4×컨셉·탈것·낮밤. 고른 조합 JSON을 3D 본편(Codex 레인)에 전달. 본편 코드와 무관, 인터넷 필요 |
 | `qa/` | v1~v8 캡처 |
 
 ## 2. 설계 계약 (고치기 전에)
@@ -48,6 +49,7 @@
 - **v9**: 차 모드 일방통행 화살표(`drawOnewayArrows`) · 비교표 차 행 + 시계 변경 시 `computeMetrics` 재계산 · 불빛 레이어 지연 생성(`buildLights`, 밤 첫 진입) · 하늘 그라데이션·라벨 폭 캐시. 수치 불변.
 - **후속 검증 보강(`1ecd401`, Codex)**: 스타일랩 crop 동기화와 bake.sh 연결, 골든/방향 데이터 누락·손상 실패 처리, 전체 검사 성공 후에만 명시적 골든 갱신, 검증기 회귀11개. [상세](tests/README.md).
 - **v10**: 정정 요청 링크(카드·단지 사실 → 공개 저장소 이슈 사전 작성, 백엔드 없음) · 임장 노트 이미지 저장·공유(`renderNoteImage`, Web Share→다운로드→길게 눌러 저장 순) · 가림 목록 이진탐색. 수치 불변.
+- **v11**: 3D 스타일 랩(`stylelab3d/`) — 사용자 1순위가 "three.js 3D 귀여운 캐릭터·여러 풍"이라 2D 랩처럼 고르게 만든 실험실. 선택 결과를 Codex 레인 캐릭터·건물·지도 id로 대응(`mapToCodex`).
 - 검수 원문(결함 25건·문서 결함·백로그)과 증거는 부모 저장소 `docs/analysis/APTHANIMO_CLAUDE_PROTO_REVIEW_2026-10-12.md`.
 
 ## 4. 재현 절차
@@ -73,6 +75,7 @@ python3 -m http.server 8793 --bind 127.0.0.1 --directory prototype
 - `build_cell.py`는 `tools/osm3.json`이 있어야 한다. 없으면 `bake.sh --refresh`.
 
 ## 6. 백로그 (이 레인)
+0. **3D 랩에서 사용자가 조합을 고르면** → Codex 레인 백로그에 "캐릭터·월드 풍 교체" 티켓(규칙·수치·재질 파라미터만 전달, `STYLE_LAB_3D` §6).
 1. 실기 iOS Safari·Android Chrome(폴리필·핀치·저메모리).
 2. 일방통행 교차로 인접 타일 관대화 재검토(25m 합성으로 과한 우회). OCC 가림 목록 이진탐색(남은 프레임당 비용).
 3. 비교표·점수에 차 지표를 점수(`scoreFor`)에도 반영할지 결정(지금은 표만).
