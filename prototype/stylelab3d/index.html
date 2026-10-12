@@ -19,17 +19,18 @@
 #view{position:relative;min-width:0} canvas{display:block;width:100%;height:100%}
 #hud{position:absolute;left:12px;top:10px;background:rgba(255,253,246,.9);border:1.5px solid var(--line2);border-radius:12px;padding:6px 10px;font-size:12px;pointer-events:none}
 #tip{position:absolute;right:12px;bottom:10px;background:rgba(255,253,246,.9);border:1.5px solid var(--line2);border-radius:12px;padding:6px 10px;font-size:11.5px;color:var(--muted);max-width:52%}
+#panelBtn{display:none;position:absolute;left:12px;bottom:10px;font:500 13px var(--body);background:rgba(255,253,246,.95);color:var(--fg);border:1.5px solid var(--line2);border-radius:999px;padding:7px 12px;cursor:pointer;z-index:2;min-height:36px}
 textarea{width:100%;min-height:150px;font:11.5px/1.45 ui-monospace,Menlo,monospace;background:var(--paper2);border:1.5px solid var(--line2);border-radius:10px;padding:8px;color:var(--fg)}
 .btn{font:500 13px var(--body);background:var(--accent);color:#fff;border:0;border-radius:12px;padding:8px 12px;cursor:pointer;margin-top:6px} .btn.sec{background:var(--paper2);color:var(--fg);border:1.5px solid var(--line2)}
 .note{font-size:11.5px;color:var(--muted);margin-top:6px}
-@media (max-width:820px){#app{grid-template-columns:1fr;grid-template-rows:1fr 46vh}#panel{order:2;border-right:0;border-top:2px solid var(--line2)}}
+@media (max-width:820px){#app{grid-template-columns:1fr;grid-template-rows:1fr 44vh}#panel{order:2;border-right:0;border-top:2px solid var(--line2)}#tip{display:none}#panelBtn{display:block}#app.collapsed{grid-template-rows:1fr 0}#app.collapsed #panel{display:none}}
 </style>
 </head>
 <body>
 <div id="app">
   <aside id="panel">
     <h1>3D 스타일 랩</h1>
-    <div class="sub">three.js · <b>실제 단지를 지도 모양 그대로 잘라 띄운 섬</b> 위에서 귀여운 캐릭터 풍 6 × 월드 풍 5 × 시점 4 × 컨셉 3. 고른 조합을 JSON으로 내보내 3D 본편(Codex 레인)에 전달.</div>
+    <div class="sub">three.js · <b>실제 단지를 지도 모양 그대로 잘라 띄운 섬</b> 위에서 귀여운 캐릭터 풍 6 × 상태(표정·동작) 6 × 월드 풍 5 × 시점 4 × 컨셉 3. 바닥을 탭하면 그 자리까지 길을 따라 걸어간다. 고른 조합을 JSON으로 내보내 3D 본편(Codex 레인)에 전달.</div>
     <h3>장소(실제 OSM 윤곽·층수·도로 + SRTM 고도)</h3><div class="opts" id="optPlace"></div>
     <h3>캐릭터 풍</h3><div class="opts" id="optChar"></div>
     <h3>주민 종족(동숲풍·클레이)</h3><div class="opts" id="optSpecies"></div>
@@ -37,14 +38,15 @@ textarea{width:100%;min-height:150px;font:11.5px/1.45 ui-monospace,Menlo,monospa
     <h3>시점</h3><div class="opts" id="optCam"></div>
     <h3>컨셉(파티)</h3><div class="opts" id="optParty"></div>
     <h3>탈것</h3><div class="opts" id="optRide"></div>
+    <h3>상태(표정·동작)</h3><div class="opts" id="optState"></div>
     <h3>장면</h3><div class="opts" id="optScene"></div>
     <h3>내보내기</h3>
     <textarea id="exportTxt" readonly></textarea>
     <button class="btn" id="copyBtn">선택 조합 복사</button> <button class="btn sec" id="pngBtn">PNG 저장</button>
-    <div class="note" id="copyMsg">드래그 = 둘러보기 · 휠 = 줌 · WASD = 직접 걷기(자동 산책 해제)</div>
+    <div class="note" id="copyMsg">탭/클릭 = 그 자리까지 걷기(길 우선) · 드래그 = 둘러보기 · 휠/핀치 = 줌 · WASD = 직접 걷기</div>
     <div class="note">캐릭터는 전부 코드로 만든 절차 메시(외부 에셋 0). 픽셀크루 복셀은 작성자 본인 PixelCrew 24×22 픽셀맵(MIT)을 입체로 올린 것.</div>
   </aside>
-  <div id="view"><canvas id="c"></canvas><div id="hud">…</div><div id="tip">같은 디오라마(단 지형·길·코티지·아파트·나무) 위에서 풍만 바꿔 비교. 수치·경로 계산과 무관한 순수 연출 실험.</div></div>
+  <div id="view"><canvas id="c"></canvas><div id="hud">…</div><div id="tip">같은 디오라마(단 지형·길·코티지·아파트·나무) 위에서 풍만 바꿔 비교. 수치·경로 계산과 무관한 순수 연출 실험.</div><button id="panelBtn" type="button" aria-expanded="true">설정 접기</button></div>
 </div>
 <script>
 // PixelCrew 명부(색·액세서리·이름) — 본편 04_route.js 와 동일, 작성자 본인 저작
@@ -87,10 +89,11 @@ const CAMS = [{id:'iso', name:'아이소 2.5D'}, {id:'persp', name:'원근 3D'},
 const PARTIES = [{id:'solo', name:'1인'}, {id:'couple', name:'커플'}, {id:'family', name:'가족(아이)'}];
 const RIDES = [{id:'none', name:'도보'}, {id:'stroller', name:'유모차'}, {id:'bike', name:'자전거'}, {id:'car', name:'차'}];
 const SCENES = [{id:'day', name:'낮'}, {id:'night', name:'밤'}, {id:'follow', name:'따라가기 ON/OFF'}];
+const STATES = [{id:'auto', name:'자동', desc:'걸으면 걷기, 멈추면 두리번, 도착하면 기쁨'}, {id:'wave', name:'인사', desc:'한 손 흔들기'}, {id:'talk', name:'말하기', desc:'입 벌림·손짓·말풍선'}, {id:'happy', name:'기쁨', desc:'^^ 눈·만세·제자리 점프'}, {id:'think', name:'생각', desc:'턱 괴기·눈 위로·…'}, {id:'sit', name:'앉기', desc:'다리 앞으로·주저앉기'}];
 const ISLANDS = self.ISLANDS || {};
 const PLACES = [...Object.values(ISLANDS).map(i => ({id:i.id, name:i.short + ' 섬', desc:`${i.buildings.length}동·${i.tiles.length}타일·단 ${Math.max(...i.tiles.map(t => t[6])) + 1}`})), {id:'dio', name:'가상 디오라마', desc:'단 지형·길·코티지·아파트'}];
-const SEL = {place:ISLANDS.HYBER ? 'HYBER' : 'dio', char:'villager', species:'cat', world:'toon', cam:'iso', party:'family', ride:'stroller', night:false, follow:true, manual:false};
-try { for (const tok of location.hash.slice(1).split('-')) { if (CHARS.some(c => c.id === tok)) SEL.char = tok; if (WORLDS.some(w => w.id === tok)) SEL.world = tok; if (SPECIES.some(s => s.id === tok)) SEL.species = tok; if (CAMS.some(c => c.id === tok)) SEL.cam = tok; if (PLACES.some(p => p.id === tok)) SEL.place = tok; } } catch (e) {}
+const SEL = {place:ISLANDS.HYBER ? 'HYBER' : 'dio', char:'villager', species:'cat', world:'toon', cam:'iso', party:'family', ride:'stroller', night:false, follow:true, manual:false, state:'auto'};
+try { for (const tok of location.hash.slice(1).split('-')) { if (CHARS.some(c => c.id === tok)) SEL.char = tok; if (WORLDS.some(w => w.id === tok)) SEL.world = tok; if (SPECIES.some(s => s.id === tok)) SEL.species = tok; if (CAMS.some(c => c.id === tok)) SEL.cam = tok; if (PLACES.some(p => p.id === tok)) SEL.place = tok; if (STATES.some(s => s.id === tok)) SEL.state = tok; } } catch (e) {}
 
 // ---------------- 렌더러·씬 ----------------
 const canvas = document.getElementById('c'); const view = document.getElementById('view');
@@ -102,7 +105,7 @@ const lamp = new THREE.PointLight(0xffd27a, 0, 9, 1.6); scene.add(lamp);
 let ISL = null; // 실제 단지 섬 모드면 {cx, cy, map, tierStep, lastTop, poly, ...}
 let camera, controls; const CENTER = new THREE.Vector3(0, 0.8, 0);
 function makeCamera(kind) {
-  const w = view.clientWidth || 800, h = view.clientHeight || 600, a = w / h;
+  camOccluded = false; const w = view.clientWidth || 800, h = view.clientHeight || 600, a = w / h;
   const big = !!ISL;
   if (kind === 'persp') { camera = new THREE.PerspectiveCamera(42, a, 0.1, 200); camera.position.set(big ? 21 : 11, big ? 15 : 8, big ? 21 : 11); }
   else if (kind === 'close') { camera = new THREE.PerspectiveCamera(34, a, 0.1, 200); camera.position.set(big ? 2.6 : 4.2, big ? 2.0 : 3.2, big ? 3.2 : 5.2); }
@@ -143,19 +146,20 @@ const cellPos = (x, y) => { const [wx, wz] = worldXZ(x + 0.5, y + 0.5); return n
 const PAL = {grass:['#9ad178', '#8ec76e', '#a6d987'], road:'#d9d2c3', curb:'#efe8d6', wall:['#fff1d6', '#ffe4e1', '#e6f3ff', '#f3ffe0', '#fff8c7', '#f1e4ff'], roof:['#e07b67', '#5f8f7a', '#4f7fb3', '#c59a3c', '#8d6cb9', '#d96a8a'], apt:'#fff5e4', aptRoof:'#f08a66', trunk:'#8a5a3b', leaf:['#5fa852', '#4e9a46', '#7cc26a']};
 function buildWorld() {
   while (world.children.length) { const c = world.children.pop(); c.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.dispose && o.material !== OUTLINE) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose && m.dispose()); }); }
+  slabs = []; blds = []; occDirty = true;
   if (ISL) { buildIsland(); return; }
   // 지형(단) — 셀마다 박스. 길은 베이지 포장 + 연석
   for (let y = 0; y < GH; y++) for (let x = 0; x < GW; x++) {
     const h = topY(x, y); const p = cellPos(x, y); const road = isRoad(x, y);
     const g = new THREE.BoxGeometry(CELL, h, CELL); const m = mat(road ? PAL.road : PAL.grass[(x * 7 + y * 3) % 3], {grain:SEL.world === 'paper'});
-    const b = new THREE.Mesh(g, m); b.position.set(p.x, h / 2, p.z); b.receiveShadow = true; world.add(b);
+    const b = new THREE.Mesh(g, m); b.position.set(p.x, h / 2, p.z); b.receiveShadow = true; b.userData.tile = [x, y]; slabs.push(b); world.add(b);
     if (SEL.world === 'toon' || SEL.world === 'paper') { const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({color:0x8a7560, transparent:true, opacity:SEL.world === 'paper' ? .35 : .18})); e.position.copy(b.position); world.add(e); }
     if (road) { const cb = new THREE.Mesh(new THREE.BoxGeometry(CELL, 0.04, CELL), mat(PAL.curb)); cb.position.set(p.x, h + 0.02, p.z); world.add(cb); if (y === 7 && x % 2 === 0 && x !== 9) { const dash = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.02, 0.08), mat('#f7f1dc')); dash.position.set(p.x, h + 0.05, p.z); world.add(dash); } }
     else if (SEL.world !== 'voxel' && ((x * 13 + y * 7) % 9 === 0)) { const f = new THREE.Mesh(sphere(0.07), mat(['#f472b6', '#ffd43b', '#ffffff'][(x + y) % 3])); f.position.set(p.x + 0.4, h + 0.08, p.z - 0.3); world.add(f); }
   }
   // 코티지 5채 + 아파트 2동
-  const houses = [[2, 3], [5, 10], [14, 3], [16, 11], [4, 5]]; houses.forEach(([x, y], i) => world.add(cottage(x, y, i)));
-  world.add(apartment(12, 9, 0, 6)); world.add(apartment(7, 2, 1, 8));
+  const houses = [[2, 3], [5, 10], [14, 3], [16, 11], [4, 5]]; houses.forEach(([x, y], i) => { const c = cottage(x, y, i); blds.push(c); world.add(c); });
+  for (const a of [apartment(12, 9, 0, 6), apartment(7, 2, 1, 8)]) { blds.push(a); world.add(a); }
   // 나무
   const trees = [[1, 1], [7, 4], [11, 5], [15, 7.9], [18, 2], [3, 12], [12, 12], [17, 5], [1, 9], [6, 12.5]]; trees.forEach(([x, y], i) => world.add(tree(x, y, i)));
   // 가로등
@@ -198,7 +202,7 @@ function buildIsland() { // 실제 단지: 타일 기둥(단 지형) + OSM 건�
   for (const t of I.tiles) {
     const [x, y, k, r, cr, st, tier] = t; const rec = I.map.get(x + ',' + y); const top = rec.top; const p = cellPos(x, y); const bottom = -1.3 - hashf(x, y, 5) * 0.5;
     const side = new THREE.Mesh(new THREE.BoxGeometry(CELL, top - 0.12 - bottom, CELL), mat(ROCK[(x * 3 + y) % 3])); side.position.set(p.x, (top - 0.12 + bottom) / 2, p.z); side.receiveShadow = true; world.add(side);
-    const col = k === 0 ? SURF[0][(x * 7 + y * 3) % 3] : (SURF[k] || SURF[0][0]); const slabG = new THREE.BoxGeometry(CELL, 0.12, CELL); const slab = new THREE.Mesh(slabG, mat(col, {grain:SEL.world === 'paper'})); slab.position.set(p.x, top - 0.06, p.z); slab.receiveShadow = true; world.add(slab);
+    const col = k === 0 ? SURF[0][(x * 7 + y * 3) % 3] : (SURF[k] || SURF[0][0]); const slabG = new THREE.BoxGeometry(CELL, 0.12, CELL); const slab = new THREE.Mesh(slabG, mat(col, {grain:SEL.world === 'paper'})); slab.position.set(p.x, top - 0.06, p.z); slab.receiveShadow = true; slab.userData.tile = [x, y]; slabs.push(slab); world.add(slab);
     if (toon) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(slabG), new THREE.LineBasicMaterial({color:0x8a7560, transparent:true, opacity:SEL.world === 'paper' ? .35 : .16})); e.position.copy(slab.position); world.add(e); }
     if (k === 1 && r >= 8) { const dash = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.015, 0.07), mat('#f7f1dc')); dash.position.set(p.x, top + 0.01, p.z); dash.rotation.y = (rec.ew ? 0 : Math.PI / 2); world.add(dash); }
     if (cr) { for (let i = -1; i <= 1; i++) { const z = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.015, 0.9), mat('#ffffff')); z.position.set(p.x + i * 0.28, top + 0.012, p.z); z.rotation.y = rec.ew ? Math.PI / 2 : 0; world.add(z); } }
@@ -219,7 +223,7 @@ function buildIsland() { // 실제 단지: 타일 기둥(단 지형) + OSM 건�
     const roofCol = b.complex ? cmeta.color : apt ? '#f08a66' : b.kind === 'house' || b.kind === 'residential' ? PAL.roof[b.id % PAL.roof.length] : b.kind === 'commercial' || b.kind === 'retail' ? '#8aa2c0' : b.kind === 'school' ? '#d9b36c' : '#c9b9a0';
     const pf = b.complex ? PROFILES[b.complex] : null;
     const wallCol = pf ? pf.wall : apt ? '#fff5e4' : b.kind === 'house' || b.kind === 'residential' ? PAL.wall[b.id % PAL.wall.length] : b.kind === 'commercial' || b.kind === 'retail' ? '#e8eef5' : b.kind === 'school' ? '#f6ecd2' : '#efe7d6';
-    const m = new THREE.Mesh(geo, [mat(roofCol), mat(wallCol, {grain:SEL.world === 'paper'})]); m.position.set(cx0, base, cz0); m.castShadow = true; m.receiveShadow = true; world.add(m);
+    const m = new THREE.Mesh(geo, [mat(roofCol), mat(wallCol, {grain:SEL.world === 'paper'})]); m.position.set(cx0, base, cz0); m.castShadow = true; m.receiveShadow = true; blds.push(m); world.add(m);
     if (pf) { // 사진 관찰 띠: 상단 1개 층 높이의 악센트 링(폴리곤을 얇게 돌출) + 기단
       const band = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, {depth:0.12, bevelEnabled:false}).rotateX(-Math.PI / 2), [mat(pf.accent), mat(pf.accent)]); band.scale.set(1.03, 1, 1.03); band.position.set(cx0, base + depth - 0.34, cz0); world.add(band);
       const plinth = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, {depth:0.16, bevelEnabled:false}).rotateX(-Math.PI / 2), [mat(pf.base), mat(pf.base)]); plinth.scale.set(1.04, 1, 1.04); plinth.position.set(cx0, base, cz0); world.add(plinth); }
@@ -240,7 +244,7 @@ function buildIsland() { // 실제 단지: 타일 기둥(단 지형) + OSM 건�
 }
 const hashf = (x, y, s = 0) => { let h = (x * 374761393 + y * 668265263 + s * 2246822519) | 0; h = (h ^ (h >>> 13)) * 1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 function treeAt(wx, top, wz, i, s) { const g = tree(0, 0, i); g.position.set(wx, top, wz); g.scale.setScalar(s); return g; }
-let rocks = [];
+let rocks = []; let slabs = [], blds = []; // 탭 이동 레이캐스트 대상(바닥 타일·건물)
 function prepareIsland(id) {
   const src = ISLANDS[id]; if (!src) { ISL = null; return; }
   const maxTier = Math.max(...src.tiles.map(t => t[6])); const tierStep = Math.min(0.5, 2.6 / Math.max(1, maxTier));
@@ -249,9 +253,9 @@ function prepareIsland(id) {
   const xs = src.tiles.map(t => t[0]), ys = src.tiles.map(t => t[1]);
   ISL = Object.assign({}, src, {map, tierStep, maxTop, lastTop:0.35, radius:Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) / 2, bbox:[Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]});
 }
-function islandRoute() { // 정문에 가까운 보행 타일에서 출발해 길·보도·계단 타일만 따라 무작위 산책(왕복 루프)
+function islandRoute(from) { // 정문(또는 from 타일)에 가까운 보행 타일에서 출발해 길·보도·계단 타일만 따라 무작위 산책(왕복 루프)
   const walk = new Set(); for (const t of ISL.tiles) if (t[2] === 1 || t[2] === 2 || t[2] === 3) walk.add(t[0] + ',' + t[1]);
-  const g = ISL.gates[0] || {x:ISL.cx, y:ISL.cy}; let best = null, bd = 1e9; for (const k of walk) { const [x, y] = k.split(',').map(Number); const d = Math.hypot(x + 0.5 - g.x, y + 0.5 - g.y); if (d < bd) { bd = d; best = [x, y]; } }
+  const g = from ? {x:from[0] + 0.5, y:from[1] + 0.5} : (ISL.gates[0] || {x:ISL.cx, y:ISL.cy}); let best = null, bd = 1e9; for (const k of walk) { const [x, y] = k.split(',').map(Number); const d = Math.hypot(x + 0.5 - g.x, y + 0.5 - g.y); if (d < bd) { bd = d; best = [x, y]; } }
   if (!best) return [cellPos(Math.floor(ISL.cx), Math.floor(ISL.cy))];
   const pts = []; let cur = best, prev = null, seed = 7;
   for (let i = 0; i < 60; i++) { pts.push(cellPos(cur[0], cur[1])); const nb = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([dx, dy]) => [cur[0] + dx, cur[1] + dy]).filter(([x, y]) => walk.has(x + ',' + y) && !(prev && x === prev[0] && y === prev[1])); if (!nb.length) break; seed = (seed * 9301 + 49297) % 233280; const pick = nb[Math.floor(seed / 233280 * nb.length)]; prev = cur; cur = pick; }
@@ -265,11 +269,14 @@ function labelSprite(text) { const c = document.createElement('canvas'); c.width
 // ---------------- 캐릭터(절차 메시) ----------------
 const CONCEPT_COL = {solo:['#6ee7ff'], couple:['#6ee7ff', '#f472b6'], family:['#ffa94d', '#74c0fc', '#f472b6']};
 const CREW_FOR = {solo:['cyan'], couple:['cyan', 'pink'], family:['orange', 'blue', 'pink']};
-function face(head, r, opts = {}) { // 큰 눈 + 하이라이트 + 볼 + 코
+function face(head, r, opts = {}) { // 큰 눈 + 하이라이트 + 볼 + 코 + 숨겨 둔 ^^ 눈·벌린 입 — 표정은 setFace()가 파츠를 켜고 끈다
   const eyeR = r * 0.2, z = r * 0.86; const eyeMat = SEL.world === 'paper' ? mat('#2b1f17', {paper:false}) : new THREE.MeshBasicMaterial({color:0x2b1f17});
-  for (const sx of [-1, 1]) { const w = new THREE.Mesh(new THREE.SphereGeometry(eyeR, 12, 10), new THREE.MeshBasicMaterial({color:0xffffff})); w.position.set(sx * r * 0.38, r * 0.05, z); head.add(w); const p = new THREE.Mesh(new THREE.SphereGeometry(eyeR * 0.62, 12, 10), eyeMat); p.position.set(sx * r * 0.38, r * 0.05, z + eyeR * 0.55); p.name = 'pupil'; head.add(p); const hl = new THREE.Mesh(new THREE.SphereGeometry(eyeR * 0.22, 8, 8), new THREE.MeshBasicMaterial({color:0xffffff})); hl.position.set(sx * r * 0.38 - eyeR * 0.22, r * 0.05 + eyeR * 0.3, z + eyeR * 1.05); head.add(hl); const bl = new THREE.Mesh(new THREE.CircleGeometry(r * 0.16, 16), new THREE.MeshBasicMaterial({color:0xf5a3b0, transparent:true, opacity:.8})); bl.position.set(sx * r * 0.62, -r * 0.22, z - r * 0.06); bl.lookAt(new THREE.Vector3(sx * r * 3, -r, z * 4)); head.add(bl); }
+  for (const sx of [-1, 1]) { const w = new THREE.Mesh(new THREE.SphereGeometry(eyeR, 12, 10), new THREE.MeshBasicMaterial({color:0xffffff})); w.position.set(sx * r * 0.38, r * 0.05, z); w.name = 'eyeW'; head.add(w); const p = new THREE.Mesh(new THREE.SphereGeometry(eyeR * 0.62, 12, 10), eyeMat); p.position.set(sx * r * 0.38, r * 0.05, z + eyeR * 0.55); p.name = 'pupil'; head.add(p); const hl = new THREE.Mesh(new THREE.SphereGeometry(eyeR * 0.22, 8, 8), new THREE.MeshBasicMaterial({color:0xffffff})); hl.position.set(sx * r * 0.38 - eyeR * 0.22, r * 0.05 + eyeR * 0.3, z + eyeR * 1.05); hl.name = 'eyeHL'; head.add(hl); const bl = new THREE.Mesh(new THREE.CircleGeometry(r * 0.16, 16), new THREE.MeshBasicMaterial({color:0xf5a3b0, transparent:true, opacity:.8})); bl.position.set(sx * r * 0.62, -r * 0.22, z - r * 0.06); bl.lookAt(new THREE.Vector3(sx * r * 3, -r, z * 4)); bl.name = 'blush'; head.add(bl);
+    const arc = new THREE.Mesh(new THREE.TorusGeometry(eyeR * 0.95, eyeR * 0.2, 6, 12, Math.PI), eyeMat); arc.position.set(sx * r * 0.38, r * 0.02, z + eyeR * 0.5); arc.name = 'eyeHappy'; arc.visible = false; head.add(arc); }
   if (!opts.noNose) { const n = new THREE.Mesh(new THREE.SphereGeometry(r * 0.11, 10, 8), new THREE.MeshBasicMaterial({color:opts.nose || 0x5a3b2f})); n.position.set(0, -r * 0.12, z + r * 0.05); head.add(n); }
-  const mouth = new THREE.Mesh(new THREE.TorusGeometry(r * 0.16, r * 0.03, 6, 12, Math.PI), new THREE.MeshBasicMaterial({color:0x5a3b2f})); mouth.rotation.z = Math.PI; mouth.position.set(0, -r * 0.3, z + r * 0.02); head.add(mouth);
+  const mouth = new THREE.Mesh(new THREE.TorusGeometry(r * 0.16, r * 0.03, 6, 12, Math.PI), new THREE.MeshBasicMaterial({color:0x5a3b2f})); mouth.rotation.z = Math.PI; mouth.position.set(0, -r * 0.3, z + r * 0.02); mouth.name = 'mouth'; head.add(mouth);
+  const mo = new THREE.Mesh(new THREE.SphereGeometry(r * 0.13, 10, 8), new THREE.MeshBasicMaterial({color:0x7a3a3a})); mo.position.set(0, -r * 0.3, z); mo.scale.set(1, 0.75, 0.5); mo.name = 'mouthO'; mo.visible = false; head.add(mo);
+  head.userData.face = true;
 }
 function ears(head, r, kind, fur) {
   const m = mat(fur), inner = mat('#f5b8c0');
@@ -289,7 +296,7 @@ function charVillager(col, scale, species, soft) { // soft=true → 클레이(�
   const head = shadowed(new THREE.Mesh(sphere(r), fur)); head.position.y = 1.32; head.name = 'head'; g.add(soft ? head : withOutline(head));
   ears(head, r, sp.ear, sp.fur); face(head, r, {nose:sp.id === 'bunny' ? 0xf08a9a : 0x5a3b2f});
   if (sp.id === 'cat' || sp.id === 'dog') { const mz = new THREE.Mesh(sphere(r * 0.3), mat('#fff5ea')); mz.position.set(0, -r * 0.2, r * 0.8); mz.scale.set(1.3, 0.8, 0.7); head.add(mz); }
-  for (const sx of [-1, 1]) { const arm = shadowed(new THREE.Mesh(capsule(0.09, 0.26), fur)); arm.position.set(sx * 0.4, 0.68, 0); arm.name = sx < 0 ? 'armL' : 'armR'; g.add(soft ? arm : withOutline(arm, 1.08)); const leg = shadowed(new THREE.Mesh(capsule(0.11, 0.18), fur)); leg.position.set(sx * 0.15, 0.2, 0); leg.name = sx < 0 ? 'legL' : 'legR'; g.add(soft ? leg : withOutline(leg, 1.08)); const shoe = new THREE.Mesh(sphere(0.13), mat('#5a4634')); shoe.position.set(sx * 0.15, 0.08, 0.05); shoe.scale.set(1, 0.6, 1.3); g.add(shoe); }
+  for (const sx of [-1, 1]) { const armG = capsule(0.09, 0.26); armG.translate(0, -0.16, 0); const arm = shadowed(new THREE.Mesh(armG, fur)); arm.position.set(sx * 0.4, 0.84, 0); arm.name = sx < 0 ? 'armL' : 'armR'; g.add(soft ? arm : withOutline(arm, 1.08)); const legG = capsule(0.11, 0.18); legG.translate(0, -0.12, 0); const leg = shadowed(new THREE.Mesh(legG, fur)); leg.position.set(sx * 0.15, 0.32, 0); leg.name = sx < 0 ? 'legL' : 'legR'; g.add(soft ? leg : withOutline(leg, 1.08)); const shoe = new THREE.Mesh(sphere(0.13), mat('#5a4634')); shoe.position.set(0, -0.24, 0.05); shoe.scale.set(1, 0.6, 1.3); leg.add(shoe); } // 팔·다리는 어깨·엉덩이 피벗(지오메트리를 아래로 밀어 둠)
   const hat = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.22, 10), mat('#5aa469')); hat.position.set(0.1, r * 1.1, 0); hat.rotation.z = -0.4; head.add(hat); // 새싹 모자
   g.scale.setScalar(scale); return g;
 }
@@ -319,14 +326,15 @@ function charMinifig(col, scale) {
   const torso = shadowed(new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.5, 0.32), flat(col))); torso.position.y = 0.65; torso.name = 'body'; g.add(torso);
   const head = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.36, 14), flat('#ffd98a'))); head.position.y = 1.1; head.name = 'head'; g.add(head);
   const stud = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.1, 12), flat('#ffd98a')); stud.position.y = 0.23; head.add(stud);
-  for (const sx of [-1, 1]) { const eye = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 0.02), new THREE.MeshBasicMaterial({color:0x2b1f17})); eye.position.set(sx * 0.1, 0.04, 0.28); head.add(eye); const arm = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.42, 8), flat(col))); arm.position.set(sx * 0.34, 0.66, 0); arm.name = sx < 0 ? 'armL' : 'armR'; g.add(arm); const hand = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.03, 6, 10, Math.PI * 1.4), flat('#ffd98a')); hand.position.set(sx * 0.34, 0.4, 0); g.add(hand); const leg = shadowed(new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.4, 0.28), flat('#3b5fa8'))); leg.position.set(sx * 0.12, 0.2, 0); leg.name = sx < 0 ? 'legL' : 'legR'; g.add(leg); }
-  const smile = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.015, 6, 12, Math.PI), new THREE.MeshBasicMaterial({color:0x2b1f17})); smile.rotation.z = Math.PI; smile.position.set(0, -0.06, 0.28); head.add(smile);
+  for (const sx of [-1, 1]) { const eye = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 0.02), new THREE.MeshBasicMaterial({color:0x2b1f17})); eye.position.set(sx * 0.1, 0.04, 0.28); eye.name = 'eyeW'; head.add(eye); const armG = new THREE.CylinderGeometry(0.07, 0.07, 0.42, 8); armG.translate(0, -0.21, 0); const arm = shadowed(new THREE.Mesh(armG, flat(col))); arm.position.set(sx * 0.34, 0.87, 0); arm.name = sx < 0 ? 'armL' : 'armR'; g.add(arm); const hand = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.03, 6, 10, Math.PI * 1.4), flat('#ffd98a')); hand.position.set(0, -0.47, 0); arm.add(hand); const legG = new THREE.BoxGeometry(0.2, 0.4, 0.28); legG.translate(0, -0.2, 0); const leg = shadowed(new THREE.Mesh(legG, flat('#3b5fa8'))); leg.position.set(sx * 0.12, 0.4, 0); leg.name = sx < 0 ? 'legL' : 'legR'; g.add(leg); }
+  const smile = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.015, 6, 12, Math.PI), new THREE.MeshBasicMaterial({color:0x2b1f17})); smile.rotation.z = Math.PI; smile.position.set(0, -0.06, 0.28); smile.name = 'mouth'; head.add(smile); head.userData.face = true;
   legs.visible = false; g.scale.setScalar(scale); return g;
 }
 function charVoxel(crewKey, scale) { // PixelCrew 24×22 → 복셀. 걷기 2프레임을 미리 만들어 토글
   const g = new THREE.Group(); const px = self.PixelSprites; const V = 0.075, D = 0.3;
   const build = (state, frame) => { const fr = px.renderFrame({crew:crewKey, state, frame, flip:false}); const geo = new THREE.BoxGeometry(V, V, D); const im = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({vertexColors:false}), fr.pixels.length); const mtx = new THREE.Matrix4(); const col = new THREE.Color(); let minx = 99, maxx = 0, maxy = 0; for (const q of fr.pixels) { minx = Math.min(minx, q.x); maxx = Math.max(maxx, q.x); maxy = Math.max(maxy, q.y); } const cx = (minx + maxx) / 2; fr.pixels.forEach((q, i) => { mtx.makeTranslation((q.x - cx) * V, (maxy - q.y + 0.5) * V, 0); im.setMatrixAt(i, mtx); im.setColorAt(i, col.set(q.c)); }); im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true; im.castShadow = true; return im; };
-  const idle = build('idle', 0), w0 = build('walk', 0), w1 = build('walk', 1); w0.visible = false; w1.visible = false; g.add(idle, w0, w1); g.userData.frames = {idle, walk:[w0, w1]};
+  const frames = {}; for (const st of ['idle', 'walk', 'talk', 'happy', 'think', 'alert', 'sleep']) { const n = px.frameCount(st); const arr = []; for (let f = 0; f < n; f++) { const m = build(st, f); m.visible = st === 'idle' && f === 0; g.add(m); arr.push(m); } frames[st] = arr; }
+  g.userData.frames = frames; g.userData.frameMs = (st) => px.frameMs(st); // 상태별 프레임 수·간격은 엔진 값 그대로(픽셀맵 수정 0)
   g.scale.setScalar(scale); return g;
 }
 function makeChar(kind, col, scale, species, crewKey) {
@@ -361,38 +369,110 @@ function buildParty() {
     if (SEL.ride === 'car') { g.position.y = rideG.userData.seatY - 0.45; g.userData.riding = true; ox = (i - (n - 1) / 2) * 0.42; oz = -0.2; }
     g.position.x = ox; g.position.z += oz; g.userData.phase = i * 0.9; party.add(g); members.push(g);
   }
+  bubble = null; bubbleKey = ''; party.updateMatrixWorld(true); const bb = new THREE.Box3(); members.forEach(m => bb.expandByObject(m)); party.userData.topY = (bb.max.y - party.position.y) / (party.scale.y || 1); // 말풍선 높이(파티 로컬)
 }
 
 // ---------------- 산책(자동 경로 + 수동 WASD) ----------------
 const dioRoute = () => [[1, 7], [9, 7], [9, 12], [9, 7], [18, 7], [9, 7], [9, 2], [9, 7]].map(([x, y]) => cellPos(x, y));
 let route = []; let segI = 0, segT = 0; const pos = new THREE.Vector3(); let heading = 0; const keys = new Set();
-function resetRoute() { route = ISL ? islandRoute() : dioRoute(); segI = 0; segT = 0; pos.copy(route[0]); }
-window.addEventListener('keydown', e => { const k = e.key.toLowerCase(); if ('wasd'.includes(k) || e.key.startsWith('Arrow')) { keys.add(k); SEL.manual = true; e.preventDefault(); } });
+let oneWay = false, arrivedAt = -1; // 탭 이동이면 편도(끝에서 멈춤)·도착 시각
+function resetRoute(from) { route = ISL ? islandRoute(from) : dioRoute(); oneWay = false; arrivedAt = -1; segI = 0; segT = 0; if (from) route.unshift(pos.clone()); else pos.copy(route[0]); }
+window.addEventListener('keydown', e => { const k = e.key.toLowerCase(); if ('wasd'.includes(k) || e.key.startsWith('Arrow')) { keys.add(k); e.preventDefault(); if (!SEL.manual || SEL.state !== 'auto') { SEL.manual = true; SEL.state = 'auto'; oneWay = false; arrivedAt = -1; hideDest(); syncUI(); } } });
 window.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 function step(dt) {
   const speed = SEL.ride === 'car' ? 4.2 : SEL.ride === 'bike' ? 2.6 : 1.5; let moving = false;
-  if (SEL.manual) { let dx = 0, dz = 0; if (keys.has('w') || keys.has('arrowup')) dz -= 1; if (keys.has('s') || keys.has('arrowdown')) dz += 1; if (keys.has('a') || keys.has('arrowleft')) dx -= 1; if (keys.has('d') || keys.has('arrowright')) dx += 1; if (dx || dz) { const l = Math.hypot(dx, dz); const nx = pos.x + dx / l * speed * dt, nz = pos.z + dz / l * speed * dt; if (ISL) { const [tx, ty] = tileOf(nx, nz); const r = ISL.map.get(tx + ',' + ty); if (r && r.k !== 4) { pos.x = nx; pos.z = nz; moving = true; } } else { pos.x = THREE.MathUtils.clamp(nx, -GW / 2 * CELL + 0.5, GW / 2 * CELL - 0.5); pos.z = THREE.MathUtils.clamp(nz, -GH / 2 * CELL + 0.5, GH / 2 * CELL - 0.5); moving = true; } heading = Math.atan2(dx, dz); } }
-  else { const a = route[segI], b = route[(segI + 1) % route.length]; const len = a.distanceTo(b) || 1; segT += speed * dt / len; if (segT >= 1) { segT = 0; segI = (segI + 1) % route.length; } const a2 = route[segI], b2 = route[(segI + 1) % route.length]; pos.lerpVectors(a2, b2, segT); heading = Math.atan2(b2.x - a2.x, b2.z - a2.z); moving = true; }
+  if (SEL.state !== 'auto') { /* 표정·동작 연기 중: 제자리 */ }
+  else if (SEL.manual) { let dx = 0, dz = 0; if (keys.has('w') || keys.has('arrowup')) dz -= 1; if (keys.has('s') || keys.has('arrowdown')) dz += 1; if (keys.has('a') || keys.has('arrowleft')) dx -= 1; if (keys.has('d') || keys.has('arrowright')) dx += 1; if (dx || dz) { const l = Math.hypot(dx, dz); const nx = pos.x + dx / l * speed * dt, nz = pos.z + dz / l * speed * dt; if (ISL) { const [tx, ty] = tileOf(nx, nz); const r = ISL.map.get(tx + ',' + ty); if (r && r.k !== 4) { pos.x = nx; pos.z = nz; moving = true; } } else { pos.x = THREE.MathUtils.clamp(nx, -GW / 2 * CELL + 0.5, GW / 2 * CELL - 0.5); pos.z = THREE.MathUtils.clamp(nz, -GH / 2 * CELL + 0.5, GH / 2 * CELL - 0.5); moving = true; } heading = Math.atan2(dx, dz); } }
+  else if (route.length > 1 && !(oneWay && segI >= route.length - 1)) { const nextI = (i) => oneWay ? Math.min(i + 1, route.length - 1) : (i + 1) % route.length; const a = route[segI], b = route[nextI(segI)]; const len = a.distanceTo(b) || 1; segT += speed * dt / len; if (segT >= 1) { segT = 0; segI = nextI(segI); }
+    if (oneWay && segI >= route.length - 1) { pos.copy(route[route.length - 1]); arrivedAt = t; hideDest(); } // 도착: 기쁨 1.8초 + 말풍선
+    else { const a2 = route[segI], b2 = route[nextI(segI)]; pos.lerpVectors(a2, b2, segT); heading = Math.atan2(b2.x - a2.x, b2.z - a2.z); moving = true; } }
   const [cx, cz] = tileOf(pos.x, pos.z); const y = ISL ? topY(cx, cz) : topY(THREE.MathUtils.clamp(cx, 0, GW - 1), THREE.MathUtils.clamp(cz, 0, GH - 1));
   party.position.set(pos.x, y, pos.z); party.rotation.y = heading; return moving;
 }
-let t = 0, blinkT = 0;
+// ---------------- 탭 이동(섬·디오라마): 바닥을 탭하면 길 우선 경로로 그 자리까지 걷고 도착하면 기뻐한다 ----------------
+const fx = new THREE.Group(); scene.add(fx); // 섬 흔들림을 따라가는 표식 그룹
+const destMark = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.06, 8, 24), new THREE.MeshBasicMaterial({color:0xf08a66})); destMark.rotation.x = -Math.PI / 2; destMark.visible = false; fx.add(destMark);
+const pathDots = new THREE.InstancedMesh(new THREE.SphereGeometry(0.07, 8, 6), new THREE.MeshBasicMaterial({color:0xfff1c9}), 160); pathDots.count = 0; pathDots.visible = false; pathDots.frustumCulled = false; fx.add(pathDots);
+function hideDest() { destMark.visible = false; pathDots.visible = false; pathDots.count = 0; }
+const tileRec = (x, y) => ISL ? ISL.map.get(x + ',' + y) : ((x >= 0 && y >= 0 && x < GW && y < GH) ? {k:isRoad(x, y) ? 1 : 0, top:topY(x, y)} : null);
+const walkCost = (r) => (!r || r.k === 4) ? Infinity : (r.k === 1 || r.k === 2 || r.k === 3) ? 1 : 2.4; // 건물 불가 · 길/보도/계단 1 · 잔디·공원 2.4(길 우선)
+function findPath(from, to) { // 4-이웃 다익스트라(섬 타일 ≤ 600이라 단순 선형 탐색)
+  const key = (x, y) => x + ',' + y; const tk = key(to[0], to[1]); const dist = new Map([[key(from[0], from[1]), 0]]); const prev = new Map(); const open = [[0, from[0], from[1]]];
+  while (open.length) { let bi = 0; for (let i = 1; i < open.length; i++) if (open[i][0] < open[bi][0]) bi = i; const [d, x, y] = open.splice(bi, 1)[0]; const k = key(x, y); if (k === tk) break; if (d > (dist.get(k) ?? Infinity)) continue;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; const c = walkCost(tileRec(nx, ny)); if (c === Infinity) continue; const nd = d + c, nk = key(nx, ny); if (nd < (dist.get(nk) ?? Infinity)) { dist.set(nk, nd); prev.set(nk, k); open.push([nd, nx, ny]); } } }
+  if (!dist.has(tk)) return null; const path = []; let k = tk; while (k) { path.push(k.split(',').map(Number)); k = prev.get(k); } return path.reverse();
+}
+function nearestWalkable(x, y) { if (walkCost(tileRec(x, y)) < Infinity) return [x, y]; for (let r = 1; r <= 3; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) { if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue; if (walkCost(tileRec(x + dx, y + dy)) < Infinity) return [x + dx, y + dy]; } return null; }
+function walkTo(tx, ty) { // 현재 타일 → (tx,ty). 건물·섬 밖이면 가장 가까운 걸을 수 있는 타일로
+  const to = nearestWalkable(tx, ty); if (!to) { say('갈 수 없는 곳'); return false; }
+  const from = tileOf(pos.x, pos.z); const path = findPath(from, to); if (!path || path.length < 2) { say(path ? '여기 있잖아' : '길이 안 이어져'); return false; }
+  route = [pos.clone(), ...path.slice(1).map(([x, y]) => cellPos(x, y))]; oneWay = true; arrivedAt = -1; segI = 0; segT = 0; if (SEL.manual || SEL.state !== 'auto') { SEL.manual = false; SEL.state = 'auto'; syncUI(); }
+  const ep = cellPos(to[0], to[1]); destMark.position.set(ep.x, tileRec(to[0], to[1]).top + 0.04, ep.z); destMark.visible = true;
+  const M = new THREE.Matrix4(); const n = Math.min(path.length, 160); for (let i = 0; i < n; i++) { const [x, y] = path[i]; const p = cellPos(x, y); M.makeTranslation(p.x, tileRec(x, y).top + 0.08, p.z); pathDots.setMatrixAt(i, M); } pathDots.count = n; pathDots.instanceMatrix.needsUpdate = true; pathDots.visible = true;
+  return true;
+}
+const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2(); let ptrDown = null;
+function tapAt(clientX, clientY) { const rc = canvas.getBoundingClientRect(); ndc.set(((clientX - rc.left) / rc.width) * 2 - 1, -((clientY - rc.top) / rc.height) * 2 + 1); ray.setFromCamera(ndc, camera); const hits = ray.intersectObjects(slabs.concat(blds), true); if (!hits.length) return false; const h = hits[0]; const tile = h.object.userData.tile || tileOf(h.point.x, h.point.z); return walkTo(tile[0], tile[1]); }
+canvas.addEventListener('pointerdown', e => { ptrDown = {x:e.clientX, y:e.clientY, t:performance.now(), id:e.pointerId}; });
+canvas.addEventListener('pointerup', e => { if (!ptrDown || e.pointerId !== ptrDown.id) return; const d = Math.hypot(e.clientX - ptrDown.x, e.clientY - ptrDown.y), ms = performance.now() - ptrDown.t; ptrDown = null; if (d < 8 && ms < 450) tapAt(e.clientX, e.clientY); }); // 드래그(둘러보기)와 구분: 8px·450ms 안쪽만 탭
+canvas.addEventListener('pointercancel', () => { ptrDown = null; });
+
+// ---------------- 상태·표정 ----------------
+const VOX_STATE = {idle:'idle', wave:'alert', talk:'talk', happy:'happy', think:'think', sit:'sleep'}; // 픽셀크루 엔진 상태로 대응(인사→alert 점프, 앉기→sleep 주저앉기)
+const SIT_DROP = {villager:0.22, clay:0.22, minifig:0.3, bean:0.12, paper:0.08, voxelcrew:0};
+const BUBBLE = {wave:'안녕!', talk:'이 단지 어때?', happy:'좋아!', think:'…', sit:'잠깐 쉬자', arrive:'도착!'};
+let bubble = null, bubbleKey = '', sayText = '', sayUntil = 0; const bubbleCache = new Map();
+function bubbleSprite(text) { if (bubbleCache.has(text)) return bubbleCache.get(text); const c = document.createElement('canvas'); c.width = 256; c.height = 96; const g = c.getContext('2d'); g.fillStyle = 'rgba(255,255,255,.96)'; g.strokeStyle = '#4a3b2f'; g.lineWidth = 4; g.beginPath(); g.roundRect(8, 6, 240, 62, 22); g.fill(); g.stroke(); g.beginPath(); g.moveTo(114, 66); g.lineTo(128, 90); g.lineTo(142, 66); g.closePath(); g.fill(); g.stroke(); g.fillRect(116, 58, 24, 12); g.fillStyle = '#4a3b2f'; g.font = '600 30px "Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 128, 38); const tex = new THREE.CanvasTexture(c); const s = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, depthTest:false, transparent:true})); s.scale.set(1.6, 0.6, 1); bubbleCache.set(text, s); return s; }
+function say(text, sec = 1.8) { sayText = text; sayUntil = t + sec; }
+function setBubble(text) { if (text === bubbleKey) return; if (bubble) party.remove(bubble); bubble = text ? bubbleSprite(text) : null; bubbleKey = text; if (bubble) party.add(bubble); }
+function setFace(head, expr, tt) { // expr: open | blink | happy | talk | think — face()가 이름 붙인 파츠만 켜고 끈다
+  const P = head.userData.parts || (head.userData.parts = (() => { const o = {}; head.traverse(n => { if (n.name && /^(eyeW|pupil|eyeHL|blush|eyeHappy|mouth|mouthO)$/.test(n.name)) (o[n.name] = o[n.name] || []).push(n); }); return o; })());
+  const show = (k, v) => (P[k] || []).forEach(n => n.visible = v); const happy = expr === 'happy'; const hasHappy = !!(P.eyeHappy && P.eyeHappy.length); const swap = happy && hasHappy;
+  show('eyeHappy', swap); show('eyeW', !swap); show('eyeHL', !swap); show('pupil', !swap);
+  (P.pupil || []).forEach(n => { if (n.userData.bx === undefined) { n.userData.bx = n.position.x; n.userData.by = n.position.y; } n.scale.y = expr === 'blink' ? 0.1 : 1; const th = expr === 'think'; n.position.x = n.userData.bx + (th ? Math.abs(n.userData.bx) * 0.25 : 0); n.position.y = n.userData.by + (th ? Math.abs(n.userData.bx) * 0.3 : 0); });
+  (P.eyeW || []).forEach(n => n.scale.y = (happy && !hasHappy) ? 0.35 : 1);
+  (P.mouth || []).forEach(n => { n.visible = expr !== 'talk'; n.scale.set(happy ? 1.5 : expr === 'think' ? 0.6 : 1, happy ? 1.5 : expr === 'think' ? 0.4 : 1, 1); });
+  (P.mouthO || []).forEach(n => { n.visible = expr === 'talk'; n.scale.y = 0.45 + Math.abs(Math.sin(tt * 9)) * 0.5; });
+  (P.blush || []).forEach(n => { n.material.opacity = happy ? 1 : 0.8; });
+}
+let t = 0, blinkT = 0; let camWant = 0, camOccluded = false, occluders = [], occDirty = true; const camRay = new THREE.Raycaster(); camRay.near = 0.05;
 function animate(dt, moving) {
   t += dt; blinkT += dt; const blink = blinkT % 3.2 < 0.12;
+  const st = SEL.state !== 'auto' ? SEL.state : (arrivedAt >= 0 && t - arrivedAt < 1.8) ? 'happy' : moving ? 'walk' : 'idle'; // 상태 머신: 고른 상태 > 도착 기쁨 > 걷기 > 두리번
+  const expr = st === 'happy' ? 'happy' : st === 'talk' ? 'talk' : st === 'think' ? 'think' : blink ? 'blink' : 'open';
   members.forEach((g, i) => {
-    const ph = t * 9 + g.userData.phase; const riding = g.userData.riding; const walk = moving && !riding;
-    const bob = walk ? Math.abs(Math.sin(ph)) * 0.06 : Math.sin(t * 2 + i) * 0.015; const base = g.userData.baseY ?? (g.userData.baseY = g.position.y);
-    g.position.y = base + bob; if (SEL.char === 'bean') { g.scale.y = (g.userData.s0 ?? (g.userData.s0 = g.scale.x)) * (walk ? 1 + Math.sin(ph) * 0.08 : 1); g.position.y = base + (walk ? Math.abs(Math.sin(ph)) * 0.14 : bob); }
+    const ph = t * 9 + g.userData.phase; const riding = g.userData.riding; const walk = st === 'walk' && !riding;
+    const base = g.userData.baseY ?? (g.userData.baseY = g.position.y); const s0 = g.userData.s0 ?? (g.userData.s0 = g.scale.x);
+    let bob = walk ? Math.abs(Math.sin(ph)) * 0.06 : Math.sin(t * 2 + i) * 0.015; let dy = 0; g.scale.y = s0;
+    if (st === 'happy' && !riding) bob = Math.abs(Math.sin(t * 10 + i)) * 0.16; // 제자리 점프
+    if (st === 'sit' && !riding) dy = -(SIT_DROP[SEL.char] ?? 0.2) * s0;
+    if (SEL.char === 'bean') { g.scale.y = s0 * (walk ? 1 + Math.sin(ph) * 0.08 : st === 'sit' ? 0.8 : 1); if (walk) bob = Math.abs(Math.sin(ph)) * 0.14; }
+    g.position.y = base + bob + dy;
     const sw = walk ? Math.sin(ph) * 0.65 : 0; const legL = g.getObjectByName('legL'), legR = g.getObjectByName('legR'), armL = g.getObjectByName('armL'), armR = g.getObjectByName('armR'), head = g.getObjectByName('head');
-    if (legL) legL.rotation.x = sw; if (legR) legR.rotation.x = -sw; if (armL) armL.rotation.x = -sw * 0.8; if (armR) armR.rotation.x = sw * 0.8; if (head) head.rotation.z = walk ? Math.sin(ph * 0.5) * 0.06 : Math.sin(t * 1.5 + i) * 0.03;
-    if (head) head.traverse(o => { if (o.name === 'pupil') o.scale.y = blink ? 0.1 : 1; });
-    if (g.userData.frames) { const f = g.userData.frames; const w = walk; f.idle.visible = !w; const k = Math.floor(t / 0.18) % 2; f.walk[0].visible = w && k === 0; f.walk[1].visible = w && k === 1; }
-    if (g.userData.billboard) { g.rotation.z = walk ? Math.sin(ph * 0.5) * 0.12 : 0; }
+    const legX = (st === 'sit' && !riding) ? -1.45 : 0; if (legL) legL.rotation.set(legX + sw, 0, 0); if (legR) legR.rotation.set(legX - sw, 0, 0);
+    let aLx = -sw * 0.8, aLz = 0, aRx = sw * 0.8, aRz = 0; // 팔 포즈(어깨 피벗): 상태별
+    if (st === 'wave') { aRz = -2.3 + Math.sin(t * 9 + i) * 0.35; aRx = 0; }
+    else if (st === 'talk') { aRx = -0.9 + Math.sin(t * 6 + i) * 0.3; aLx = -0.3; }
+    else if (st === 'happy') { aLz = 2.4 + Math.sin(t * 10 + i) * 0.2; aRz = -2.4 - Math.sin(t * 10 + i) * 0.2; aLx = aRx = 0; }
+    else if (st === 'think') { aRx = -2.1; aRz = -0.35; aLx = -0.2; }
+    else if (st === 'sit') { aLx = aRx = -0.5; }
+    if (armL) armL.rotation.set(aLx, 0, aLz); if (armR) armR.rotation.set(aRx, 0, aRz);
+    if (head) { head.rotation.set(st === 'talk' ? Math.sin(t * 6 + i) * 0.06 : 0, st === 'think' ? 0.25 : 0, walk ? Math.sin(ph * 0.5) * 0.06 : st === 'think' ? 0.14 : st === 'wave' ? -0.1 : Math.sin(t * 1.5 + i) * 0.03); if (head.userData.face) setFace(head, expr, t); }
+    if (g.userData.frames) { const F = g.userData.frames; const vs = walk ? 'walk' : (VOX_STATE[st] || 'idle'); const arr = F[vs] || F.idle; const k = Math.floor(t * 1000 / g.userData.frameMs(vs)) % arr.length; for (const s in F) { const a = F[s]; for (let j = 0; j < a.length; j++) a[j].visible = (a === arr && j === k); } }
+    if (g.userData.billboard) { g.rotation.z = walk ? Math.sin(ph * 0.5) * 0.12 : st === 'wave' ? Math.sin(t * 8) * 0.1 : st === 'happy' ? Math.sin(t * 10) * 0.08 : 0; }
   });
   if (rideG) rideG.children.forEach(c => { if (c.geometry && c.geometry.type === 'TorusGeometry' && moving) c.rotation.x += dt * 6; });
-  const bobI = ISL ? Math.sin(t * 0.6) * 0.06 : 0; world.position.y = bobI; party.position.y += bobI; for (const r of rocks) { r.position.y += Math.sin(t * 0.8 + r.userData.bob) * 0.002; r.rotation.y += dt * 0.05; }
+  const bt = sayUntil > t ? sayText : (SEL.state !== 'auto') ? BUBBLE[SEL.state] : (st === 'happy' && arrivedAt >= 0) ? BUBBLE.arrive : ''; setBubble(bt); // 말풍선: 토스트 > 고른 상태 > 도착
+  if (bubble) bubble.position.set(0, (party.userData.topY || 1.8) + 0.45 + Math.sin(t * 3) * 0.04, 0);
+  if (destMark.visible) { const s = 1 + Math.sin(t * 5) * 0.12; destMark.scale.set(s, s, 1); }
+  const bobI = ISL ? Math.sin(t * 0.6) * 0.06 : 0; world.position.y = bobI; fx.position.y = bobI; party.position.y += bobI; for (const r of rocks) { r.position.y += Math.sin(t * 0.8 + r.userData.bob) * 0.002; r.rotation.y += dt * 0.05; }
   clouds.children.forEach(sp => { sp.position.x += sp.userData.v * dt; if (sp.position.x > 24) sp.position.x = -24; });
-  if (SEL.follow && controls) { const tgt = new THREE.Vector3(party.position.x, party.position.y + 0.8 * party.scale.y, party.position.z); const d = new THREE.Vector3().subVectors(camera.position, controls.target); controls.target.lerp(tgt, 0.08); camera.position.copy(controls.target).add(d); }
+  if (SEL.follow && controls) { const tgt = new THREE.Vector3(party.position.x, party.position.y + 0.8 * party.scale.y, party.position.z); const d = new THREE.Vector3().subVectors(camera.position, controls.target); controls.target.lerp(tgt, 0.08);
+    if (camera.isPerspectiveCamera) { // 건물·지형이 파티를 가리면 카메라를 가림 지점 앞으로 당기고, 트이면 원래 거리로 돌아간다
+      const cur = d.length(); if (!camOccluded) camWant = cur; const dir = d.clone().normalize();
+      if (occDirty) { occDirty = false; occluders = slabs.slice(); for (const b of blds) b.traverse(o => { if (o.isMesh && !o.isSprite && !o.isInstancedMesh && !(o.material && o.material.side === THREE.BackSide)) occluders.push(o); }); } // 메시만: 라벨 스프라이트(카메라 필요)·윤곽(BackSide)·창 인스턴스 제외
+      camRay.camera = camera; camRay.set(controls.target, dir); camRay.far = camWant; const hit = camRay.intersectObjects(occluders, false)[0]; camOccluded = !!hit; d.copy(dir).multiplyScalar(hit ? Math.max(0.7, hit.distance - 0.4) : camWant); }
+    camera.position.copy(controls.target).add(d); }
 }
 
 // ---------------- 장면 상태(낮/밤) ----------------
@@ -403,20 +483,21 @@ function applyScene() {
 // ---------------- UI ----------------
 const $ = (s) => document.querySelector(s);
 function group(el, list, key, extra) { el.innerHTML = list.map(it => `<button data-id="${it.id}" aria-pressed="${String(SEL[key] === it.id)}">${it.name}${it.desc ? `<small>${it.desc}</small>` : ''}</button>`).join(''); el.querySelectorAll('button').forEach(b => b.onclick = () => { if (extra) return extra(b.dataset.id); SEL[key] = b.dataset.id; rebuild(key); }); }
-function syncUI() { group($('#optPlace'), PLACES, 'place'); group($('#optChar'), CHARS, 'char'); group($('#optSpecies'), SPECIES, 'species'); group($('#optWorld'), WORLDS, 'world'); group($('#optCam'), CAMS, 'cam'); group($('#optParty'), PARTIES, 'party'); group($('#optRide'), RIDES, 'ride');
+function syncUI() { group($('#optPlace'), PLACES, 'place'); group($('#optChar'), CHARS, 'char'); group($('#optSpecies'), SPECIES, 'species'); group($('#optWorld'), WORLDS, 'world'); group($('#optCam'), CAMS, 'cam'); group($('#optParty'), PARTIES, 'party'); group($('#optRide'), RIDES, 'ride'); group($('#optState'), STATES, 'state');
   const sc = $('#optScene'); sc.innerHTML = `<button data-id="day" aria-pressed="${String(!SEL.night)}">낮</button><button data-id="night" aria-pressed="${String(SEL.night)}">밤</button><button data-id="follow" aria-pressed="${String(SEL.follow)}">카메라 따라가기</button><button data-id="auto" aria-pressed="${String(!SEL.manual)}">자동 산책</button>`;
-  sc.querySelectorAll('button').forEach(b => b.onclick = () => { const id = b.dataset.id; if (id === 'day' || id === 'night') { SEL.night = id === 'night'; rebuild('world'); } else if (id === 'follow') { SEL.follow = !SEL.follow; syncUI(); } else { SEL.manual = !SEL.manual; syncUI(); } });
+  sc.querySelectorAll('button').forEach(b => b.onclick = () => { const id = b.dataset.id; if (id === 'day' || id === 'night') { SEL.night = id === 'night'; rebuild('world'); } else if (id === 'follow') { SEL.follow = !SEL.follow; syncUI(); } else { SEL.manual = !SEL.manual; if (!SEL.manual) { SEL.state = 'auto'; hideDest(); resetRoute(tileOf(pos.x, pos.z)); } syncUI(); } });
   updateExport(); updateHud();
 }
-function rebuild(key) { if (key === 'cam') makeCamera(SEL.cam); else if (key === 'place') { rocks = []; prepareIsland(SEL.place === 'dio' ? null : SEL.place); makeCamera(SEL.cam); resize(); buildWorld(); buildParty(); applyScene(); resetRoute(); } else if (key === 'world') { rocks = []; buildWorld(); buildParty(); applyScene(); } else buildParty(); syncUI(); try { history.replaceState(null, '', '#' + [SEL.place, SEL.char, SEL.species, SEL.world, SEL.cam].join('-')); } catch (e) {} }
+function rebuild(key) { if (key === 'cam') makeCamera(SEL.cam); else if (key === 'place') { rocks = []; prepareIsland(SEL.place === 'dio' ? null : SEL.place); makeCamera(SEL.cam); resize(); buildWorld(); buildParty(); applyScene(); resetRoute(); } else if (key === 'world') { rocks = []; buildWorld(); buildParty(); applyScene(); } else if (key === 'state') { /* 표정·동작만 바뀜 */ } else buildParty(); syncUI(); try { history.replaceState(null, '', '#' + [SEL.place, SEL.char, SEL.species, SEL.world, SEL.cam].concat(SEL.state !== 'auto' ? [SEL.state] : []).join('-')); } catch (e) {} }
 function updateExport() {
   const ch = CHARS.find(c => c.id === SEL.char), wd = WORLDS.find(w => w.id === SEL.world), sp = SPECIES.find(s => s.id === SEL.species);
-  const pl = PLACES.find(p => p.id === SEL.place); const obj = {stylelab3d:'imjang-world 2026-10-12', place:{id:SEL.place, name:pl.name, source:ISL ? ISL.source : '가상 디오라마'}, character:{id:ch.id, name:ch.name, desc:ch.desc, species:(SEL.char === 'villager' || SEL.char === 'clay' || SEL.char === 'paper') ? sp.id : null, headRatio:'2등신(머리 r0.44 / 몸 캡슐 r0.3)', eyes:'흰 구+짙은 동공+하이라이트, 3.2초 깜빡임', blush:true, outline:SEL.world === 'toon' ? 'inverted-hull 1.045 갈색' : 'none', toon:SEL.world === 'toon' ? '3-step gradient' : null}, world:{id:wd.id, name:wd.name, desc:wd.desc, terrain:'단(0.55m) 박스 지형·길 베이지·코티지 박공(4각뿔)·아파트 창 그리드·구형 2단 나무', night:SEL.night}, camera:{id:SEL.cam, iso:'Orthographic 35.264° 고도·45° 방위', persp:'Perspective 42°', close:'Perspective 34° · 거리 약 7m 따라가기'}, party:{concept:SEL.party, ride:SEL.ride, colors:CONCEPT_COL[SEL.party]}, mapToCodex:{character:{villager:'새 메시(round-buddy 머리·귀·눈 규격 교체)', clay:'plush-crew 질감', bean:'round-buddy', paper:'paper-scout', minifig:'voxel-walker 변형', voxelcrew:'crew-pixel 복셀 승격'}[SEL.char], building:{toon:'soft-isometric+윤곽', clay:'clay-toy', lowpoly:'white-model/flat-roof', voxel:'pixel-blocks', paper:'paper-cut'}[SEL.world], map:{toon:'soft-village', clay:'toy-island', lowpoly:'topo-outdoor', voxel:'pixel-grid', paper:'paper-layers'}[SEL.world]}, source:'github.com/flykimjiwon/aptHanimo prototype/stylelab3d/index.html'};
+  const pl = PLACES.find(p => p.id === SEL.place); const obj = {stylelab3d:'imjang-world 2026-10-12', place:{id:SEL.place, name:pl.name, source:ISL ? ISL.source : '가상 디오라마'}, character:{id:ch.id, name:ch.name, desc:ch.desc, species:(SEL.char === 'villager' || SEL.char === 'clay' || SEL.char === 'paper') ? sp.id : null, headRatio:'2등신(머리 r0.44 / 몸 캡슐 r0.3)', eyes:'흰 구+짙은 동공+하이라이트, 3.2초 깜빡임', blush:true, outline:SEL.world === 'toon' ? 'inverted-hull 1.045 갈색' : 'none', toon:SEL.world === 'toon' ? '3-step gradient' : null}, world:{id:wd.id, name:wd.name, desc:wd.desc, terrain:'단(0.55m) 박스 지형·길 베이지·코티지 박공(4각뿔)·아파트 창 그리드·구형 2단 나무', night:SEL.night}, camera:{id:SEL.cam, iso:'Orthographic 35.264° 고도·45° 방위', persp:'Perspective 42°', close:'Perspective 34° · 거리 약 7m 따라가기'}, party:{concept:SEL.party, ride:SEL.ride, colors:CONCEPT_COL[SEL.party]}, state:{id:SEL.state, name:STATES.find(s => s.id === SEL.state).name, machine:'auto: walk/idle, 도착 happy 1.8s; 고정: wave·talk·happy·think·sit', expressions:'눈(open/blink/^^)·입(smile/open/flat)·볼 파츠 토글, 픽셀크루는 엔진 상태(alert/talk/happy/think/sleep) 프레임', tapToWalk:'바닥 탭 → 4-이웃 다익스트라(길 1·잔디 2.4·건물 불가) → 편도 경로·도착 표식'}, mapToCodex:{character:{villager:'새 메시(round-buddy 머리·귀·눈 규격 교체)', clay:'plush-crew 질감', bean:'round-buddy', paper:'paper-scout', minifig:'voxel-walker 변형', voxelcrew:'crew-pixel 복셀 승격'}[SEL.char], building:{toon:'soft-isometric+윤곽', clay:'clay-toy', lowpoly:'white-model/flat-roof', voxel:'pixel-blocks', paper:'paper-cut'}[SEL.world], map:{toon:'soft-village', clay:'toy-island', lowpoly:'topo-outdoor', voxel:'pixel-grid', paper:'paper-layers'}[SEL.world]}, source:'github.com/flykimjiwon/aptHanimo prototype/stylelab3d/index.html'};
   $('#exportTxt').value = `# 임장월드 3D 스타일 선택\n- 장소: ${pl.name}${ISL ? ' — ' + ISL.source : ''}\n- 캐릭터: ${ch.name} (${ch.id})${obj.character.species ? ' · 종족 ' + sp.name : ''} — ${ch.desc}\n- 월드: ${wd.name} (${wd.id}) — ${wd.desc}\n- 시점: ${CAMS.find(c => c.id === SEL.cam).name} · 컨셉: ${PARTIES.find(p => p.id === SEL.party).name} · 탈것: ${RIDES.find(r => r.id === SEL.ride).name} · ${SEL.night ? '밤' : '낮'}\n- Codex 레인 대응: 캐릭터 ${obj.mapToCodex.character} / 건물 ${obj.mapToCodex.building} / 지도 ${obj.mapToCodex.map}\n\n` + JSON.stringify(obj, null, 1);
 }
 let fps = 0, fpsN = 0, fpsT = 0;
 function updateHud() { $('#hud').textContent = `${PLACES.find(p => p.id === SEL.place).name} · ${CHARS.find(c => c.id === SEL.char).name} × ${WORLDS.find(w => w.id === SEL.world).name} × ${CAMS.find(c => c.id === SEL.cam).name} · ${PARTIES.find(p => p.id === SEL.party).name} · ${fps ? fps + ' fps' : ''}`; }
 $('#copyBtn').onclick = () => { const ta = $('#exportTxt'); const ok = () => $('#copyMsg').textContent = '복사됨. 3D 본편(Codex 레인) 인계문에 붙여 넣으세요.'; const fail = () => { ta.focus(); ta.select(); $('#copyMsg').textContent = '자동 복사가 막혀 텍스트를 선택했어요.'; }; try { navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(ta.value).then(ok, fail) : fail(); } catch (e) { fail(); } };
+$('#panelBtn').onclick = () => { const app = $('#app'); const c = app.classList.toggle('collapsed'); const b = $('#panelBtn'); b.textContent = c ? '설정 펼치기' : '설정 접기'; b.setAttribute('aria-expanded', String(!c)); resize(); };
 $('#pngBtn').onclick = () => { try { renderer.render(scene, camera); const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = `stylelab3d_${SEL.char}_${SEL.world}_${SEL.cam}.png`; a.click(); $('#copyMsg').textContent = 'PNG 저장'; } catch (e) { $('#copyMsg').textContent = '저장 실패: ' + e.message; } };
 
 // ---------------- 부팅·루프 ----------------
@@ -424,7 +505,8 @@ prepareIsland(SEL.place === 'dio' ? null : SEL.place); makeCamera(SEL.cam); resi
 let last = performance.now();
 function loop(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now; const moving = step(dt); animate(dt, moving); controls.update(); renderer.render(scene, camera); fpsN++; fpsT += dt; if (fpsT >= 1) { fps = Math.round(fpsN / fpsT); fpsN = 0; fpsT = 0; updateHud(); } requestAnimationFrame(loop); }
 requestAnimationFrame(loop);
-self.__lab = {SEL, rebuild, scene, renderer, get fps() { return fps; }, members: () => members.length, world: () => world.children.length, island: () => ISL ? {id:ISL.id, tiles:ISL.tiles.length, buildings:ISL.buildings.length, maxTop:ISL.maxTop, route:route.length} : null};
+self.__lab = {SEL, rebuild, scene, renderer, get fps() { return fps; }, members: () => members.length, world: () => world.children.length, island: () => ISL ? {id:ISL.id, tiles:ISL.tiles.length, buildings:ISL.buildings.length, maxTop:ISL.maxTop, route:route.length} : null,
+  walkTo, tapAt, route: () => route.length, oneWay: () => oneWay, arrived: () => arrivedAt >= 0, tile: () => tileOf(pos.x, pos.z), bubble: () => bubbleKey, state: () => SEL.state, dest: () => destMark.visible, cam: () => camera.position.toArray().map(v => +v.toFixed(2))};
 </script>
 </body>
 </html>
