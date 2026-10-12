@@ -56,5 +56,5 @@ export const DEFAULT_WORLD_STYLE: WorldStyle = {
   character: "round-buddy",
   building: "soft-isometric",
   map: "soft-village",
-  view: "isometric",
+  view: "perspective",
 };

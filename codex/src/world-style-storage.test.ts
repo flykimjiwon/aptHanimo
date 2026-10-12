@@ -42,6 +42,13 @@ test("new users start with the cozy round-buddy world style", () => {
   installBrowser("/");
 
   expect(readWorldStyle()).toEqual(DEFAULT_WORLD_STYLE);
+  expect(readWorldStyle().view).toBe("perspective");
+});
+
+test("the new 3D default preserves a returning user's saved isometric view", () => {
+  const saved: WorldStyle = { ...DEFAULT_WORLD_STYLE, view: "isometric" };
+  installBrowser("/", new Map([["hanbakwi-world-style-v1", JSON.stringify(saved)]]));
+  expect(readWorldStyle()).toEqual(saved);
 });
 
 test("valid URL style fields override storage while invalid fields keep the saved choice", () => {

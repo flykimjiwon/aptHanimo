@@ -41,7 +41,7 @@ export const extraStyleCopy = {
   },
 } as const;
 export const presetLabels: Readonly<Record<WorldStylePresetId, string>> = {
-  cozy: "포근한 2.5D",
+  cozy: "포근한 마을 3D",
   clay: "말랑 점토 3D",
   voxel: "복셀 3D",
   paper: "종이 2.5D",
@@ -54,7 +54,7 @@ export const presets: Readonly<Record<WorldStylePresetId, WorldStyle>> = {
     character: "round-buddy",
     building: "soft-isometric",
     map: "soft-village",
-    view: "isometric",
+    view: "perspective",
   },
   clay: {
     character: "plush-crew",
@@ -92,4 +92,14 @@ export const presets: Readonly<Record<WorldStylePresetId, WorldStyle>> = {
     map: "realistic-neighborhood",
     view: "perspective",
   },
+};
+
+export const presetDescriptions: Readonly<Record<WorldStylePresetId, string>> = {
+  cozy: "동글동글 친구들과 파스텔 동네 산책",
+  clay: "봉제 친구와 손으로 빚은 장난감 마을",
+  voxel: "네모난 친구가 걷는 작은 블록 세상",
+  paper: "종이를 오려 겹친 가벼운 디오라마",
+  ink: "펜으로 그린 캐릭터와 한눈에 보는 지도",
+  watercolor: "새싹 친구와 부드럽게 번지는 초록빛",
+  realistic: "귀여운 친구와 실제 동네 재료감의 조합",
 };

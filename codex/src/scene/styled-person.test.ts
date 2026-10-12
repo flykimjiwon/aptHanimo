@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { Group, Mesh } from "three";
+import { Group, Mesh, Raycaster, Vector3 } from "three";
 import { CHARACTER_IDS, type CharacterStyle } from "../world-style";
 import { avatar } from "./avatar";
 import { animateAvatar } from "./avatar-motion";
@@ -91,6 +91,24 @@ test("solid distance animation returns to an exact still pose", () => {
   expect(foot.position.y).toBe(foot.userData.motionBaseY);
   expect(foot.rotation.x).toBe(0);
   disposeGroup(person);
+});
+
+test("both pupils remain in front of every solid character's body", () => {
+  for (const style of SOLID_STYLES) {
+    const model = solidPerson(style, style, { color: "#6ed8e8", palette: new MaterialPalette() });
+    model.updateMatrixWorld(true);
+    const pupils: Mesh[] = [];
+    model.traverse((object) => {
+      if (object instanceof Mesh && object.name === "crew-pupil") pupils.push(object);
+    });
+    expect(pupils).toHaveLength(2);
+    for (const pupil of pupils) {
+      const origin = pupil.getWorldPosition(new Vector3()).add(new Vector3(0, 0, 5));
+      const ray = new Raycaster(origin, new Vector3(0, 0, -1));
+      expect(ray.intersectObject(model, true)[0]?.object).toBe(pupil);
+    }
+    disposeGroup(model);
+  }
 });
 
 test("solid styles retain companions and every vehicle mode", () => {

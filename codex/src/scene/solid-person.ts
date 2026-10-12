@@ -6,7 +6,10 @@ import {
   Group,
   IcosahedronGeometry,
   Mesh,
+  QuadraticBezierCurve3,
   SphereGeometry,
+  TubeGeometry,
+  Vector3,
 } from "three";
 import type { CharacterStyle } from "../world-style";
 import { C, type MaterialPalette } from "./materials";
@@ -23,7 +26,8 @@ function part(
     | ConeGeometry
     | CylinderGeometry
     | IcosahedronGeometry
-    | SphereGeometry,
+    | SphereGeometry
+    | TubeGeometry,
   options: { readonly color: string; readonly name: string },
   palette: MaterialPalette,
 ): Mesh {
@@ -35,24 +39,63 @@ function part(
   return mesh;
 }
 
-function face(group: Group, palette: MaterialPalette, scale = 1): void {
+function face(group: Group, palette: MaterialPalette, style: SolidStyle): void {
+  const scale = style === "rubber-hose" ? 0.94 : 1;
+  const depth =
+    style === "bead-crew"
+      ? 0.36
+      : style === "rubber-hose"
+        ? 0.5
+        : style === "voxel-walker"
+          ? 0.58
+          : 0.72;
   for (const x of [-0.31, 0.31]) {
     const eye = part(
-      new BoxGeometry(0.2, 0.26, 0.1),
+      style === "voxel-walker"
+        ? new BoxGeometry(0.27, 0.34, 0.1)
+        : new CapsuleGeometry(0.13, 0.08, 4, 10),
       { color: C.white, name: "crew-eye" },
       palette,
     );
-    eye.position.set(x * scale, 1.72 * scale, 0.67 * scale);
+    if (style !== "voxel-walker") eye.scale.z = 0.4;
+    eye.position.set(x * scale, 1.68 * scale, depth);
     group.add(eye);
+    const pupil = part(
+      new SphereGeometry(0.065, 10, 8),
+      { color: C.ink, name: "crew-pupil" },
+      palette,
+    );
+    pupil.scale.set(0.8, 1, 0.45);
+    pupil.position.set(x * scale, 1.66 * scale, depth + 0.065);
+    group.add(pupil);
+    const glint = part(
+      new SphereGeometry(0.022, 6, 4),
+      { color: C.white, name: "crew-eye-glint" },
+      palette,
+    );
+    glint.position.set(x * scale - 0.02, 1.69 * scale, depth + 0.095);
+    group.add(glint);
     const cheek = part(
       new SphereGeometry(0.11, 7, 5),
       { color: "#f19aac", name: "crew-cheek" },
       palette,
     );
     cheek.scale.set(1.35, 0.72, 0.38);
-    cheek.position.set(x * 1.5 * scale, 1.39 * scale, 0.68 * scale);
+    cheek.position.set(x * 1.5 * scale, 1.39 * scale, depth);
     group.add(cheek);
   }
+  const smile = new QuadraticBezierCurve3(
+    new Vector3(-0.12, 1.39 * scale, depth + 0.09),
+    new Vector3(0, 1.27 * scale, depth + 0.12),
+    new Vector3(0.12, 1.39 * scale, depth + 0.09),
+  );
+  group.add(
+    part(
+      new TubeGeometry(smile, 8, 0.025, 5, false),
+      { color: C.ink, name: "crew-smile" },
+      palette,
+    ),
+  );
 }
 
 function scarf(group: Group, palette: MaterialPalette, leaf = false): void {
@@ -117,6 +160,22 @@ function beadBody(group: Group, color: string, palette: MaterialPalette): void {
 
 function accessories(group: Group, style: SolidStyle, palette: MaterialPalette): void {
   if (style === "plush-crew") {
+    for (const x of [-0.57, 0.57]) {
+      const ear = part(
+        new SphereGeometry(0.25, 12, 8),
+        { color: "#8cbeb5", name: "plush-ear" },
+        palette,
+      );
+      ear.position.set(x, 2.04, 0);
+      const inside = part(
+        new SphereGeometry(0.14, 10, 8),
+        { color: C.skin, name: "plush-ear-inner" },
+        palette,
+      );
+      inside.scale.z = 0.3;
+      inside.position.set(x, 2.04, 0.22);
+      group.add(ear, inside);
+    }
     for (const x of [-0.48, 0.48]) {
       const stitch = part(
         new BoxGeometry(0.18, 0.035, 0.06),
@@ -167,7 +226,7 @@ export function solidPerson(
         ? new BoxGeometry(1.35, 1.46, 1.08)
         : rubber
           ? new CapsuleGeometry(0.51, 0.8, 4, 8)
-          : new SphereGeometry(0.83, style === "plush-crew" ? 10 : 12, 8),
+          : new SphereGeometry(0.83, style === "plush-crew" ? 20 : 24, 16),
       { color: style === "plush-crew" ? "#8cbeb5" : color, name: "crew-dome-body" },
       palette,
     );
@@ -187,7 +246,18 @@ export function solidPerson(
       person.add(arm);
     }
   }
-  face(person, palette, rubber ? 0.94 : 1);
+  if (!rubber) {
+    for (const x of [-0.82, 0.82]) {
+      const hand = part(
+        voxel ? new BoxGeometry(0.27, 0.34, 0.3) : new SphereGeometry(0.19, 10, 8),
+        { color: style === "plush-crew" ? "#8cbeb5" : color, name: "crew-mitten" },
+        palette,
+      );
+      hand.position.set(x, 0.92, 0.13);
+      person.add(hand);
+    }
+  }
+  face(person, palette, style);
   scarf(person, palette, style === "leaf-guide");
   feet(person, palette, voxel ? "box" : beads ? "bead" : "round");
   accessories(person, style, palette);
