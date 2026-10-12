@@ -1,0 +1,101 @@
+@import "./shell.css";
+@import "./scene.css";
+@import "./controls.css";
+
+@media (max-width: 800px) {
+  .island-header {
+    height: 64px;
+    padding: 0 20px;
+  }
+  .island-intro {
+    padding: 22px 24px 0;
+    gap: 18px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .island-intro h1 {
+    font-size: 26px;
+  }
+  .island-palettes {
+    align-self: center;
+  }
+  .island-stage {
+    height: 460px;
+    min-height: 400px;
+    max-height: none;
+  }
+  .island-compass {
+    top: 14px;
+    right: 22px;
+  }
+  .island-camera {
+    right: 20px;
+    bottom: 8px;
+  }
+  .island-detail {
+    left: 16px;
+    bottom: 68px;
+    width: 205px;
+    padding: 16px;
+  }
+  .island-detail p {
+    font-size: 12px;
+  }
+  .island-pad {
+    left: 16px;
+    bottom: 5px;
+  }
+  .island-bottom {
+    padding: 14px 12px 16px;
+  }
+  .island-bottom > p:first-child {
+    font-size: 11px;
+  }
+  .island-dock {
+    width: min(100%, 480px);
+    justify-content: center;
+    gap: 0;
+  }
+  .island-dock button {
+    padding: 0 13px;
+    min-height: 46px;
+    font-size: 12px;
+  }
+  .island-caption span {
+    display: block;
+    margin: 7px 0 0;
+    padding: 0;
+    border: 0;
+  }
+  .island-sources {
+    margin-bottom: 20px;
+  }
+  .island-palettes button {
+    padding: 0 13px;
+  }
+}
+@media (max-width: 370px) {
+  .island-dock button {
+    padding: 0 9px;
+    font-size: 11px;
+  }
+  .island-palettes button {
+    padding: 0 10px;
+    font-size: 11px;
+  }
+  .island-stage {
+    height: 420px;
+  }
+  .island-brand span {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .island-loading-dot {
+    animation: none;
+  }
+  body,
+  .island-palettes button {
+    transition: none;
+  }
+}

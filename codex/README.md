@@ -4,6 +4,8 @@
 
 ## 실행
 
+새 비교판: **[왕십리자이 단지 섬](http://localhost:5178/island.html)** — 실제 단지 윤곽과 7개 동을 공중 섬으로 정리한 독립 개선판. 기존 본편은 그대로 유지한다. [구현·출처·조작·105테스트 가이드](docs/ISLAND_EDITION_2026-10-12.md).
+
 ```sh
 bun install --frozen-lockfile
 bun run build
