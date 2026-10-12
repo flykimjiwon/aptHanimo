@@ -11,9 +11,9 @@
 | 프로토타입(단일 HTML, 의존성 0) | `prototype/dev.html`(더블클릭) · `prototype/index.html`(아티팩트용) | 정본은 `prototype/src/` → `assemble.py` → `build.py`. 제작 노트 `prototype/PROTOTYPE_NOTES.md`, Codex 구조 가이드 `prototype/CODEX_PROTOTYPE_GUIDE_2026-10-11.md`(`guide.html`) |
 | 그림체 전환 | 주소 끝 `#캐릭터-월드` (`#villager-watermap`) 또는 서랍 단지 탭 선택기 | char: pixelcrew·villager / world: terrace·sketch·watermap / bld: cottage |
 | 스타일 랩(캐릭터·건물·월드맵 각 10종) | `prototype/stylelab/dev.html` · `STYLE_LAB_2026-10-11.md` | 조합 미리보기 + JSON 내보내기 |
-| **3D 스타일 랩**(three.js: 실제 단지 '떠 있는 섬' 3곳 × 귀여운 캐릭터 풍 6 × 월드 풍 5 × 시점 4) | `prototype/stylelab3d/index.html` · `STYLE_LAB_3D_2026-10-12.md` | CDN ESM(인터넷 필요). 섬 데이터는 `build_island_data.py`로 셀에서 굽는다. 고른 조합 JSON을 3D 본편(`codex/`)에 전달 |
+| **3D 스타일 랩**(three.js: 실제 단지 '떠 있는 섬' 3곳 × 귀여운 캐릭터 풍 6 × 상태·표정 6 × 월드 풍 5 × 시점 4) | `prototype/stylelab3d/index.html` · `STYLE_LAB_3D_2026-10-12.md` | CDN ESM(인터넷 필요). 섬 데이터는 `build_island_data.py`로 셀에서 굽는다. v13: 바닥 탭 이동·말풍선·카메라 가림 회피·모바일 설정 접기. 고른 조합 JSON을 3D 본편(`codex/`)에 전달 |
 | 25구 단지 카탈로그 | `SEOUL_25GU_COMPLEX_CATALOG_2026-10-11.md` | [검증] 표시는 K-apt 확인 전 |
-| 검증 캡처 | `prototype/qa/` | v1~v12 이력, 크로미움 에뮬레이션 |
+| 검증 캡처 | `prototype/qa/` | v1~v13 이력, 크로미움 에뮬레이션(v13은 터치 에뮬레이션 포함) |
 | 자동 검사·서버 운영 | [검증·운영 가이드](codex/docs/VERIFICATION_2026-10-12.md) · `.github/workflows/verify.yml` | Codex와 Prototype을 별도 job으로 검사. 브라우저 회귀·실기 검증은 별도 |
 | 테스트·재굽기 | [검증 가이드](prototype/tests/README.md) · 규칙149개 + 검증기 회귀11개 · `bash prototype/tools/bake.sh [--refresh]` | 본편·스타일랩 동시 생성, 골든·방향 자료 오류 실패 처리. v8 일방통행·v9 렌더링 계약 유지 / v10: 카드·사실 정정 요청(GitHub 이슈 사전 작성)·노트 이미지 저장·공유·가림 이진탐색 |
 | 검수 반영(v7, 2026-10-12) | `prototype/PROTOTYPE_NOTES.md` 머리말 v7 | roundRect 폴리필·계단 규칙·카드 매핑·주차 타임라인·charset·ODbL 고지 등. 검수 보고서는 메타 repo `docs/analysis/APTHANIMO_CLAUDE_PROTO_REVIEW_2026-10-12.md` |

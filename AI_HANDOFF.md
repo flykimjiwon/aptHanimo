@@ -1,5 +1,7 @@
 # aptHanimo · AI 인계 (두 레인 합본) — 2026-10-12
 
+> 최신 Claude(v13, 10-12 밤): [3D 스타일 랩 §0-1](prototype/stylelab3d/STYLE_LAB_3D_2026-10-12.md) — 캐릭터 상태·표정 6(인사·말하기·기쁨·생각·앉기+auto, 말풍선), 바닥 탭 이동(길 우선 경로·도착 리액션, 마우스·터치), 원근 카메라 가림 회피, 모바일 설정 접기. 본편(2D)·수치·셀 데이터·생성물 무변경, 규칙149·검증기11 그대로. 이 줄이 아래 v12 기준보다 최신이다.
+
 > 현재 통합 기준: Codex 단지 섬 `952a132`, Claude v12 `683f272`까지 반영했다. **Codex 105테스트·9,539 assertions·21파일**, **Prototype 규칙149·검증기11**을 별도로 유지한다. 운영 보강으로 [격리 서버 검사와 두 CI job](codex/docs/VERIFICATION_2026-10-12.md)을 추가했다. HTTP54/WS6은 이번 서비스 검증이고, 아래 UI 검증은 각 기능 개발 당시의 증거다.
 
 > 최신 Codex 비교판: [왕십리자이 단지 섬](codex/docs/ISLAND_EDITION_2026-10-12.md), `codex/island.html`. 실제 지도 윤곽/7개 동을 공중 섬으로 정리한 별도 개선판이며 기존 본편은 유지한다. 위성 화면 대조·재질3풍·회전/핀치·건물 선택·산책, 개발 당시105테스트/9,539 assertions/21파일·화면6조건·axe0위반. 단지 하나의 비교판을 세 단지 본편 전체 교체로 해석하지 않는다.
@@ -14,7 +16,7 @@
 | 레인 | 경로 | 정본 인계 문서 | 작성 AI |
 |---|---|---|---|
 | **Codex 레인 · 한바퀴 V5** | `codex/` | [`codex/docs/AI_HANDOFF_2026-10-12.md`](codex/docs/AI_HANDOFF_2026-10-12.md) | Codex |
-| **Claude 레인 · 프로토타입 v12** | `prototype/` + 루트 기획서·카탈로그 | [`prototype/AI_HANDOFF_2026-10-12.md`](prototype/AI_HANDOFF_2026-10-12.md) | Claude Code, 검증기·생성물 후속은 Codex |
+| **Claude 레인 · 프로토타입 v13** | `prototype/` + 루트 기획서·카탈로그 | [`prototype/AI_HANDOFF_2026-10-12.md`](prototype/AI_HANDOFF_2026-10-12.md) | Claude Code, 검증기·생성물 후속은 Codex |
 
 ---
 
@@ -27,7 +29,7 @@
 | 공간 데이터 | `public/worlds/*.json`(코어 동 외곽선·OSM·DEM), DEM은 **Mapzen/Tilezen Terrarium 타일** 재표본(코드 `scripts/collect-spatial.mjs` 기준; 옛 문서의 "OpenTopoData"는 오기) | `data/cell_data.json`(OSM Overpass 2026-10-12 추출 + **OpenTopoData SRTM 30m** 저장본 + 손입력 단지 사실 `tools/complexes.json`) |
 | 이동 규칙 | 2m 격자 A*·차량 탐색점 도로 투영·선분 충돌 검사. 경로 메타 `stairs`·`slope`는 아직 0, 일방통행 필드 없음 | 타일 A*·수단별 속도·경사 계수·계단(`isStairs`)·횡단·**일방통행 방향 `odir`+`moveAllowed`**(v8) |
 | 검증 | Bun105테스트(9,539 assertions, 21파일) · 서비스 HTTP54/WS6. 과거 UI 검증은 기능별 가이드 참조 | 규칙149·검증기 회귀11 · 생성물6개 재생성 일치. 과거 브라우저 검증은 제작 노트 참조 |
-| 상태 | 이동 수정·수첩·3D 컨셉·왕십리자이 섬 반영(`952a132`), 공개 배포·실기 미검증 | v12(`683f272`): 3D 랩 실제 섬3곳. 실기 미검증 |
+| 상태 | 이동 수정·수첩·3D 컨셉·왕십리자이 섬 반영(`952a132`), 공개 배포·실기 미검증 | v13: 3D 랩 상태·표정 6·바닥 탭 이동·카메라 가림 회피·모바일 접기(v12 `683f272` 실제 섬3곳 위). 실기 미검증 |
 | 그림체 | 캐릭터 10·건물 11·지도 11·시점 3, 프리셋 7, URL/저장 | `STYLE` 해시 `#캐릭터-월드`(pixelcrew\|villager × terrace\|sketch\|watermap), 스타일 랩 10×10×10 |
 
 두 레인의 **기능 수·테스트 수·검증 수치를 합산하지 않는다.** 코드·데이터 파이프라인도 섞지 않는다. 같은 단지 세 곳(래미안신당하이베르·왕십리자이·라체르보푸르지오써밋)을 다루지만 좌표계·데이터 계약이 다르다.
@@ -45,11 +47,11 @@ aptHanimo/
 ├─ SEOUL_25GU_COMPLEX_CATALOG_2026-10-11.md   25구 219단지 후보([검증]=K-apt 확인 전)
 ├─ prototype/                         Claude 레인
 │  ├─ AI_HANDOFF_2026-10-12.md        레인 인계 정본
-│  ├─ PROTOTYPE_NOTES.md              제작 노트(머리말 v1~v12 변경 요약, §7-1 검증 로그)
+│  ├─ PROTOTYPE_NOTES.md              제작 노트(머리말 v1~v13 변경 요약, §7-1 검증 로그)
 │  ├─ CODEX_PROTOTYPE_GUIDE_2026-10-11.md  구조 가이드(데이터 계약·이동 규칙·DOM 계약·가져갈 것/금지) — 이름과 달리 prototype/ 안내
 │  ├─ src/ (정본 7조각) → assemble.py → template.html → build.py → index.html·dev.html
 │  ├─ data/cell_data.json (굽기 산출), tools/(build_cell.py·bake.sh·overpass_query.ql·complexes.json·elev_srtm*.json)
-│  ├─ tests/run.mjs·golden.json, stylelab/(2D 10×10×10), stylelab3d/(three.js 캐릭터 6×월드 5×시점 4), qa/(v1~v12 캡처)
+│  ├─ tests/run.mjs·golden.json, stylelab/(2D 10×10×10), stylelab3d/(three.js 실제 섬 3곳·캐릭터 6×상태 6×월드 5×시점 4, 탭 이동), qa/(v1~v13 캡처)
 └─ codex/                             Codex 레인
    ├─ docs/AI_HANDOFF_2026-10-12.md   레인 인계 정본
    ├─ README.md, DESIGN.md, docs/Claude_V5_전체월드스타일_구현가이드.md
@@ -86,6 +88,7 @@ aptHanimo/
 | `952a132` | Codex | 왕십리자이 실제 윤곽 단지 섬 비교판 |
 | `3fcd6ea` | Codex | 격리 HTTP·WebSocket 검사와 서버 host/port 설정 |
 | `d3e6c61` | 공통 | 두 레인 분리 CI·Prototype 생성물 일치 검사 |
+| `896dcc8` 밤 | Claude | **v13** 3D 랩 상태·표정 6·바닥 탭 이동·카메라 가림 회피·모바일 접기 |
 
 ---
 
@@ -162,7 +165,7 @@ dirty·staged·원격 차이를 확인해 fast-forward 동기화하고 경로·h
 [Codex 레인] codex/docs/AI_HANDOFF_2026-10-12.md 와 VERIFICATION_2026-10-12.md 를 읽어라.
 현재 기준 = Bun105테스트/9,539 assertions/21파일 + HTTP54/WS6. UI 증거는 이동·수첩·3D컨셉·섬 가이드에 시점별로 있다.
 
-[Claude 레인] prototype/AI_HANDOFF_2026-10-12.md 를 읽어라. v12=683f272, 후속 검증기=1ecd401.
+[Claude 레인] prototype/AI_HANDOFF_2026-10-12.md 를 읽어라. v13=896dcc8(3D 랩 상태·탭 이동, 최신), v12=683f272, 후속 검증기=1ecd401.
 규칙149개와 검증기 회귀11개가 먼저. 정문 유모차 11분·496m, 비교표11/19/8분은 현재 데이터의 회귀 기준이다.
 src/ 만 고치고 assemble.py→build.py 로 재생성, 브라우저 실측 후 커밋.
 ```

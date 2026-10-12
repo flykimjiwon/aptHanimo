@@ -1,12 +1,12 @@
 # 임장월드 프로토타입(Claude 레인) · AI 인계 — 2026-10-12
 
 > 대상: `prototype/`와 루트 기획서·카탈로그를 이어받을 AI. 저장소 전체 입구는 [`../AI_HANDOFF.md`](../AI_HANDOFF.md), Codex 레인(`codex/`)은 별도 구현이라 섞지 않는다.
-> 현재 기준: `683f272`(v12, 실제 단지 섬 3곳). 규칙149·검증기11은 [검증 가이드](tests/README.md), 분리된 CI와 생성물 일치 검사는 [운영 가이드](../codex/docs/VERIFICATION_2026-10-12.md)를 따른다. 이력 정본은 [`PROTOTYPE_NOTES.md`](PROTOTYPE_NOTES.md), 구조는 [`CODEX_PROTOTYPE_GUIDE_2026-10-11.md`](CODEX_PROTOTYPE_GUIDE_2026-10-11.md)(이름과 달리 이 폴더 안내).
+> 현재 기준: v13(3D 랩 상태·표정 6·바닥 탭 이동·카메라 가림 회피·모바일 접기, 2026-10-12 밤, `896dcc8`) — 직전 `683f272`(v12, 실제 단지 섬 3곳). 규칙149·검증기11은 [검증 가이드](tests/README.md), 분리된 CI와 생성물 일치 검사는 [운영 가이드](../codex/docs/VERIFICATION_2026-10-12.md)를 따른다. 이력 정본은 [`PROTOTYPE_NOTES.md`](PROTOTYPE_NOTES.md), 구조는 [`CODEX_PROTOTYPE_GUIDE_2026-10-11.md`](CODEX_PROTOTYPE_GUIDE_2026-10-11.md)(이름과 달리 이 폴더 안내).
 
 ## 0. 30초 요약
 - 세 단지(래미안신당하이베르·왕십리자이·라체르보푸르지오써밋)를 한 클러스터 셀(99×58 타일, 25m)로 굽고, 도보·유모차·자전거·차의 **실제 환산 시간(추정)**, 출처 등급 이슈 카드, 컨셉별 체크리스트, 임장 노트, 세 단지 비교, 출근 레그, 단지 내부, 모의 광고까지 **끝까지 동작**하는 단일 HTML 체험판. PC·모바일.
 - **수치 기준점**: 가족·하이베르, 신당역 3번 출구→정문 **유모차 11분·496m·↑19m**, 비교표 유모차 **11/19/8분**. `node prototype/tests/run.mjs`(149건)의 골든값이 지킨다.
-- 오늘(10-12) 변경: v7 검수 반영부터 v12 실제 섬까지. v10 정정 요청·노트 이미지, v11 3D 랩, v12 실제 단지 섬은 아래 §3과 `PROTOTYPE_NOTES.md` 머리말에 요약.
+- 오늘(10-12) 변경: v7 검수 반영부터 v12 실제 섬, v13 3D 랩 상태·탭 이동까지. v10 정정 요청·노트 이미지, v11 3D 랩, v12 실제 단지 섬은 아래 §3과 `PROTOTYPE_NOTES.md` 머리말에 요약.
 
 ## 1. 파일 지도 (정본 vs 생성물)
 | 경로 | 역할 |
@@ -24,8 +24,8 @@
 | `tools/build_cell.py`, `tools/bake.sh`, `tools/overpass_query.ql`, `tools/elev_srtm*.json` | 굽기. `osm3.json`은 gitignore(로컬만) |
 | `tests/run.mjs`, `tests/golden.json` | 검사 149건·골든값 |
 | `stylelab/` | 캐릭터·건물·월드맵 각 10종 선택기(`src/`→`build_stylelab.py`) |
-| `stylelab3d/index.html` + `STYLE_LAB_3D_2026-10-12.md` + `build_island_data.py`→`island_data.js` | **3D 스타일 랩**(three.js CDN ESM): **실제 단지 '떠 있는 섬' 3곳**(셀에서 잘라 굽기, OSM 건물 돌출·사진 팔레트) + 가상 디오라마 × 캐릭터 풍 6×종족 4×월드 풍 5×시점 4×컨셉·탈것·낮밤. 고른 조합 JSON을 3D 본편(Codex 레인)에 전달. 본편 코드와 무관, 인터넷 필요 |
-| `qa/` | v1~v12 캡처 이력 |
+| `stylelab3d/index.html` + `STYLE_LAB_3D_2026-10-12.md` + `build_island_data.py`→`island_data.js` | **3D 스타일 랩**(three.js CDN ESM): **실제 단지 '떠 있는 섬' 3곳**(셀에서 잘라 굽기, OSM 건물 돌출·사진 팔레트) + 가상 디오라마 × 캐릭터 풍 6×종족 4×월드 풍 5×시점 4×컨셉·탈것·낮밤. 고른 조합 JSON을 3D 본편(Codex 레인)에 전달. 본편 코드와 무관, 인터넷 필요. **v13**: 상태·표정 6(`STATES`·`setFace`), 바닥 탭 이동(`walkTo`·`findPath` 길 우선 다익스트라, 연출용), 원근 카메라 가림 회피(`camRay`·`occluders`), 모바일 설정 접기 |
+| `qa/` | v1~v13 캡처 이력(v13: 상태·탭 이동·모바일 터치) |
 
 ## 2. 설계 계약 (고치기 전에)
 1. **데이터 ≠ 연출**: 경로·시간은 원본 고도·타일 종류·등급·계단·일방통행으로 계산. 단 지형·나무·NPC·불빛은 연출. 수치에 영향 없음.
@@ -50,6 +50,7 @@
 - **후속 검증 보강(`1ecd401`, Codex)**: 스타일랩 crop 동기화와 bake.sh 연결, 골든/방향 데이터 누락·손상 실패 처리, 전체 검사 성공 후에만 명시적 골든 갱신, 검증기 회귀11개. [상세](tests/README.md).
 - **v10**: 정정 요청 링크(카드·단지 사실 → 공개 저장소 이슈 사전 작성, 백엔드 없음) · 임장 노트 이미지 저장·공유(`renderNoteImage`, Web Share→다운로드→길게 눌러 저장 순) · 가림 목록 이진탐색. 수치 불변.
 - **v12**: 3D 랩에 실제 단지 섬(하이베르·왕십리자이·라체르보) — 사용자 "게임 맵처럼 떠 있는 실제 지도 모양 섬" 요청. `build_island_data.py` 재굽기 가능.
+- **v13**: 3D 랩 사용성 묶음 — 상태·표정 6(인사·말하기·기쁨·생각·앉기 + auto, 말풍선), 바닥 탭 이동(길 우선 경로·도착 리액션, 마우스·터치), 원근 카메라 가림 회피(정문 옆에서 카메라가 벽 안으로 들어가던 문제; 가림 대상은 메시만 — 라벨 스프라이트를 넣으면 three.js Raycaster가 camera 없이 터진다), 모바일 설정 접기. 본편·수치·생성물 무변경. 검증 `stylelab3d/STYLE_LAB_3D_2026-10-12.md` §5-1, 캡처 `qa/v13_*.png`.
 - **v11**: 3D 스타일 랩(`stylelab3d/`) — 사용자 1순위가 "three.js 3D 귀여운 캐릭터·여러 풍"이라 2D 랩처럼 고르게 만든 실험실. 선택 결과를 Codex 레인 캐릭터·건물·지도 id로 대응(`mapToCodex`).
 - 검수 원문(결함 25건·문서 결함·백로그)과 증거는 부모 저장소 `docs/analysis/APTHANIMO_CLAUDE_PROTO_REVIEW_2026-10-12.md`.
 
@@ -78,7 +79,8 @@ python3 -m http.server 8793 --bind 127.0.0.1 --directory prototype
 
 ## 6. 백로그 (이 레인)
 0. **3D 랩에서 사용자가 조합을 고르면** → Codex 레인 백로그에 "캐릭터·월드 풍 교체" 티켓(규칙·수치·재질 파라미터만 전달, `STYLE_LAB_3D` §6).
-1. 실기 iOS Safari·Android Chrome(폴리필·핀치·저메모리).
+0-1. 3D 랩 남은 것(v13 이후): 종이 인형 표정, 종족별 몸 실루엣·의상, 상태 전환 보간, 파티원별 상태, 나무 가림(지금은 건물·지형만 회피). 랩의 탭 이동은 연출용 다익스트라이며 2D 본편의 수단·경사·계단·일방통행 규칙을 넣지 않았다(넣을 거면 `04_route.js` 규칙을 그대로 옮긴다).
+1. 실기 iOS Safari·Android Chrome(폴리필·핀치·저메모리). 3D 랩 터치는 v13에서 에뮬레이션(탭·회전·핀치·접기)까지.
 2. 일방통행 교차로 인접 타일 관대화 재검토(25m 합성으로 과한 우회). OCC 가림 목록 이진탐색(남은 프레임당 비용).
 3. 비교표·점수에 차 지표를 점수(`scoreFor`)에도 반영할지 결정(지금은 표만).
 6. 스타일 랩 나머지 id 본편 이식.
@@ -87,7 +89,7 @@ python3 -m http.server 8793 --bind 127.0.0.1 --directory prototype
 
 ## 7. 인수 문구
 ```text
-aptHanimo의 prototype/(Claude 레인)을 이어서 작업한다. ../AI_HANDOFF.md 로 범위를 확인하고 이 문서와 PROTOTYPE_NOTES.md 머리말 v7~v12·검증기 후속을 읽어라.
+aptHanimo의 prototype/(Claude 레인)을 이어서 작업한다. ../AI_HANDOFF.md 로 범위를 확인하고 이 문서와 PROTOTYPE_NOTES.md 머리말 v7~v13·검증기 후속을 읽어라.
 수정 범위는 최신 사용자 지시·병행 담당 경로로 정하고 다른 작업의 dirty를 보존한다. 규칙149개와 검증기 회귀11개부터 확인한다.
 src/ 만 고치고 assemble.py→build.py 로 재생성한 뒤 브라우저(서버로 띄워서)에서 기준 흐름을 실측해라.
 수치 기준점(정문 유모차 11분·496m, 비교표 유모차 11/19/8분)이 바뀌면 원인을 먼저 설명하고 의도한 변화만 --update 해라.
