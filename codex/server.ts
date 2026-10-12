@@ -1,18 +1,30 @@
 import { resolve, sep } from "node:path";
 import type { ServerWebSocket } from "bun";
+import { z } from "zod";
 import { incomingSchema, type Peer } from "./src/protocol";
 
 type Session = { id: string; room: string; ip: string; last: number; peer: Peer };
 const sessions = new Map<string, ServerWebSocket<Session>>();
 const root = resolve(import.meta.dir, "dist");
+const configuration = z
+  .object({
+    port: z
+      .string()
+      .regex(/^(0|[1-9]\d{0,4})$/)
+      .default("5178")
+      .transform(Number)
+      .pipe(z.number().int().min(0).max(65535)),
+    hostname: z.enum(["0.0.0.0", "127.0.0.1", "::", "::1"]).default("0.0.0.0"),
+  })
+  .parse({ port: process.env.HANBAKWI_PORT, hostname: process.env.HANBAKWI_HOSTNAME });
 function broadcast(room: string): void {
   const peers = [...sessions.values()].filter((s) => s.data.room === room).map((s) => s.data.peer);
   const payload = JSON.stringify({ type: "peers", peers });
   for (const socket of sessions.values()) if (socket.data.room === room) socket.send(payload);
 }
 const server = Bun.serve<Session>({
-  hostname: "0.0.0.0",
-  port: 5178,
+  hostname: configuration.hostname,
+  port: configuration.port,
   development: false,
   async fetch(request, server) {
     const url = new URL(request.url);
