@@ -4,6 +4,7 @@
 
 | 무엇 | 어디 | 비고 |
 |---|---|---|
+| **AI 인계(입구)** | `AI_HANDOFF.md` | 두 레인(Codex `codex/` · Claude `prototype/`) 합본: 지도·경계·상태·백로그·인수 문구. 레인 정본은 `codex/docs/AI_HANDOFF_2026-10-12.md`, `prototype/AI_HANDOFF_2026-10-12.md` |
 | 통합 기획서(정본, PRD+빌드 스펙) | `IMJANG_WORLD_MASTER_2026-10-11.md` → `index.html`(`build_html.py`) | 결정 D-01~D-22·미결 D-U1~14(§19), 요구사항 ID(§16)·티켓(§17), 부록 D 프로토 이력 |
 | 초안 v0.2 | `IMJANG_WORLD_PRD_2026-10-11.md` | 이력 |
 | 외부 기획서 2본(텍스트) | `sources/` | 종합 대상 |
@@ -30,4 +31,4 @@ bun run build
 bun start
 ```
 
-브라우저: `http://localhost:5178/` · 스타일 실험실: `http://localhost:5178/style-lab.html`. [제작방법·기술스택·출처·Claude 인계](codex/docs/Claude_V5_전체월드스타일_구현가이드.md), [검증 상태](codex/qa/v5/QA.md)를 참고한다. V5 자동/서버 검증은 통과했으며 새 V5 화면·모바일 입력 QA는 사용자 브라우저 권한 반환 대기다. 공개 웹 서비스 배포는 포함하지 않는다.
+브라우저: `http://localhost:5178/` · 스타일 실험실: `http://localhost:5178/style-lab.html`. [AI 인계 가이드](codex/docs/AI_HANDOFF_2026-10-12.md), [제작방법·기술스택·출처](codex/docs/Claude_V5_전체월드스타일_구현가이드.md), [QA 인덱스](codex/qa/v5/QA.md)·[후속 수정 검증](codex/qa/v5/repair-2026-10-12.md)을 참고한다. 2026-10-12 Codex 세션이 브라우저 전체 검수 뒤 결함 5건(도착 UI·차량 경로 완주·순간이동 취소·모바일 조작부·초기화 오류 복구)을 수정했고 Bun 81테스트·엔진 80경로·브라우저 차량 17목적지·화면 8조건으로 검증했다. 실기 iOS/Android와 공개 웹 서비스 배포는 미검증·미포함이다.
