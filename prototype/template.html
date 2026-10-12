@@ -202,6 +202,8 @@ if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D
 const DATA = JSON.parse(document.getElementById('cell').textContent);
 const W = DATA.meta.W, H = DATA.meta.H, TILE_M = DATA.meta.tile_m;
 const E = DATA.elev, K = DATA.kind, R = DATA.rcls, LN = DATA.lanes, CR = DATA.cross, ST = DATA.steps;
+const OW = DATA.oneway || null, OD = DATA.odir || null; // 일방통행 플래그·진행 방향 코드(0=동·2=남·4=서·6=북, 홀수=대각). odir은 v8 굽기부터 — 없으면 차 역주행 검사 생략
+const DIRV = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]];
 const idx = (x, y) => y * W + x;
 const inb = (x, y) => x >= 0 && y >= 0 && x < W && y < H;
 const TW = 32, TH = 16, ZS = 1.6, LH = 2.4;      // 타일 px, 고도 px/m, 층당 px
@@ -558,6 +560,12 @@ function tileAllowed(i, mode, goal) {
   if (isStairs(i) && mode !== 'walk') return false; // 계단: 도보만
   return true;
 }
+// 차 일방통행: 출발·도착 타일 중 일방통행인 곳의 진행 방향과 이동 벡터(dx,dy)가 반대(내적<0)면 금지. 25m 타일이라 교차로 인접 타일은 관대하게(수직=허용)
+function moveAllowed(from, to, mode, dx, dy) {
+  if (mode !== 'car' || !OW || !OD) return true;
+  const chk = (i) => { if (!OW[i] || OD[i] < 0) return true; const v = DIRV[OD[i]]; return dx * v[0] + dy * v[1] >= 0; };
+  return chk(to) && chk(from);
+}
 function stepCost(from, to, mode, diag) {
   const d = diag ? TILE_M * 1.4142 : TILE_M;
   const dz = E[to] - E[from]; const grade = dz / d * 100;
@@ -594,6 +602,7 @@ function astar(sx, sy, gx, gy, mode) {
     for (const [dx, dy, dg] of N) {
       const nx = cx + dx, ny = cy + dy; if (!inb(nx, ny)) continue; const ni = idx(nx, ny); if (closed[ni]) continue;
       if (!tileAllowed(ni, mode, goal)) continue;
+      if (ni !== goal && !moveAllowed(cur, ni, mode, dx, dy)) continue; // 차 역주행 금지(목표 진입은 허용)
       if (dg) { if (!tileAllowed(idx(cx + dx, cy), mode, goal) && !tileAllowed(idx(cx, cy + dy), mode, goal)) continue; }
       const c = stepCost(cur, ni, mode, dg); if (!isFinite(c)) continue;
       const t = gS[cur] + c; if (t < gS[ni]) { gS[ni] = t; came[ni] = cur; push(t + h(ni), ni); }
@@ -1228,7 +1237,7 @@ function renderDrawer() {
       <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="small" id="btnInterior">🏢 단지 내부 열기</button><button class="small" id="btnCommute">🚇 출근 레그</button><button class="small" id="btnSwitch">🔁 다른 단지로</button></div>
       <div class="legend"><span><i style="background:#c99a6b"></i>절벽=8m 단(연출)</span><span><i style="background:#b4b9c3"></i>대로</span><span><i style="background:#d4d0c6"></i>골목</span><span><i style="background:#eadcb5"></i>보도</span><span><i style="background:#5fa852;border-radius:50%"></i>나무(배치 연출)</span></div>
       <p class="small muted" style="margin-top:6px">${TOP ? '수채 지도(탑뷰)는 고도·절벽을 그리지 않지만' : '언덕은 실제 고도(SRTM)를 8m 단으로 양자화해 절벽·경사로로 그렸고,'} 경로 시간은 원본 고도로 계산합니다. 주민 캐릭터는 연출이며 실제 이용자가 아닙니다. 정정 신청 폼은 이 프로토에 없습니다(실서비스는 카드마다 24시간 내 비노출).</p>
-      <p class="small muted" style="margin-top:4px">지도 데이터 © OpenStreetMap contributors(ODbL) · 고도 OpenTopoData SRTM 30m · 단지 사실은 네이버부동산·호갱노노 수동 열람 요약(출처 등급 표기).</p>
+      <p class="small muted" style="margin-top:4px">${OD ? '차 경로는 OSM 일방통행 방향을 따릅니다(추정). ' : ''}지도 데이터 © OpenStreetMap contributors(ODbL) · 고도 OpenTopoData SRTM 30m · 단지 사실은 네이버부동산·호갱노노 수동 열람 요약(출처 등급 표기).</p>
       <div class="small muted" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">그림체 <select id="selChar">${[['pixelcrew', '픽셀크루 도트 유령'], ['villager', '동숲 주민']].map(([v, l]) => `<option value="${v}"${STYLE.char === v ? ' selected' : ''}>${l}</option>`).join('')}</select> × 코티지 × <select id="selWorld">${[['terrace', '8m 단 지형'], ['sketch', '연필 스케치'], ['watermap', '수채 지도(탑뷰)']].map(([v, l]) => `<option value="${v}"${STYLE.world === v ? ' selected' : ''}>${l}</option>`).join('')}</select> <button class="small" id="btnStyle">적용</button><span>주소 끝에 #캐릭터-월드(예 #villager-watermap)를 붙여도 돼요</span></div>`;
     $('#btnStyle').onclick = () => { const h = `${$('#selChar').value}-${$('#selWorld').value}`; try { if (location.hash.slice(1) !== h) { location.hash = h; } else location.reload(); } catch (e) { toast('새로고침이 막혀 있어요. 주소 끝에 #' + h + ' 를 붙여 다시 열어 주세요.'); } };
     $('#btnInterior').onclick = openInterior; $('#btnCommute').onclick = openCommute; $('#btnSwitch').onclick = () => openComplexPicker(true);
@@ -1351,7 +1360,7 @@ function onTap(sx, sy) {
   if (best) { startTravel(Math.floor(best.x), Math.floor(best.y), best); return; }
   const tile = pickTile(sx, sy); if (!tile) return; startTravel(tile[0], tile[1], null);
 }
-window.addEventListener('keydown', (e) => { if (!S.concept || S.traveling) return; if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return; const d = {ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0], w:[0,-1], s:[0,1], a:[-1,0], d:[1,0]}[e.key]; if (!d) return; e.preventDefault(); const nx = (S.px | 0) + d[0], ny = (S.py | 0) + d[1]; if (!inb(nx, ny)) return; const i = idx(nx, ny); if (!tileAllowed(i, S.mode, -1)) { toast('막힘: ' + (K[i] === KIND.BLD ? '건물' : isStairs(i) ? '계단(유모차·자전거 불가)' : '통행 불가')); return; } const c = stepCost(idx(S.px | 0, S.py | 0), i, S.mode, false); if (!isFinite(c)) { toast('급경사: 이 수단으로는 못 올라가요'); return; } S.px = nx; S.py = ny; S.follow = true; const sxp = d[0] - d[1]; if (sxp !== 0) S.face = sxp > 0 ? 1 : -1; const near = TARGETS.find(t => Math.hypot(t.x - nx - 0.5, t.y - ny - 0.5) < 0.8); if (near && !S.visited.has(near.id)) { S.visited.add(near.id); onArrive(near, S.mode, {min:c, dist:TILE_M, up:0, cross:0, stairs:0, maxGrade:0}); } });
+window.addEventListener('keydown', (e) => { if (!S.concept || S.traveling) return; if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return; const d = {ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0], w:[0,-1], s:[0,1], a:[-1,0], d:[1,0]}[e.key]; if (!d) return; e.preventDefault(); const nx = (S.px | 0) + d[0], ny = (S.py | 0) + d[1]; if (!inb(nx, ny)) return; const i = idx(nx, ny); if (!tileAllowed(i, S.mode, -1)) { toast('막힘: ' + (K[i] === KIND.BLD ? '건물' : isStairs(i) ? '계단(유모차·자전거 불가)' : '통행 불가')); return; } if (!moveAllowed(idx(S.px | 0, S.py | 0), i, S.mode, d[0], d[1])) { toast('🚫 일방통행 역주행(OSM oneway, 추정)'); return; } const c = stepCost(idx(S.px | 0, S.py | 0), i, S.mode, false); if (!isFinite(c)) { toast('급경사: 이 수단으로는 못 올라가요'); return; } S.px = nx; S.py = ny; S.follow = true; const sxp = d[0] - d[1]; if (sxp !== 0) S.face = sxp > 0 ? 1 : -1; const near = TARGETS.find(t => Math.hypot(t.x - nx - 0.5, t.y - ny - 0.5) < 0.8); if (near && !S.visited.has(near.id)) { S.visited.add(near.id); onArrive(near, S.mode, {min:c, dist:TILE_M, up:0, cross:0, stairs:0, maxGrade:0}); } });
 
 // ---------- 루프 ----------
 function loop(ts) { tickTravel(performance.now()); draw(ts); requestAnimationFrame(loop); }

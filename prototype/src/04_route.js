@@ -27,6 +27,12 @@ function tileAllowed(i, mode, goal) {
   if (isStairs(i) && mode !== 'walk') return false; // 계단: 도보만
   return true;
 }
+// 차 일방통행: 출발·도착 타일 중 일방통행인 곳의 진행 방향과 이동 벡터(dx,dy)가 반대(내적<0)면 금지. 25m 타일이라 교차로 인접 타일은 관대하게(수직=허용)
+function moveAllowed(from, to, mode, dx, dy) {
+  if (mode !== 'car' || !OW || !OD) return true;
+  const chk = (i) => { if (!OW[i] || OD[i] < 0) return true; const v = DIRV[OD[i]]; return dx * v[0] + dy * v[1] >= 0; };
+  return chk(to) && chk(from);
+}
 function stepCost(from, to, mode, diag) {
   const d = diag ? TILE_M * 1.4142 : TILE_M;
   const dz = E[to] - E[from]; const grade = dz / d * 100;
@@ -63,6 +69,7 @@ function astar(sx, sy, gx, gy, mode) {
     for (const [dx, dy, dg] of N) {
       const nx = cx + dx, ny = cy + dy; if (!inb(nx, ny)) continue; const ni = idx(nx, ny); if (closed[ni]) continue;
       if (!tileAllowed(ni, mode, goal)) continue;
+      if (ni !== goal && !moveAllowed(cur, ni, mode, dx, dy)) continue; // 차 역주행 금지(목표 진입은 허용)
       if (dg) { if (!tileAllowed(idx(cx + dx, cy), mode, goal) && !tileAllowed(idx(cx, cy + dy), mode, goal)) continue; }
       const c = stepCost(cur, ni, mode, dg); if (!isFinite(c)) continue;
       const t = gS[cur] + c; if (t < gS[ni]) { gS[ni] = t; came[ni] = cur; push(t + h(ni), ni); }

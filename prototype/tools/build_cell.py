@@ -56,6 +56,7 @@ KIND = [0] * (W * H)         # 0 ground 1 road 2 footway 3 steps 4 building 5 pa
 RCLS = [0] * (W * H)         # road class rank
 LANES = [0] * (W * H)
 ONEWAY = [0] * (W * H)
+ODIR = [-1] * (W * H)  # 일방통행 진행 방향 코드 0..7 (0=동, 2=남, 4=서, 6=북, 홀수=대각), -1=없음/양방향
 CROSS = [0] * (W * H)
 STEPS = [0] * (W * H)
 RNAME = {}
@@ -65,13 +66,26 @@ DEFAULT_LANES = {'primary': 3, 'primary_link': 1, 'secondary': 2, 'secondary_lin
                  'living_street': 1, 'unclassified': 1, 'service': 1}
 
 def supercover(x0, y0, x1, y1):
-    """float 좌표 선분이 지나는 타일 목록"""
-    pts = []
+    """float 좌표 선분이 지나는 타일 전부(4-연결 체인, Amanatides-Woo 격자 순회).
+    v7까지의 2배 샘플링은 모서리만 닿는 대각 연결을 만들어 차 경로가 끊겼다(검수 P2)."""
+    x, y = math.floor(x0), math.floor(y0)
+    xe, ye = math.floor(x1), math.floor(y1)
     dx, dy = x1 - x0, y1 - y0
-    n = int(max(abs(dx), abs(dy)) * 2) + 1
-    for i in range(n + 1):
-        t = i / n
-        pts.append((int(x0 + dx * t), int(y0 + dy * t)))
+    sx = 1 if dx > 0 else -1
+    sy = 1 if dy > 0 else -1
+    inf = float('inf')
+    tx = ((x + (1 if dx > 0 else 0)) - x0) / dx if dx else inf
+    ty = ((y + (1 if dy > 0 else 0)) - y0) / dy if dy else inf
+    ddx = abs(1 / dx) if dx else inf
+    ddy = abs(1 / dy) if dy else inf
+    pts = [(x, y)]
+    guard = 0
+    while (x, y) != (xe, ye) and guard < 100000:
+        if tx < ty:
+            x += sx; tx += ddx
+        else:
+            y += sy; ty += ddy
+        pts.append((x, y)); guard += 1
     return pts
 
 def inb(x, y): return 0 <= x < W and 0 <= y < H
@@ -88,10 +102,17 @@ for e in osm:
     try: lanes = int(lanes)
     except: lanes = DEFAULT_LANES.get(hw, 0)
     width = 2 if lanes >= 4 else 1
-    ow = 1 if t.get('oneway') == 'yes' else 0
+    ow_tag = t.get('oneway', '')
+    ow = 1 if ow_tag in ('yes', 'true', '1', '-1') else 0
+    ow_rev = ow_tag == '-1'  # 노드 순서 역방향
     pts = [to_tile(p['lat'], p['lon']) for p in e.get('geometry', [])]
     roads_drawn += 1
     for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+        if ow:
+            vx, vy = (ax - bx, ay - by) if ow_rev else (bx - ax, by - ay)
+            dcode = int(round(math.atan2(vy, vx) / (math.pi / 4))) % 8 if (vx or vy) else -1
+        else:
+            dcode = -1
         for (x, y) in supercover(ax, ay, bx, by):
             cells = [(x, y)]
             if width == 2:
@@ -102,7 +123,7 @@ for e in osm:
                 if KIND[i] == 4: continue
                 if hw == 'steps': STEPS[i] = 1
                 if rank >= RCLS[i]:
-                    RCLS[i] = rank; LANES[i] = lanes; ONEWAY[i] = ow
+                    RCLS[i] = rank; LANES[i] = lanes; ONEWAY[i] = ow; ODIR[i] = dcode
                     if hw == 'steps': KIND[i] = 3
                     elif rank <= 3: KIND[i] = 2
                     else: KIND[i] = 1
@@ -272,7 +293,7 @@ out = {
              'bbox': {'lat0': LAT0, 'lat1': LAT1, 'lon0': LON0, 'lon1': LON1},
              'sources': ['OpenStreetMap (ODbL) via Overpass 2026-10-11', 'OpenTopoData SRTM 30m', '네이버 부동산·네이버지도 단지정보 2026-10-11', '호갱노노 단지 페이지(수동 열람·요약) 2026-10-11', '뉴스(한국경제·서울신문·헤럴드경제 등)'],
              'roads_drawn': roads_drawn},
-    'elev': E, 'kind': KIND, 'rcls': RCLS, 'lanes': LANES, 'oneway': ONEWAY, 'cross': CROSS, 'steps': STEPS,
+    'elev': E, 'kind': KIND, 'rcls': RCLS, 'lanes': LANES, 'oneway': ONEWAY, 'odir': ODIR, 'cross': CROSS, 'steps': STEPS,
     'rname': {str(k): v for k, v in RNAME.items()},
     'buildings': buildings, 'stations': stations, 'exits': exits, 'pois': pois, 'complexes': complexes,
     'areas': [{'kind': k, 'name': n, 'poly': [[round(x, 2), round(y, 2)] for x, y in p]} for k, n, p in areas],

@@ -118,6 +118,7 @@ article hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
 4. **코덱스 빌드(저장소 `codex/`, Three.js 저폴리곤 디오라마·체험 그래프)와 겹치지 않는다.** 이쪽은 Canvas 2D + 실제 OSM/SRTM 격자 + 타일 A*. 두 결과물은 서로 참고만 하고 코드를 섞지 않는다.
 5. **그림체는 `STYLE`로 고른다**(`src/02_world.js` 맨 위 `STYLE_DEFAULT` + 주소 해시 덮어쓰기, 스타일 랩 '선택 조합 복사' JSON의 id와 같다). 캐릭터 `char`: `pixelcrew`(사용자 본인 프로젝트 PixelCrew Desk의 24×22 도트 유령, `src/vendor/pixelcrew_sprites.js` 원문·MIT) 또는 `villager`(동물 귀 주민, 코드 드로잉). 월드 `world`: `terrace`(8m 단 지형, 아이소), `sketch`(연필 스케치, 아이소), `watermap`(수채 지도, **탑뷰** — 투영·입력·정적 레이어가 바뀌고 고도·절벽·건물 높이는 그리지 않음). 건물은 `cottage`(박공·처마·굴뚝·창틀, 탑뷰에선 평면 워시) 하나다. 기본 조합 = pixelcrew × cottage × sketch. 주소 끝에 `#villager-watermap`처럼 붙이거나 서랍 단지 탭의 그림체 선택기를 쓰면 새로고침과 함께 바뀐다. 어느 조합이든 경로·카드·수치는 같다(§12).
 6. 2026-10-12 사용자 지시로 GitHub `flykimjiwon/aptHanimo`(공개)에 커밋·푸시했다(`imjang_world_2026-10-11/` 폴더 = 저장소 루트, 메타 repo 안의 서브 repo). 이후 커밋·푸시도 사용자가 시킬 때만. 같은 저장소의 `codex/`는 Codex 독립 구현(한바퀴 V5)이며 이 가이드가 말하는 "코덱스 빌드"가 그것이다.
+8. **v8(10-12 낮)**: OSM 재취득·재굽기(진짜 supercover, 일방통행 방향 `odir`), 차 역주행 금지 `moveAllowed`, 테스트 `tests/run.mjs`(149 검사)·`tools/bake.sh`. 골든값 `tests/golden.json`이 기준 구간의 정답지다 — 굽기·규칙을 바꾸면 먼저 테스트를 돌리고 의도한 변화일 때만 `--update`.
 7. **v7(10-12 오전, 검수 반영)**: 줄번호 대신 **파일·함수 이름**으로 가리킨다(소스가 v4~v6에서 많이 자라 줄번호가 최대 400행 틀어졌었다). 계단 판정은 `isStairs()`(04_route.js) 하나로 통일, 카드 매핑은 `CARD_CATS`(05_dynamic.js), 데이터 문자열은 `esc()`로 넣는다. 변경 목록은 `PROTOTYPE_NOTES.md` 머리말 v7.
 
 ## 0-1. v2~v6에서 바뀐 것 — 사용자 피드백 "자유분방하고 귀엽거나 동물의숲 느낌이 없다"에 대한 대응
@@ -186,7 +187,9 @@ prototype/
 │  ├─ complexes.json             # 손입력 단지 사실·카드·출입구(§4) — 편집 대상
 │  ├─ elev_srtm.json / elev_srtm_east.json   # OpenTopoData srtm30m 격자(50m 간격)
 │  └─ overpass_query.ql          # Overpass 질의(bbox 37.5520–37.5710 / 127.0100–127.0420)
-│     (osm3.json 3.4MB 원본은 저장소 미포함 — 질의 재실행으로 복원)
+│     (osm3.json 3.4MB 원본은 저장소 미포함 — `tools/bake.sh --refresh`로 복원)
+│  └─ bake.sh                    # 취득(선택)→build_cell→assemble/build→tests 한 번에
+│  tests/run.mjs · tests/golden.json  # 경로 규칙·데이터 무결성 검사(node, 의존성 0)와 기준 구간 골든값
 ├─ stylelab/                     # 스타일 랩: src/(6조각) → build_stylelab.py → index.html·dev.html, 카탈로그 STYLE_LAB_2026-10-11.md
 ├─ qa/                           # v1/v2/v3 캡처 9장 + 스타일 랩 5장 + v4 캡처 7장 + v5 캡처 7장 + v6 캡처 5장
 ├─ PROTOTYPE_NOTES.md            # 제작 방법·출처·규칙·검증 로그
@@ -197,7 +200,7 @@ prototype/
 | 단계 | 명령/도구 | 입력 → 출력 | 소요 |
 |---|---|---|---|
 | ① 단지 사실 | Ego 브라우저 수동 열람(네이버지도 단축링크·네이버부동산 `complexes/{id}?tab=complex-info`·호갱노노 `apt/{id}`) → 요약 손입력 | `tools/complexes.json` | 단지당 10~15분 |
-| ② 지리 | `curl -d @tools/overpass_query.ql https://overpass.private.coffee/api/interpreter > tools/osm3.json` (공식 서버는 "too busy" 잦음) | osm3.json(5,090 요소) | 1~2분 |
+| ② 지리 | `bash tools/bake.sh --refresh` (내부: `curl -A '<UA>' -H 'Accept: application/json' --data-urlencode data@tools/overpass_query.ql https://overpass-api.de/api/interpreter` — UA 없으면 406) | osm3.json(2026-10-12 기준 5,146 요소) | 10초~2분 |
 | ③ 고도 | OpenTopoData `srtm30m` 100점/요청·1초 간격(open-elevation은 600점 뒤 429) | `elev_srtm*.json` | 2~3분 |
 | ④ 굽기 | `python3 tools/build_cell.py` | `cell_data.json` | 수초 |
 | ⑤ 조립 | `python3 assemble.py && python3 build.py` | template.html → index.html·dev.html | 즉시 |
@@ -215,7 +218,8 @@ prototype/
 | `kind` | int[] | 0 땅 · 1 도로 · 2 보도 · 3 계단 · 4 건물 · 5 공원 · 6 학교 · 7 공사구역 (8 물은 예약, 이 셀엔 없음) |
 | `rcls` | int[] | 도로 등급 9 primary · 8 secondary/primary_link · 7 tertiary/secondary_link · 5 residential/living/unclassified · 4 service · 3 pedestrian · 2 footway/cycleway/path · 1 steps |
 | `lanes` | int[] | OSM lanes, 없으면 등급 기본값(primary 3·secondary 2·residential 1) |
-| `oneway` | int[] | 1=일방(현재 경로 비용에 미반영 — 마스터 MOV004에서 처리) |
+| `oneway` | int[] | 1=일방통행 플래그(가장 높은 등급 도로 기준) |
+| `odir` | int[] | 일방통행 진행 방향 코드 0..7(0=동·1=남동·2=남·…·6=북), -1=없음. OSM `oneway=-1`은 노드 역순. v8 굽기부터. 차 경로 `moveAllowed`가 읽는다(MOV004) |
 | `cross` | int[] | 횡단보도 노드가 있는 타일 |
 | `steps` | int[] | 계단 way가 지나는 타일(kind 3이 아니어도 설정될 수 있음) |
 | `rname` | `{ "i": 도로명 }` | 이름 있는 도로 타일만 |
@@ -253,7 +257,7 @@ prototype/
 ## 5. 이동·시간 규칙(마스터 §7 대응) — `src/04_route.js`(속도 상수 `SPEED`는 02_world.js)
 - 속도 km/h: 도보 4.0 · 유모차 3.2 · 자전거 12 · 차 22. `stepCost(from,to,mode,diag)` = 거리/속도 × 경사계수 + 가산.
 - 경사계수 `slopeFactor` (경사 % = Δ고도/거리): 도보 <5 ×1 · <9 ×1.1 · <15 ×1.4 · ≥15 ×1.6 / 유모차 <2 ×1 · <5 ×1.11 · <9 ×1.33 · <15 ×2.0 · ≥15 불가 / 자전거 <2 ×1 · <5 ×1.18 · <9 ×1.54 · <15 ×2.5 · ≥15 불가 / 내리막 자전거 ×0.8·유모차 ×1.1. 차 무관.
-- 통행 `tileAllowed`: 건물 불가. 차는 도로 등급 4+만. 비차량은 학교·공사구역 불가, 계단은 도보만. **계단 판정 `isStairs(i)`** = steps 플래그가 있고, 대로(등급 8+) 타일에 겹친 계단(지하도·육교 계단, 4칸)이 아닌 것 — 25m 타일 해상도 한계로 대로 보행은 막지 않는다. (v6까지는 `K≠ROAD` 조건이라 굽기에서 ROAD로 분류된 계단 24칸을 유모차가 통과했다.)
+- 통행 `tileAllowed`: 건물 불가. 차는 도로 등급 4+만. 비차량은 학교·공사구역 불가, 계단은 도보만. **차 일방통행 `moveAllowed(from,to,mode,dx,dy)`**(v8): 출발·도착 타일 중 일방통행인 곳의 `odir` 벡터와 이동 벡터의 내적이 음수면 금지(수직은 허용, 목표 타일 진입은 허용). 보행 수단 무관. A*·키보드 이동 둘 다 통과. **계단 판정 `isStairs(i)`** = steps 플래그가 있고, 대로(등급 8+) 타일에 겹친 계단(지하도·육교 계단, 4칸)이 아닌 것 — 25m 타일 해상도 한계로 대로 보행은 막지 않는다. (v6까지는 `K≠ROAD` 조건이라 굽기에서 ROAD로 분류된 계단 24칸을 유모차가 통과했다.)
 - 가산: 길 없는 땅 ×1.5, 대로변 보행 ×1.1, 계단 ×1.6, 자전거 보도 ×1.3, 대로 진입 횡단 +0.5분(자전거 +0.33), 차 러시아워(시계 am/pm) 등급 7+ ×2.0, 차 신호 +0.67분, 차 주차 +3분(`routeStats`; v7부터 재생 타임라인에도 마지막 타일 3분 정지로 포함).
 - `astar` 8방향·이진힙·대각선 코너컷 금지·20만 반복 상한. 결과 `routeStats` = {min, dist, up, cross, stairs, maxGrade}.
 - 재생: `TIME_SCALE=22`(실제 1초=월드 22초), `tickTravel`이 누적 비용 `seg[]`로 위치 보간, 경사 9%+·계단·대로 횡단에서 토스트, 건너뛰기는 `t0=-1e12`.

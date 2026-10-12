@@ -1,0 +1,149 @@
+{
+ "generated": "2026-10-12",
+ "metrics": {
+  "HYBER": {
+   "exit": "신당역 3번 출구",
+   "exitWalk": {
+    "min": 8,
+    "dist": 496,
+    "up": 19,
+    "cross": 0,
+    "stairs": 0
+   },
+   "exitStroller": {
+    "min": 11,
+    "dist": 496,
+    "up": 19,
+    "cross": 0,
+    "stairs": 0
+   },
+   "exitCar": {
+    "min": 4,
+    "dist": 516,
+    "up": 20,
+    "cross": 0,
+    "stairs": 0
+   },
+   "elem": "신당초등학교",
+   "elemWalk": {
+    "min": 7,
+    "dist": 454,
+    "up": 9,
+    "cross": 0,
+    "stairs": 0
+   },
+   "mart": "하임마트",
+   "martWalk": {
+    "min": 9,
+    "dist": 521,
+    "up": 1,
+    "cross": 1,
+    "stairs": 0
+   },
+   "med": "백화점약국",
+   "medWalk": {
+    "min": 10,
+    "dist": 654,
+    "up": 3,
+    "cross": 1,
+    "stairs": 0
+   }
+  },
+  "WJAI": {
+   "exit": "상왕십리역 6번 출구",
+   "exitWalk": {
+    "min": 11,
+    "dist": 624,
+    "up": 47,
+    "cross": 0,
+    "stairs": 0
+   },
+   "exitStroller": {
+    "min": 19,
+    "dist": 697,
+    "up": 33,
+    "cross": 1,
+    "stairs": 0
+   },
+   "exitCar": {
+    "min": 5,
+    "dist": 660,
+    "up": 51,
+    "cross": 0,
+    "stairs": 0
+   },
+   "elem": "신당초등학교",
+   "elemWalk": {
+    "min": 7,
+    "dist": 396,
+    "up": 2,
+    "cross": 1,
+    "stairs": 0
+   },
+   "mart": "헬스디씨마트",
+   "martWalk": {
+    "min": 10,
+    "dist": 574,
+    "up": 20,
+    "cross": 0,
+    "stairs": 0
+   },
+   "med": "자연생약국",
+   "medWalk": {
+    "min": 12,
+    "dist": 749,
+    "up": 9,
+    "cross": 1,
+    "stairs": 0
+   }
+  },
+  "LACERVO": {
+   "exit": "왕십리역 9번 출구",
+   "exitWalk": {
+    "min": 5,
+    "dist": 341,
+    "up": 8,
+    "cross": 0,
+    "stairs": 0
+   },
+   "exitStroller": {
+    "min": 8,
+    "dist": 341,
+    "up": 8,
+    "cross": 0,
+    "stairs": 0
+   },
+   "exitCar": {
+    "min": 6,
+    "dist": 624,
+    "up": 12,
+    "cross": 1,
+    "stairs": 0
+   },
+   "elem": "서울행당초등학교",
+   "elemWalk": {
+    "min": 4,
+    "dist": 231,
+    "up": 2,
+    "cross": 0,
+    "stairs": 0
+   },
+   "mart": "E-편한마트",
+   "martWalk": {
+    "min": 2,
+    "dist": 121,
+    "up": 0,
+    "cross": 0,
+    "stairs": 0
+   },
+   "med": "아이들소아과",
+   "medWalk": {
+    "min": 5,
+    "dist": 316,
+    "up": 7,
+    "cross": 0,
+    "stairs": 0
+   }
+  }
+ }
+}

@@ -4,6 +4,8 @@ if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D
 const DATA = JSON.parse(document.getElementById('cell').textContent);
 const W = DATA.meta.W, H = DATA.meta.H, TILE_M = DATA.meta.tile_m;
 const E = DATA.elev, K = DATA.kind, R = DATA.rcls, LN = DATA.lanes, CR = DATA.cross, ST = DATA.steps;
+const OW = DATA.oneway || null, OD = DATA.odir || null; // 일방통행 플래그·진행 방향 코드(0=동·2=남·4=서·6=북, 홀수=대각). odir은 v8 굽기부터 — 없으면 차 역주행 검사 생략
+const DIRV = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]];
 const idx = (x, y) => y * W + x;
 const inb = (x, y) => x >= 0 && y >= 0 && x < W && y < H;
 const TW = 32, TH = 16, ZS = 1.6, LH = 2.4;      // 타일 px, 고도 px/m, 층당 px
