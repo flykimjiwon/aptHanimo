@@ -169,29 +169,41 @@ function tickNpcs(dt) {
 
 // ---------- 그리기 ----------
 let lastTs = 0;
+const skyCache = new Map();
+function drawOnewayArrows() { // 차 모드: 일방통행 타일에 진행 방향 화살표(OSM oneway, 추정). 월드 좌표계 안에서 호출
+  ctx.fillStyle = 'rgba(40,70,140,.55)'; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 0.8 / S.zoom; const s = 7 / S.zoom; // 화면 7px
+  for (let i = 0; i < W * H; i++) {
+    if (!OW[i] || OD[i] < 0 || K[i] !== KIND.ROAD) continue;
+    const x = i % W, y = (i / W) | 0; const c = proj(x + 0.5, y + 0.5, zCenter(i) + 0.2); const sc = worldToScreen(c[0], c[1]); if (sc[0] < -20 || sc[1] < -20 || sc[0] > VW + 20 || sc[1] > VH + 20) continue;
+    const v = DIRV[OD[i]]; const q = proj(x + 0.5 + v[0] * 0.5, y + 0.5 + v[1] * 0.5, zCenter(i) + 0.2); let dx = q[0] - c[0], dy = q[1] - c[1]; const L = Math.hypot(dx, dy) || 1; dx /= L; dy /= L;
+    ctx.beginPath(); ctx.moveTo(c[0] + dx * s, c[1] + dy * s); ctx.lineTo(c[0] - dx * s * .6 + dy * s * .6, c[1] - dy * s * .6 - dx * s * .6); ctx.lineTo(c[0] - dx * s * .6 - dy * s * .6, c[1] - dy * s * .6 + dx * s * .6); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+}
 function draw(ts) {
   if (!staticCv) return;
   const dt = Math.min(0.1, (ts - lastTs) / 1000 || 0); lastTs = ts; tickNpcs(dt);
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  const night = S.night; const sky = ctx.createLinearGradient(0, 0, 0, VH); if (night) { sky.addColorStop(0, '#1b2238'); sky.addColorStop(1, '#2a3450'); } else if (SK || TOP) { const pc = S.clock === 'pm' ? C.paper2 : C.paper; sky.addColorStop(0, pc); sky.addColorStop(1, pc); } else if (S.clock === 'pm') { sky.addColorStop(0, '#f6dfc4'); sky.addColorStop(1, '#f1e6cf'); } else { sky.addColorStop(0, '#d9efe3'); sky.addColorStop(1, '#eef3dc'); }
+  const night = S.night; const skyKey = (night ? 'n' : 'd') + (SK || TOP ? 's' : 'i') + S.clock + '|' + VH; let sky = skyCache.get(skyKey); if (!sky) { sky = ctx.createLinearGradient(0, 0, 0, VH); if (night) { sky.addColorStop(0, '#1b2238'); sky.addColorStop(1, '#2a3450'); } else if (SK || TOP) { const pc = S.clock === 'pm' ? C.paper2 : C.paper; sky.addColorStop(0, pc); sky.addColorStop(1, pc); } else if (S.clock === 'pm') { sky.addColorStop(0, '#f6dfc4'); sky.addColorStop(1, '#f1e6cf'); } else { sky.addColorStop(0, '#d9efe3'); sky.addColorStop(1, '#eef3dc'); } skyCache.set(skyKey, sky); } // 하늘 그라데이션은 (밤·스타일·시계·높이)별로 한 번만 만든다(v9)
   ctx.fillStyle = sky; ctx.fillRect(0, 0, VW, VH);
   if (S.follow) { const p = proj(S.px + 0.5, S.py + 0.5, surfZ(S.px + 0.5, S.py + 0.5)); S.camX += (p[0] - S.camX) * 0.18; S.camY += (p[1] - 10 - S.camY) * 0.18; }
   ctx.translate(VW / 2, VH / 2); ctx.scale(S.zoom, S.zoom); ctx.translate(-S.camX, -S.camY);
   ctx.imageSmoothingEnabled = true;
   ctx.drawImage(staticCv, WX0, WY0, (WX1 - WX0), (WY1 - WY0));
+  if (S.mode === 'car' && OW && OD && S.zoom >= 1.1) drawOnewayArrows(); // v9
   // 경로 미리보기(점선 + 깃발)
   if (S.traveling) { const t = S.traveling; ctx.strokeStyle = 'rgba(240,138,102,.95)'; ctx.lineWidth = 2.2 / S.zoom + 1; ctx.lineCap = 'round'; ctx.setLineDash([5, 5]); ctx.beginPath(); t.path.forEach((i, n) => { const x = i % W, y = (i / W) | 0; const p = proj(x + 0.5, y + 0.5, zCenter(i) + 0.3); n ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.stroke(); ctx.setLineDash([]); const gi = t.path[t.path.length - 1]; const gp = proj((gi % W) + 0.5, ((gi / W) | 0) + 0.5, zCenter(gi)); drawFlag(gp[0], gp[1], '#d95f4b'); }
   // NPC(가림 처리) → 플레이어(가림 처리)
   for (const n of S.npcs) { const z = surfZ(n.x, n.y); const p = proj(n.x, n.y + (TOP ? 0.3 : 0), z); const sp = worldToScreen(p[0], p[1]); if (sp[0] < -60 || sp[1] < -60 || sp[0] > VW + 60 || sp[1] > VH + 60) continue; const st = n.idle ? n.mood : (n.wait > 0 ? 'idle' : 'walk'); drawActorOccluded(ctx, p[0], p[1], n.x + n.y, 14, 30, (g) => drawActor(g, p[0], p[1], {who:n.who, face:n.face, state:st, t:ts / 1000, seed:n.seed})); }
   { const z = surfZ(S.px + 0.5, S.py + 0.5); const p = proj(S.px + 0.5, S.py + 0.5 + (TOP ? 0.3 : 0), z); const walking = !!S.traveling; drawActorOccluded(ctx, p[0], p[1], S.px + S.py + 1, 24, 36, (g) => drawParty(g, p[0], p[1], ts, walking, S.face, S.mode, S.concept)); }
   // 밤: 틴트 + 불빛
-  if (night) { ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.fillStyle = 'rgba(20,30,70,.42)'; ctx.fillRect(0, 0, VW, VH); ctx.translate(VW / 2, VH / 2); ctx.scale(S.zoom, S.zoom); ctx.translate(-S.camX, -S.camY); ctx.globalCompositeOperation = 'lighter'; ctx.drawImage(lightsCv, WX0, WY0, (WX1 - WX0), (WY1 - WY0)); ctx.globalCompositeOperation = 'source-over'; }
+  if (night) { ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.fillStyle = 'rgba(20,30,70,.42)'; ctx.fillRect(0, 0, VW, VH); ctx.translate(VW / 2, VH / 2); ctx.scale(S.zoom, S.zoom); ctx.translate(-S.camX, -S.camY); ctx.globalCompositeOperation = 'lighter'; if (lightsCv) ctx.drawImage(lightsCv, WX0, WY0, (WX1 - WX0), (WY1 - WY0)); ctx.globalCompositeOperation = 'source-over'; }
   // 표식(화면 좌표, 크기 고정)
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0); drawMarkers();
   drawMinimap();
 }
 function drawFlag(x, y, col) { ctx.fillStyle = 'rgba(40,30,20,.2)'; ctx.beginPath(); ctx.ellipse(x, y + 1, 5, 2.2, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#4a3b2f'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 16); ctx.stroke(); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x, y - 16); ctx.lineTo(x + 9, y - 13); ctx.lineTo(x, y - 10); ctx.closePath(); ctx.fill(); }
-function roundTag(x, y, text, opts) { const o = opts || {}; ctx.font = `${o.bold ? 600 : 500} ${o.size || 10}px "Noto Sans KR",sans-serif`; const tw = ctx.measureText(text).width; const pad = o.pad || 6; const w = tw + pad * 2 + (o.dot ? 10 : 0), h = (o.size || 10) + 8; const x0 = x - w / 2, y0 = y - h; ctx.fillStyle = o.bg || 'rgba(255,253,246,.94)'; ctx.strokeStyle = o.border || 'rgba(74,59,47,.35)'; ctx.lineWidth = o.lw || 1; ctx.beginPath(); ctx.roundRect(x0, y0, w, h, h / 2); ctx.fill(); ctx.stroke(); if (o.dot) { ctx.fillStyle = o.dot; ctx.beginPath(); ctx.arc(x0 + pad + 3, y0 + h / 2, 3.2, 0, 7); ctx.fill(); } ctx.fillStyle = o.color || '#4a3b2f'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(text, x0 + pad + (o.dot ? 10 : 0), y0 + h / 2 + 0.5); ctx.textBaseline = 'alphabetic'; return [x0, y0, w, h]; }
+const twCache = new Map(); const textW = (font, text) => { const k = font + '|' + text; let w = twCache.get(k); if (w === undefined) { w = ctx.measureText(text).width; if (twCache.size > 3000) twCache.clear(); twCache.set(k, w); } return w; }; // 라벨 폭 메모이즈(v9)
+function roundTag(x, y, text, opts) { const o = opts || {}; ctx.font = `${o.bold ? 600 : 500} ${o.size || 10}px "Noto Sans KR",sans-serif`; const tw = textW(ctx.font, text); const pad = o.pad || 6; const w = tw + pad * 2 + (o.dot ? 10 : 0), h = (o.size || 10) + 8; const x0 = x - w / 2, y0 = y - h; ctx.fillStyle = o.bg || 'rgba(255,253,246,.94)'; ctx.strokeStyle = o.border || 'rgba(74,59,47,.35)'; ctx.lineWidth = o.lw || 1; ctx.beginPath(); ctx.roundRect(x0, y0, w, h, h / 2); ctx.fill(); ctx.stroke(); if (o.dot) { ctx.fillStyle = o.dot; ctx.beginPath(); ctx.arc(x0 + pad + 3, y0 + h / 2, 3.2, 0, 7); ctx.fill(); } ctx.fillStyle = o.color || '#4a3b2f'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(text, x0 + pad + (o.dot ? 10 : 0), y0 + h / 2 + 0.5); ctx.textBaseline = 'alphabetic'; return [x0, y0, w, h]; }
 function drawMarkers() {
   const showLabels = S.zoom >= 1.25; const bigLabels = S.zoom >= 1.8;
   const vis = (sx, sy) => sx > -60 && sy > -60 && sx < VW + 60 && sy < VH + 60;
@@ -304,8 +316,8 @@ $('#dialog').addEventListener('click', () => { $('#dialog').classList.remove('sh
 const cur = () => DATA.complexes.find(c => c.id === S.complex) || DATA.complexes[0];
 function setMode(m) { S.mode = m; document.querySelectorAll('#dock button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m))); $('#stMode').textContent = MODE_KO[m] + ' · 실제 환산'; }
 document.querySelectorAll('#dock button').forEach(b => b.addEventListener('click', () => { if (S.traveling) { toast('이동 중에는 수단을 바꿀 수 없어요'); return; } setMode(b.dataset.mode); }));
-$('#btnNight').addEventListener('click', () => { S.night = !S.night; $('#btnNight').setAttribute('aria-pressed', String(S.night)); if (S.night) { S.events.push({night:true}); evalChecklist(); say('🌙 밤 모드는 연출이에요. 창문 불빛은 가짜고, 가로등·CCTV 데이터는 이 프로토에 없어요.'); } });
-const clockClick = () => { S.clock = S.clock === 'am' ? 'day' : S.clock === 'day' ? 'pm' : 'am'; $('#chipClock').innerHTML = S.clock === 'am' ? '🕗 <b>아침 08시</b>' : S.clock === 'day' ? '🕑 <b>낮 14시</b>' : '🕕 <b>저녁 18시</b>'; toast(S.clock === 'day' ? '낮: 차 정체 없음(가정)' : '출퇴근 시간대: 간선도로 차 속도 ×0.5(모델 가정)'); };
+$('#btnNight').addEventListener('click', () => { S.night = !S.night; $('#btnNight').setAttribute('aria-pressed', String(S.night)); if (S.night && !buildLights()) toast('불빛 레이어를 만들지 못했어요(메모리 부족). 틴트만 적용해요'); if (S.night) { S.events.push({night:true}); evalChecklist(); say('🌙 밤 모드는 연출이에요. 창문 불빛은 가짜고, 가로등·CCTV 데이터는 이 프로토에 없어요.'); } });
+const clockClick = () => { S.clock = S.clock === 'am' ? 'day' : S.clock === 'day' ? 'pm' : 'am'; $('#chipClock').innerHTML = S.clock === 'am' ? '🕗 <b>아침 08시</b>' : S.clock === 'day' ? '🕑 <b>낮 14시</b>' : '🕕 <b>저녁 18시</b>'; toast(S.clock === 'day' ? '낮: 차 정체 없음(가정)' : '출퇴근 시간대: 간선도로 차 속도 ×0.5(모델 가정)'); computeMetrics(); if (!$('#drawer').classList.contains('hidden') && tab === 'cmp') renderDrawer(); }; // 시계는 차 기준 구간(비교표)에 반영(v9)
 $('#chipClock').addEventListener('click', clockClick); $('#chipClock').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clockClick(); } });
 $('#btnSkip').addEventListener('click', () => { if (S.traveling) { S.traveling.t0 = -1e12; } });
 $('#btnCenter').addEventListener('click', () => { S.follow = true; });

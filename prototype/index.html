@@ -494,12 +494,25 @@ function drawBuilding(g, gl, b, cx) {
   // 동 라벨(단지)
   if (!house && cx && b.label) { g.font = '600 7px "Noto Sans KR",sans-serif'; g.textAlign = 'center'; const tw = g.measureText(b.label).width + 6; g.fillStyle = 'rgba(255,253,246,.92)'; g.beginPath(); g.roundRect(tcx - tw / 2, ridgeTop - 12, tw, 9, 3); g.fill(); g.fillStyle = '#4a3b2f'; g.fillText(b.label, tcx, ridgeTop - 5); }
 }
+try { self.__hasLights = () => !!lightsCv; } catch (e) {} // 자동 검증용
+function makeLightsCtx() { lightsCv = document.createElement('canvas'); lightsCv.width = Math.ceil((WX1 - WX0) * SL); lightsCv.height = Math.ceil((WY1 - WY0) * SL); const gl = lightsCv.getContext('2d'); if (!gl) { lightsCv = null; return null; } gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL); return gl; }
+function drawStreetLamps(gl) { // 가로등 불빛(야간): 간선도로 일부 타일
+  for (let i = 0; i < W * H; i++) { if (K[i] === KIND.ROAD && R[i] >= 7 && hash(i % W, (i / W) | 0, 13) < 0.1) { const c = tileCenter(i); const gr = gl.createRadialGradient(c[0], c[1], 1, c[0], c[1], 16); gr.addColorStop(0, 'rgba(255,220,140,.45)'); gr.addColorStop(1, 'rgba(255,220,140,0)'); gl.fillStyle = gr; gl.fillRect(c[0] - 16, c[1] - 16, 32, 32); } }
+}
+function buildLights() { // 밤 모드 첫 진입: 건물 창·가로등 불빛만 다시 그린다. 정적 레이어는 그대로(1×1 더미 컨텍스트로 drawBuilding을 다시 돌려 gl 쪽만 채운다)
+  if (lightsCv) return true; const gl = makeLightsCtx(); if (!gl) return false;
+  const dummy = document.createElement('canvas'); dummy.width = 1; dummy.height = 1; const g0 = dummy.getContext('2d'); if (!g0) return false; g0.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS);
+  const cmap = Object.fromEntries(DATA.complexes.map(c => [c.id, c]));
+  for (const b of BLDS) drawBuilding(g0, gl, b, cmap[b.complex]);
+  drawStreetLamps(gl); return true;
+}
 function buildStatic() {
   const w = Math.ceil((WX1 - WX0) * SS), h = Math.ceil((WY1 - WY0) * SS);
   staticCv = document.createElement('canvas'); staticCv.width = w; staticCv.height = h; const g = staticCv.getContext('2d');
-  lightsCv = document.createElement('canvas'); lightsCv.width = Math.ceil((WX1 - WX0) * SL); lightsCv.height = Math.ceil((WY1 - WY0) * SL); const gl = lightsCv.getContext('2d');
-  if (!g || !gl) throw new Error(`정적 레이어 캔버스를 만들지 못했어요(${w}×${h}px, 메모리 부족 가능)`); // bootSafe가 받아서 고지
-  g.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS); gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL);
+  if (!g) throw new Error(`정적 레이어 캔버스를 만들지 못했어요(${w}×${h}px, 메모리 부족 가능)`); // bootSafe가 받아서 고지
+  g.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS);
+  const gl = S.night ? makeLightsCtx() : null; // 불빛 레이어(약 16MB)는 밤 모드 첫 진입 때 buildLights()로 지연 생성(v9). gl=null이면 drawBuilding·가로등이 불빛을 건너뛴다
+  if (gl) gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL);
   if (TOP) { // 수채 지도 패스: 종이 결 → 블롭 타일(행 순서) → 손그림 길(이웃 연결선·지터·계단·횡단보도). 건물·나무는 아래 공통 루프(평면, 가림 목록 없음)
     g.fillStyle = 'rgba(90,70,50,.05)'; const n = Math.round((WX1 - WX0) * (WY1 - WY0) / 450); for (let i = 0; i < n; i++) g.fillRect(WX0 + hash(i, 1, 91) * (WX1 - WX0), WY0 + hash(i, 2, 92) * (WY1 - WY0), 1.2, 1.2);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) drawTile(g, x, y);
@@ -526,7 +539,7 @@ function buildStatic() {
     }
   }
   // 가로등 불빛(야간): 간선도로 일부 타일
-  for (let i = 0; i < W * H; i++) { if (K[i] === KIND.ROAD && R[i] >= 7 && hash(i % W, (i / W) | 0, 13) < 0.1) { const c = tileCenter(i); const gr = gl.createRadialGradient(c[0], c[1], 1, c[0], c[1], 16); gr.addColorStop(0, 'rgba(255,220,140,.45)'); gr.addColorStop(1, 'rgba(255,220,140,0)'); gl.fillStyle = gr; gl.fillRect(c[0] - 16, c[1] - 16, 32, 32); } }
+  if (gl) drawStreetLamps(gl);
   // 구역 라벨(공원·학교)
   for (const a of DATA.areas) { if (!a.name || a.kind === 'construction') continue; const cx = a.poly.reduce((s, p) => s + p[0], 0) / a.poly.length, cy = a.poly.reduce((s, p) => s + p[1], 0) / a.poly.length; if (!inb(cx | 0, cy | 0)) continue; const p = proj(cx, cy, surfZ(cx, cy)); g.font = '600 8.5px "Noto Sans KR",sans-serif'; g.textAlign = 'center'; const tw = g.measureText(a.name).width + 10; g.fillStyle = 'rgba(255,253,246,.9)'; g.beginPath(); g.roundRect(p[0] - tw / 2, p[1] - 6, tw, 12, 6); g.fill(); g.fillStyle = a.kind === 'park' ? '#2f7a3a' : '#8a6a1f'; g.fillText(a.name, p[0], p[1] + 3); }
   OCC.sort((a, b) => a.key - b.key);
@@ -1079,29 +1092,41 @@ function tickNpcs(dt) {
 
 // ---------- 그리기 ----------
 let lastTs = 0;
+const skyCache = new Map();
+function drawOnewayArrows() { // 차 모드: 일방통행 타일에 진행 방향 화살표(OSM oneway, 추정). 월드 좌표계 안에서 호출
+  ctx.fillStyle = 'rgba(40,70,140,.55)'; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 0.8 / S.zoom; const s = 7 / S.zoom; // 화면 7px
+  for (let i = 0; i < W * H; i++) {
+    if (!OW[i] || OD[i] < 0 || K[i] !== KIND.ROAD) continue;
+    const x = i % W, y = (i / W) | 0; const c = proj(x + 0.5, y + 0.5, zCenter(i) + 0.2); const sc = worldToScreen(c[0], c[1]); if (sc[0] < -20 || sc[1] < -20 || sc[0] > VW + 20 || sc[1] > VH + 20) continue;
+    const v = DIRV[OD[i]]; const q = proj(x + 0.5 + v[0] * 0.5, y + 0.5 + v[1] * 0.5, zCenter(i) + 0.2); let dx = q[0] - c[0], dy = q[1] - c[1]; const L = Math.hypot(dx, dy) || 1; dx /= L; dy /= L;
+    ctx.beginPath(); ctx.moveTo(c[0] + dx * s, c[1] + dy * s); ctx.lineTo(c[0] - dx * s * .6 + dy * s * .6, c[1] - dy * s * .6 - dx * s * .6); ctx.lineTo(c[0] - dx * s * .6 - dy * s * .6, c[1] - dy * s * .6 + dx * s * .6); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+}
 function draw(ts) {
   if (!staticCv) return;
   const dt = Math.min(0.1, (ts - lastTs) / 1000 || 0); lastTs = ts; tickNpcs(dt);
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  const night = S.night; const sky = ctx.createLinearGradient(0, 0, 0, VH); if (night) { sky.addColorStop(0, '#1b2238'); sky.addColorStop(1, '#2a3450'); } else if (SK || TOP) { const pc = S.clock === 'pm' ? C.paper2 : C.paper; sky.addColorStop(0, pc); sky.addColorStop(1, pc); } else if (S.clock === 'pm') { sky.addColorStop(0, '#f6dfc4'); sky.addColorStop(1, '#f1e6cf'); } else { sky.addColorStop(0, '#d9efe3'); sky.addColorStop(1, '#eef3dc'); }
+  const night = S.night; const skyKey = (night ? 'n' : 'd') + (SK || TOP ? 's' : 'i') + S.clock + '|' + VH; let sky = skyCache.get(skyKey); if (!sky) { sky = ctx.createLinearGradient(0, 0, 0, VH); if (night) { sky.addColorStop(0, '#1b2238'); sky.addColorStop(1, '#2a3450'); } else if (SK || TOP) { const pc = S.clock === 'pm' ? C.paper2 : C.paper; sky.addColorStop(0, pc); sky.addColorStop(1, pc); } else if (S.clock === 'pm') { sky.addColorStop(0, '#f6dfc4'); sky.addColorStop(1, '#f1e6cf'); } else { sky.addColorStop(0, '#d9efe3'); sky.addColorStop(1, '#eef3dc'); } skyCache.set(skyKey, sky); } // 하늘 그라데이션은 (밤·스타일·시계·높이)별로 한 번만 만든다(v9)
   ctx.fillStyle = sky; ctx.fillRect(0, 0, VW, VH);
   if (S.follow) { const p = proj(S.px + 0.5, S.py + 0.5, surfZ(S.px + 0.5, S.py + 0.5)); S.camX += (p[0] - S.camX) * 0.18; S.camY += (p[1] - 10 - S.camY) * 0.18; }
   ctx.translate(VW / 2, VH / 2); ctx.scale(S.zoom, S.zoom); ctx.translate(-S.camX, -S.camY);
   ctx.imageSmoothingEnabled = true;
   ctx.drawImage(staticCv, WX0, WY0, (WX1 - WX0), (WY1 - WY0));
+  if (S.mode === 'car' && OW && OD && S.zoom >= 1.1) drawOnewayArrows(); // v9
   // 경로 미리보기(점선 + 깃발)
   if (S.traveling) { const t = S.traveling; ctx.strokeStyle = 'rgba(240,138,102,.95)'; ctx.lineWidth = 2.2 / S.zoom + 1; ctx.lineCap = 'round'; ctx.setLineDash([5, 5]); ctx.beginPath(); t.path.forEach((i, n) => { const x = i % W, y = (i / W) | 0; const p = proj(x + 0.5, y + 0.5, zCenter(i) + 0.3); n ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.stroke(); ctx.setLineDash([]); const gi = t.path[t.path.length - 1]; const gp = proj((gi % W) + 0.5, ((gi / W) | 0) + 0.5, zCenter(gi)); drawFlag(gp[0], gp[1], '#d95f4b'); }
   // NPC(가림 처리) → 플레이어(가림 처리)
   for (const n of S.npcs) { const z = surfZ(n.x, n.y); const p = proj(n.x, n.y + (TOP ? 0.3 : 0), z); const sp = worldToScreen(p[0], p[1]); if (sp[0] < -60 || sp[1] < -60 || sp[0] > VW + 60 || sp[1] > VH + 60) continue; const st = n.idle ? n.mood : (n.wait > 0 ? 'idle' : 'walk'); drawActorOccluded(ctx, p[0], p[1], n.x + n.y, 14, 30, (g) => drawActor(g, p[0], p[1], {who:n.who, face:n.face, state:st, t:ts / 1000, seed:n.seed})); }
   { const z = surfZ(S.px + 0.5, S.py + 0.5); const p = proj(S.px + 0.5, S.py + 0.5 + (TOP ? 0.3 : 0), z); const walking = !!S.traveling; drawActorOccluded(ctx, p[0], p[1], S.px + S.py + 1, 24, 36, (g) => drawParty(g, p[0], p[1], ts, walking, S.face, S.mode, S.concept)); }
   // 밤: 틴트 + 불빛
-  if (night) { ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.fillStyle = 'rgba(20,30,70,.42)'; ctx.fillRect(0, 0, VW, VH); ctx.translate(VW / 2, VH / 2); ctx.scale(S.zoom, S.zoom); ctx.translate(-S.camX, -S.camY); ctx.globalCompositeOperation = 'lighter'; ctx.drawImage(lightsCv, WX0, WY0, (WX1 - WX0), (WY1 - WY0)); ctx.globalCompositeOperation = 'source-over'; }
+  if (night) { ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.fillStyle = 'rgba(20,30,70,.42)'; ctx.fillRect(0, 0, VW, VH); ctx.translate(VW / 2, VH / 2); ctx.scale(S.zoom, S.zoom); ctx.translate(-S.camX, -S.camY); ctx.globalCompositeOperation = 'lighter'; if (lightsCv) ctx.drawImage(lightsCv, WX0, WY0, (WX1 - WX0), (WY1 - WY0)); ctx.globalCompositeOperation = 'source-over'; }
   // 표식(화면 좌표, 크기 고정)
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0); drawMarkers();
   drawMinimap();
 }
 function drawFlag(x, y, col) { ctx.fillStyle = 'rgba(40,30,20,.2)'; ctx.beginPath(); ctx.ellipse(x, y + 1, 5, 2.2, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#4a3b2f'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 16); ctx.stroke(); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x, y - 16); ctx.lineTo(x + 9, y - 13); ctx.lineTo(x, y - 10); ctx.closePath(); ctx.fill(); }
-function roundTag(x, y, text, opts) { const o = opts || {}; ctx.font = `${o.bold ? 600 : 500} ${o.size || 10}px "Noto Sans KR",sans-serif`; const tw = ctx.measureText(text).width; const pad = o.pad || 6; const w = tw + pad * 2 + (o.dot ? 10 : 0), h = (o.size || 10) + 8; const x0 = x - w / 2, y0 = y - h; ctx.fillStyle = o.bg || 'rgba(255,253,246,.94)'; ctx.strokeStyle = o.border || 'rgba(74,59,47,.35)'; ctx.lineWidth = o.lw || 1; ctx.beginPath(); ctx.roundRect(x0, y0, w, h, h / 2); ctx.fill(); ctx.stroke(); if (o.dot) { ctx.fillStyle = o.dot; ctx.beginPath(); ctx.arc(x0 + pad + 3, y0 + h / 2, 3.2, 0, 7); ctx.fill(); } ctx.fillStyle = o.color || '#4a3b2f'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(text, x0 + pad + (o.dot ? 10 : 0), y0 + h / 2 + 0.5); ctx.textBaseline = 'alphabetic'; return [x0, y0, w, h]; }
+const twCache = new Map(); const textW = (font, text) => { const k = font + '|' + text; let w = twCache.get(k); if (w === undefined) { w = ctx.measureText(text).width; if (twCache.size > 3000) twCache.clear(); twCache.set(k, w); } return w; }; // 라벨 폭 메모이즈(v9)
+function roundTag(x, y, text, opts) { const o = opts || {}; ctx.font = `${o.bold ? 600 : 500} ${o.size || 10}px "Noto Sans KR",sans-serif`; const tw = textW(ctx.font, text); const pad = o.pad || 6; const w = tw + pad * 2 + (o.dot ? 10 : 0), h = (o.size || 10) + 8; const x0 = x - w / 2, y0 = y - h; ctx.fillStyle = o.bg || 'rgba(255,253,246,.94)'; ctx.strokeStyle = o.border || 'rgba(74,59,47,.35)'; ctx.lineWidth = o.lw || 1; ctx.beginPath(); ctx.roundRect(x0, y0, w, h, h / 2); ctx.fill(); ctx.stroke(); if (o.dot) { ctx.fillStyle = o.dot; ctx.beginPath(); ctx.arc(x0 + pad + 3, y0 + h / 2, 3.2, 0, 7); ctx.fill(); } ctx.fillStyle = o.color || '#4a3b2f'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(text, x0 + pad + (o.dot ? 10 : 0), y0 + h / 2 + 0.5); ctx.textBaseline = 'alphabetic'; return [x0, y0, w, h]; }
 function drawMarkers() {
   const showLabels = S.zoom >= 1.25; const bigLabels = S.zoom >= 1.8;
   const vis = (sx, sy) => sx > -60 && sy > -60 && sx < VW + 60 && sy < VH + 60;
@@ -1214,8 +1239,8 @@ $('#dialog').addEventListener('click', () => { $('#dialog').classList.remove('sh
 const cur = () => DATA.complexes.find(c => c.id === S.complex) || DATA.complexes[0];
 function setMode(m) { S.mode = m; document.querySelectorAll('#dock button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m))); $('#stMode').textContent = MODE_KO[m] + ' · 실제 환산'; }
 document.querySelectorAll('#dock button').forEach(b => b.addEventListener('click', () => { if (S.traveling) { toast('이동 중에는 수단을 바꿀 수 없어요'); return; } setMode(b.dataset.mode); }));
-$('#btnNight').addEventListener('click', () => { S.night = !S.night; $('#btnNight').setAttribute('aria-pressed', String(S.night)); if (S.night) { S.events.push({night:true}); evalChecklist(); say('🌙 밤 모드는 연출이에요. 창문 불빛은 가짜고, 가로등·CCTV 데이터는 이 프로토에 없어요.'); } });
-const clockClick = () => { S.clock = S.clock === 'am' ? 'day' : S.clock === 'day' ? 'pm' : 'am'; $('#chipClock').innerHTML = S.clock === 'am' ? '🕗 <b>아침 08시</b>' : S.clock === 'day' ? '🕑 <b>낮 14시</b>' : '🕕 <b>저녁 18시</b>'; toast(S.clock === 'day' ? '낮: 차 정체 없음(가정)' : '출퇴근 시간대: 간선도로 차 속도 ×0.5(모델 가정)'); };
+$('#btnNight').addEventListener('click', () => { S.night = !S.night; $('#btnNight').setAttribute('aria-pressed', String(S.night)); if (S.night && !buildLights()) toast('불빛 레이어를 만들지 못했어요(메모리 부족). 틴트만 적용해요'); if (S.night) { S.events.push({night:true}); evalChecklist(); say('🌙 밤 모드는 연출이에요. 창문 불빛은 가짜고, 가로등·CCTV 데이터는 이 프로토에 없어요.'); } });
+const clockClick = () => { S.clock = S.clock === 'am' ? 'day' : S.clock === 'day' ? 'pm' : 'am'; $('#chipClock').innerHTML = S.clock === 'am' ? '🕗 <b>아침 08시</b>' : S.clock === 'day' ? '🕑 <b>낮 14시</b>' : '🕕 <b>저녁 18시</b>'; toast(S.clock === 'day' ? '낮: 차 정체 없음(가정)' : '출퇴근 시간대: 간선도로 차 속도 ×0.5(모델 가정)'); computeMetrics(); if (!$('#drawer').classList.contains('hidden') && tab === 'cmp') renderDrawer(); }; // 시계는 차 기준 구간(비교표)에 반영(v9)
 $('#chipClock').addEventListener('click', clockClick); $('#chipClock').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clockClick(); } });
 $('#btnSkip').addEventListener('click', () => { if (S.traveling) { S.traveling.t0 = -1e12; } });
 $('#btnCenter').addEventListener('click', () => { S.follow = true; });
@@ -1258,8 +1283,8 @@ function renderDrawer() {
   }
 }
 function renderCompare() {
-  const rows = [['역 출구→정문 도보', m => m.exit && m.exit.walk ? `${esc(m.exit.name)}: ${fmtMin(m.exit.walk.min)} / ${Math.round(m.exit.walk.dist)}m ↑${Math.round(m.exit.walk.up)}m` : '—'], ['역 출구→정문 유모차', m => m.exit ? (m.exit.stroller ? `${fmtMin(m.exit.stroller.min)} · 횡단 ${m.exit.stroller.cross}` : '경로 없음(계단·경사)') : '—'], ['가까운 초등 도보', m => m.elem && m.elem.walk ? `${esc(m.elem.name)} ${fmtMin(m.elem.walk.min)} · 횡단 ${m.elem.walk.cross}` : '—'], ['가까운 마트 도보', m => m.mart && m.mart.walk ? `${esc(m.mart.name)} ${fmtMin(m.mart.walk.min)}` : '—'], ['병원·약국 도보', m => m.med && m.med.walk ? `${esc(m.med.name)} ${fmtMin(m.med.walk.min)}` : '—'], ['세대당 주차', m => esc(m.parking)], ['준공', m => esc(m.year)], ['세대·동', m => esc(m.hh)]];
-  return `<div class="small muted" style="margin-bottom:6px">세 단지를 같은 규칙(도보 4km/h, 경사·횡단·계단 가중, 정문 기준)으로 자동 계산한 값. 전부 '추정'. 역·초등·마트는 직선거리 기준 가장 가까운 곳.</div><div class="tblwrap"><table class="cmp"><tr><th></th>${DATA.complexes.map(c => `<th style="color:${esc(c.color)};filter:saturate(1.6) brightness(.7)">${esc(c.short)}</th>`).join('')}</tr>${rows.map(([l, f]) => `<tr><th>${l}</th>${DATA.complexes.map(c => `<td>${f(S.metrics[c.id] || {})}</td>`).join('')}</tr>`).join('')}</table></div>`;
+  const rows = [['역 출구→정문 도보', m => m.exit && m.exit.walk ? `${esc(m.exit.name)}: ${fmtMin(m.exit.walk.min)} / ${Math.round(m.exit.walk.dist)}m ↑${Math.round(m.exit.walk.up)}m` : '—'], ['역 출구→정문 유모차', m => m.exit ? (m.exit.stroller ? `${fmtMin(m.exit.stroller.min)} · 횡단 ${m.exit.stroller.cross}` : '경로 없음(계단·경사)') : '—'], ['역 출구→정문 차(주차 3분 포함)', m => m.exit ? (m.exit.car ? `${fmtMin(m.exit.car.min)} · ${Math.round(m.exit.car.dist)}m · 신호 ${m.exit.car.cross}` : '도로 경로 없음') : '—'], ['가까운 초등 도보', m => m.elem && m.elem.walk ? `${esc(m.elem.name)} ${fmtMin(m.elem.walk.min)} · 횡단 ${m.elem.walk.cross}` : '—'], ['가까운 마트 도보', m => m.mart && m.mart.walk ? `${esc(m.mart.name)} ${fmtMin(m.mart.walk.min)}` : '—'], ['병원·약국 도보', m => m.med && m.med.walk ? `${esc(m.med.name)} ${fmtMin(m.med.walk.min)}` : '—'], ['세대당 주차', m => esc(m.parking)], ['준공', m => esc(m.year)], ['세대·동', m => esc(m.hh)]];
+  return `<div class="small muted" style="margin-bottom:6px">세 단지를 같은 규칙(도보 4km/h, 경사·횡단·계단 가중, 정문 기준)으로 자동 계산한 값. 전부 '추정'. 역·초등·마트는 직선거리 기준 가장 가까운 곳. 차는 시계(출퇴근 정체 ×2)·일방통행·신호 반영 — 상단 시계를 바꾸면 다시 계산.</div><div class="tblwrap"><table class="cmp"><tr><th></th>${DATA.complexes.map(c => `<th style="color:${esc(c.color)};filter:saturate(1.6) brightness(.7)">${esc(c.short)}</th>`).join('')}</tr>${rows.map(([l, f]) => `<tr><th>${l}</th>${DATA.complexes.map(c => `<td>${f(S.metrics[c.id] || {})}</td>`).join('')}</tr>`).join('')}</table></div>`;
 }
 function computeMetrics() {
   for (const c of DATA.complexes) {
@@ -1271,7 +1296,7 @@ function computeMetrics() {
     const exitsOf = (st) => TARGETS.filter(t => t.type === 'exit' && (!st || t.station === st)).map(t => ({t, d:Math.hypot(t.x - gate.x, t.y - gate.y)})).sort((a, b) => a.d - b.d)[0];
     const ex = exitsOf(c.spawn_station) || exitsOf(null); // 출근 레그 제목(spawn_station)과 같은 역의 출구를 우선
     const el = nearest('elem'), ma = nearest('mart'), me = nearest('med');
-    S.metrics[c.id] = {exit: ex ? {name:ex.t.name, walk:run(ex, 'walk', true), stroller:run(ex, 'stroller', true)} : null, elem: el ? {name:el.t.name, walk:run(el, 'walk')} : null, mart: ma ? {name:ma.t.name, walk:run(ma, 'walk')} : null, med: me ? {name:me.t.name, walk:run(me, 'walk')} : null,
+    S.metrics[c.id] = {exit: ex ? {name:ex.t.name, walk:run(ex, 'walk', true), stroller:run(ex, 'stroller', true), car:run(ex, 'car', true)} : null, elem: el ? {name:el.t.name, walk:run(el, 'walk')} : null, mart: ma ? {name:ma.t.name, walk:run(ma, 'walk')} : null, med: me ? {name:me.t.name, walk:run(me, 'walk')} : null,
       parking:(facts.find(f => f.k === '주차') || {v:'?'}).v.replace(/.*세대당\s*([0-9.]+)대.*/, '$1대'), year:(facts.find(f => f.k === '사용승인') || {v:'?'}).v.slice(0, 7), hh:(facts.find(f => f.k === '세대수') || {v:'?'}).v.split(' ')[0] + ' · ' + ((facts.find(f => f.k === '동수·층수') || {v:'?'}).v.split(' ')[0])};
   }
 }

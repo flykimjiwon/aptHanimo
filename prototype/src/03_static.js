@@ -165,12 +165,25 @@ function drawBuilding(g, gl, b, cx) {
   // 동 라벨(단지)
   if (!house && cx && b.label) { g.font = '600 7px "Noto Sans KR",sans-serif'; g.textAlign = 'center'; const tw = g.measureText(b.label).width + 6; g.fillStyle = 'rgba(255,253,246,.92)'; g.beginPath(); g.roundRect(tcx - tw / 2, ridgeTop - 12, tw, 9, 3); g.fill(); g.fillStyle = '#4a3b2f'; g.fillText(b.label, tcx, ridgeTop - 5); }
 }
+try { self.__hasLights = () => !!lightsCv; } catch (e) {} // 자동 검증용
+function makeLightsCtx() { lightsCv = document.createElement('canvas'); lightsCv.width = Math.ceil((WX1 - WX0) * SL); lightsCv.height = Math.ceil((WY1 - WY0) * SL); const gl = lightsCv.getContext('2d'); if (!gl) { lightsCv = null; return null; } gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL); return gl; }
+function drawStreetLamps(gl) { // 가로등 불빛(야간): 간선도로 일부 타일
+  for (let i = 0; i < W * H; i++) { if (K[i] === KIND.ROAD && R[i] >= 7 && hash(i % W, (i / W) | 0, 13) < 0.1) { const c = tileCenter(i); const gr = gl.createRadialGradient(c[0], c[1], 1, c[0], c[1], 16); gr.addColorStop(0, 'rgba(255,220,140,.45)'); gr.addColorStop(1, 'rgba(255,220,140,0)'); gl.fillStyle = gr; gl.fillRect(c[0] - 16, c[1] - 16, 32, 32); } }
+}
+function buildLights() { // 밤 모드 첫 진입: 건물 창·가로등 불빛만 다시 그린다. 정적 레이어는 그대로(1×1 더미 컨텍스트로 drawBuilding을 다시 돌려 gl 쪽만 채운다)
+  if (lightsCv) return true; const gl = makeLightsCtx(); if (!gl) return false;
+  const dummy = document.createElement('canvas'); dummy.width = 1; dummy.height = 1; const g0 = dummy.getContext('2d'); if (!g0) return false; g0.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS);
+  const cmap = Object.fromEntries(DATA.complexes.map(c => [c.id, c]));
+  for (const b of BLDS) drawBuilding(g0, gl, b, cmap[b.complex]);
+  drawStreetLamps(gl); return true;
+}
 function buildStatic() {
   const w = Math.ceil((WX1 - WX0) * SS), h = Math.ceil((WY1 - WY0) * SS);
   staticCv = document.createElement('canvas'); staticCv.width = w; staticCv.height = h; const g = staticCv.getContext('2d');
-  lightsCv = document.createElement('canvas'); lightsCv.width = Math.ceil((WX1 - WX0) * SL); lightsCv.height = Math.ceil((WY1 - WY0) * SL); const gl = lightsCv.getContext('2d');
-  if (!g || !gl) throw new Error(`정적 레이어 캔버스를 만들지 못했어요(${w}×${h}px, 메모리 부족 가능)`); // bootSafe가 받아서 고지
-  g.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS); gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL);
+  if (!g) throw new Error(`정적 레이어 캔버스를 만들지 못했어요(${w}×${h}px, 메모리 부족 가능)`); // bootSafe가 받아서 고지
+  g.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS);
+  const gl = S.night ? makeLightsCtx() : null; // 불빛 레이어(약 16MB)는 밤 모드 첫 진입 때 buildLights()로 지연 생성(v9). gl=null이면 drawBuilding·가로등이 불빛을 건너뛴다
+  if (gl) gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL);
   if (TOP) { // 수채 지도 패스: 종이 결 → 블롭 타일(행 순서) → 손그림 길(이웃 연결선·지터·계단·횡단보도). 건물·나무는 아래 공통 루프(평면, 가림 목록 없음)
     g.fillStyle = 'rgba(90,70,50,.05)'; const n = Math.round((WX1 - WX0) * (WY1 - WY0) / 450); for (let i = 0; i < n; i++) g.fillRect(WX0 + hash(i, 1, 91) * (WX1 - WX0), WY0 + hash(i, 2, 92) * (WY1 - WY0), 1.2, 1.2);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) drawTile(g, x, y);
@@ -197,7 +210,7 @@ function buildStatic() {
     }
   }
   // 가로등 불빛(야간): 간선도로 일부 타일
-  for (let i = 0; i < W * H; i++) { if (K[i] === KIND.ROAD && R[i] >= 7 && hash(i % W, (i / W) | 0, 13) < 0.1) { const c = tileCenter(i); const gr = gl.createRadialGradient(c[0], c[1], 1, c[0], c[1], 16); gr.addColorStop(0, 'rgba(255,220,140,.45)'); gr.addColorStop(1, 'rgba(255,220,140,0)'); gl.fillStyle = gr; gl.fillRect(c[0] - 16, c[1] - 16, 32, 32); } }
+  if (gl) drawStreetLamps(gl);
   // 구역 라벨(공원·학교)
   for (const a of DATA.areas) { if (!a.name || a.kind === 'construction') continue; const cx = a.poly.reduce((s, p) => s + p[0], 0) / a.poly.length, cy = a.poly.reduce((s, p) => s + p[1], 0) / a.poly.length; if (!inb(cx | 0, cy | 0)) continue; const p = proj(cx, cy, surfZ(cx, cy)); g.font = '600 8.5px "Noto Sans KR",sans-serif'; g.textAlign = 'center'; const tw = g.measureText(a.name).width + 10; g.fillStyle = 'rgba(255,253,246,.9)'; g.beginPath(); g.roundRect(p[0] - tw / 2, p[1] - 6, tw, 12, 6); g.fill(); g.fillStyle = a.kind === 'park' ? '#2f7a3a' : '#8a6a1f'; g.fillText(a.name, p[0], p[1] + 3); }
   OCC.sort((a, b) => a.key - b.key);

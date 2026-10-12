@@ -13,7 +13,7 @@
 | 스타일 랩(캐릭터·건물·월드맵 각 10종) | `prototype/stylelab/dev.html` · `STYLE_LAB_2026-10-11.md` | 조합 미리보기 + JSON 내보내기 |
 | 25구 단지 카탈로그 | `SEOUL_25GU_COMPLEX_CATALOG_2026-10-11.md` | [검증] 표시는 K-apt 확인 전 |
 | 검증 캡처 | `prototype/qa/` | v1~v7, 크로미움 에뮬레이션 |
-| 테스트·재굽기 | `node prototype/tests/run.mjs` (149 검사, 골든값 `tests/golden.json`) · `bash prototype/tools/bake.sh [--refresh]` | v8: OSM 재취득·진짜 supercover·일방통행 방향 `odir`·차 역주행 금지 |
+| 테스트·재굽기 | `node prototype/tests/run.mjs` (149 검사, 골든값 `tests/golden.json`) · `bash prototype/tools/bake.sh [--refresh]` | v8: OSM 재취득·진짜 supercover·일방통행 방향 `odir`·차 역주행 금지 / v9: 차 모드 화살표·비교표 차 행(시계 반영)·불빛 지연 생성 |
 | 검수 반영(v7, 2026-10-12) | `prototype/PROTOTYPE_NOTES.md` 머리말 v7 | roundRect 폴리필·계단 규칙·카드 매핑·주차 타임라인·charset·ODbL 고지 등. 검수 보고서는 메타 repo `docs/analysis/APTHANIMO_CLAUDE_PROTO_REVIEW_2026-10-12.md` |
 
 데이터 출처: 지도 데이터 © OpenStreetMap contributors(ODbL, 화면 하단과 단지 탭에 상시 고지), OpenTopoData SRTM 30m, 네이버부동산·네이버지도·호갱노노 수동 열람 표기값(출처 등급과 함께 `prototype/tools/complexes.json`), 뉴스. 크롤러 없음. `prototype/tools/osm3.json`(Overpass 원본 3.4MB)은 저장소에 넣지 않았고 `bash prototype/tools/bake.sh --refresh`로 다시 받는다(User-Agent 필요).

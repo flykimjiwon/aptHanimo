@@ -34,7 +34,8 @@
 5. **카드 `CARD_CATS`**: 도착 유형별 **허용 카테고리 집합**. 실제 선택은 `c.cards.find(...)`라 **단지 `cards` 배열에서 허용 집합에 들고 아직 안 본 첫 장** 순서다(하이베르 정문: slope→parking→construction, 왕십리자이: construction→parking, 라체르보: regulation→parking). 정문 허용 = parking·slope·construction·regulation, mid/high/kinder→school, conv→commerce, lib/gym→community.
 6. **체크 키 `checkKey` = concept:complex:item**, 저장 `imjang-proto-v2`.
 7. **데이터 문자열은 `esc()`로만 innerHTML에**. (Supabase 정정 데이터 대비)
-8. **차 주차 +3분**은 `routeStats`(HUD)와 재생 타임라인(마지막 타일 3분 정지) 양쪽. 한쪽만 고치지 말 것.
+8. **차 주차 +3분**은 `routeStats`(HUD)와 재생 타임라인(마지막 타일 3분 정지) 양쪽. 한쪽만 고치지 말 것. 비교표 차 행도 같은 `routeStats`를 쓴다.
+8-1. **불빛 레이어는 지연 생성**(`buildLights`): `buildStatic`은 `S.night`가 아니면 `gl=null`로 돌고, 밤 첫 진입 때 1×1 더미 컨텍스트로 `drawBuilding`을 다시 돌려 불빛만 채운다. `drawBuilding`의 불빛 분기는 반드시 `if (gl && …)` 가드를 유지할 것.
 9. **모달**: 초기 `hidden`, 첫 요소 포커스, Escape·배경 탭(시작 선택 전엔 불가), `bootSafe`가 부팅 실패 고지.
 10. **ODbL 고지** 상시(광고줄·단지 탭). 공개 서비스 필수.
 11. **골든값**: 굽기·규칙을 바꾸면 먼저 `node tests/run.mjs`. 정문 유모차·비교표 유모차가 그대로면 정상 범위. 의도한 변화만 `--update`하고 NOTES 머리말에 이유를 적는다.
@@ -43,6 +44,7 @@
 ## 3. 오늘 바뀐 것 요약
 - **v7(검수 반영)**: roundRect 폴리필(P0) · 계단 규칙(`isStairs`) · 차로 다른 단지 도착 시 주차 수치·체크가 도착 단지 기준 · 카드 매핑 확장(획득 불가 3장 해소) · 핀치 뒤 드래그 점프 방지, 핀치 중점·휠 커서 줌 · 굽기 산출 `data/`로 · 스타일 랩 프리셋 id · 빈 단지 가드 · 데스크톱 서랍이 액션 버튼 안 덮음 · `<meta charset>` · ODbL 고지 · 주차 3분 타임라인 · 사실 배지 색 · 카드 unknown→미확인·날짜 중복 제거 · 모달 접근성·확대 허용 · `#modal` 초기 hidden+부팅 실패 고지 · 상단 바 줄바꿈·가로 모드 · `esc()` · 저장 키 v2 · 새로고침 1회 · 자전거 휴리스틱 0.8 · 데드코드 정리. 문서: 가이드 줄번호→함수명, README·MASTER·카탈로그 정정, 로컬 경로 제거.
 - **v8**: Overpass 재취득(2026-10-12T01:38Z, 5,146 요소) · 진짜 supercover(대각 도로 체인 제거, 도로 타일 3,381→3,584) · 일방통행 방향 `odir` · `moveAllowed` · `tests/run.mjs` 149건 · `tools/bake.sh`. 도보 기준구간 일부 1분 단축, 차 라체르보 출구→정문 5→6분(우회), 핵심 기준점 불변.
+- **v9**: 차 모드 일방통행 화살표(`drawOnewayArrows`) · 비교표 차 행 + 시계 변경 시 `computeMetrics` 재계산 · 불빛 레이어 지연 생성(`buildLights`, 밤 첫 진입) · 하늘 그라데이션·라벨 폭 캐시. 수치 불변.
 - 검수 원문(결함 25건·문서 결함·백로그)과 증거는 부모 저장소 `docs/analysis/APTHANIMO_CLAUDE_PROTO_REVIEW_2026-10-12.md`.
 
 ## 4. 재현 절차
@@ -64,10 +66,8 @@ cd prototype && python3 -m http.server 8793 --bind 127.0.0.1   # 브라우저 �
 
 ## 6. 백로그 (이 레인)
 1. 실기 iOS Safari·Android Chrome(폴리필·핀치·저메모리).
-2. 불빛 캔버스 지연 생성(지금은 부팅 시 15.9MB 무조건 할당·null 가드만).
-3. 시계(am/day/pm) 변경 시 `computeMetrics` 재계산.
-4. 일방통행 화살표 렌더(차 모드·줌 1.4+), 교차로 인접 타일 관대화 재검토.
-5. 프레임당 할당 정리(하늘 그라데이션 캐시·라벨 폭 메모이즈·OCC 이진탐색).
+2. 일방통행 교차로 인접 타일 관대화 재검토(25m 합성으로 과한 우회). OCC 가림 목록 이진탐색(남은 프레임당 비용).
+3. 비교표·점수에 차 지표를 점수(`scoreFor`)에도 반영할지 결정(지금은 표만).
 6. 스타일 랩 나머지 id 본편 이식.
 7. 셀 추가: `complexes.json` 사실 + `overpass_query.ql` bbox + `build_cell.py` 범위·`STATIONS` → `bake.sh` → tests `--update`. 후보는 루트 카탈로그.
 8. 5m DEM·학구도·승강시설 데이터, K-apt 조인. Next.js 이식(기획서 §11)은 사용자 결정 후.

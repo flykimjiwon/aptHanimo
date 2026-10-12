@@ -11,6 +11,7 @@
 4. **코덱스 빌드(저장소 `codex/`, Three.js 저폴리곤 디오라마·체험 그래프)와 겹치지 않는다.** 이쪽은 Canvas 2D + 실제 OSM/SRTM 격자 + 타일 A*. 두 결과물은 서로 참고만 하고 코드를 섞지 않는다.
 5. **그림체는 `STYLE`로 고른다**(`src/02_world.js` 맨 위 `STYLE_DEFAULT` + 주소 해시 덮어쓰기, 스타일 랩 '선택 조합 복사' JSON의 id와 같다). 캐릭터 `char`: `pixelcrew`(사용자 본인 프로젝트 PixelCrew Desk의 24×22 도트 유령, `src/vendor/pixelcrew_sprites.js` 원문·MIT) 또는 `villager`(동물 귀 주민, 코드 드로잉). 월드 `world`: `terrace`(8m 단 지형, 아이소), `sketch`(연필 스케치, 아이소), `watermap`(수채 지도, **탑뷰** — 투영·입력·정적 레이어가 바뀌고 고도·절벽·건물 높이는 그리지 않음). 건물은 `cottage`(박공·처마·굴뚝·창틀, 탑뷰에선 평면 워시) 하나다. 기본 조합 = pixelcrew × cottage × sketch. 주소 끝에 `#villager-watermap`처럼 붙이거나 서랍 단지 탭의 그림체 선택기를 쓰면 새로고침과 함께 바뀐다. 어느 조합이든 경로·카드·수치는 같다(§12).
 6. 2026-10-12 사용자 지시로 GitHub `flykimjiwon/aptHanimo`(공개)에 커밋·푸시했다(`imjang_world_2026-10-11/` 폴더 = 저장소 루트, 메타 repo 안의 서브 repo). 이후 커밋·푸시도 사용자가 시킬 때만. 같은 저장소의 `codex/`는 Codex 독립 구현(한바퀴 V5)이며 이 가이드가 말하는 "코덱스 빌드"가 그것이다.
+9. **v9(10-12 오후)**: 차 모드 일방통행 화살표(`drawOnewayArrows`, 05_dynamic.js), 비교표 차 행(`computeMetrics` exit.car)+시계 변경 재계산, 불빛 레이어 지연 생성(`makeLightsCtx`·`buildLights`·`drawStreetLamps`, 03_static.js), `skyCache`·`textW`.
 8. **v8(10-12 낮)**: OSM 재취득·재굽기(진짜 supercover, 일방통행 방향 `odir`), 차 역주행 금지 `moveAllowed`, 테스트 `tests/run.mjs`(149 검사)·`tools/bake.sh`. 골든값 `tests/golden.json`이 기준 구간의 정답지다 — 굽기·규칙을 바꾸면 먼저 테스트를 돌리고 의도한 변화일 때만 `--update`.
 7. **v7(10-12 오전, 검수 반영)**: 줄번호 대신 **파일·함수 이름**으로 가리킨다(소스가 v4~v6에서 많이 자라 줄번호가 최대 400행 틀어졌었다). 계단 판정은 `isStairs()`(04_route.js) 하나로 통일, 카드 매핑은 `CARD_CATS`(05_dynamic.js), 데이터 문자열은 `esc()`로 넣는다. 변경 목록은 `PROTOTYPE_NOTES.md` 머리말 v7.
 
