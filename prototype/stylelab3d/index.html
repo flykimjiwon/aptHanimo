@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>임장월드 3D 스타일 랩 · 귀여운 캐릭터 × 월드 풍</title>
+<title>임장월드 3D 스타일 랩 · 실제 단지 섬 × 귀여운 캐릭터 × 월드 풍</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
@@ -29,7 +29,8 @@ textarea{width:100%;min-height:150px;font:11.5px/1.45 ui-monospace,Menlo,monospa
 <div id="app">
   <aside id="panel">
     <h1>3D 스타일 랩</h1>
-    <div class="sub">three.js · 귀여운 캐릭터 풍 6 × 월드 풍 5 × 시점 3 × 컨셉 3. 고른 조합을 JSON으로 내보내 3D 본편(Codex 레인)에 전달.</div>
+    <div class="sub">three.js · <b>실제 단지를 지도 모양 그대로 잘라 띄운 섬</b> 위에서 귀여운 캐릭터 풍 6 × 월드 풍 5 × 시점 4 × 컨셉 3. 고른 조합을 JSON으로 내보내 3D 본편(Codex 레인)에 전달.</div>
+    <h3>장소(실제 OSM 윤곽·층수·도로 + SRTM 고도)</h3><div class="opts" id="optPlace"></div>
     <h3>캐릭터 풍</h3><div class="opts" id="optChar"></div>
     <h3>주민 종족(동숲풍·클레이)</h3><div class="opts" id="optSpecies"></div>
     <h3>월드 풍</h3><div class="opts" id="optWorld"></div>
@@ -56,6 +57,7 @@ self.PixelCrewRoster = (() => { const CREW = {
 window.__errs = []; window.addEventListener('error', e => window.__errs.push((e.message || 'err') + ' @' + e.lineno)); window.addEventListener('unhandledrejection', e => window.__errs.push('rej ' + (e.reason && e.reason.message || e.reason)));
 </script>
 <script src="../src/vendor/pixelcrew_sprites.js"></script>
+<script src="island_data.js"></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -85,8 +87,10 @@ const CAMS = [{id:'iso', name:'아이소 2.5D'}, {id:'persp', name:'원근 3D'},
 const PARTIES = [{id:'solo', name:'1인'}, {id:'couple', name:'커플'}, {id:'family', name:'가족(아이)'}];
 const RIDES = [{id:'none', name:'도보'}, {id:'stroller', name:'유모차'}, {id:'bike', name:'자전거'}, {id:'car', name:'차'}];
 const SCENES = [{id:'day', name:'낮'}, {id:'night', name:'밤'}, {id:'follow', name:'따라가기 ON/OFF'}];
-const SEL = {char:'villager', species:'cat', world:'toon', cam:'iso', party:'family', ride:'stroller', night:false, follow:true, manual:false};
-try { for (const tok of location.hash.slice(1).split('-')) { if (CHARS.some(c => c.id === tok)) SEL.char = tok; if (WORLDS.some(w => w.id === tok)) SEL.world = tok; if (SPECIES.some(s => s.id === tok)) SEL.species = tok; if (CAMS.some(c => c.id === tok)) SEL.cam = tok; } } catch (e) {}
+const ISLANDS = self.ISLANDS || {};
+const PLACES = [...Object.values(ISLANDS).map(i => ({id:i.id, name:i.short + ' 섬', desc:`${i.buildings.length}동·${i.tiles.length}타일·단 ${Math.max(...i.tiles.map(t => t[6])) + 1}`})), {id:'dio', name:'가상 디오라마', desc:'단 지형·길·코티지·아파트'}];
+const SEL = {place:ISLANDS.HYBER ? 'HYBER' : 'dio', char:'villager', species:'cat', world:'toon', cam:'iso', party:'family', ride:'stroller', night:false, follow:true, manual:false};
+try { for (const tok of location.hash.slice(1).split('-')) { if (CHARS.some(c => c.id === tok)) SEL.char = tok; if (WORLDS.some(w => w.id === tok)) SEL.world = tok; if (SPECIES.some(s => s.id === tok)) SEL.species = tok; if (CAMS.some(c => c.id === tok)) SEL.cam = tok; if (PLACES.some(p => p.id === tok)) SEL.place = tok; } } catch (e) {}
 
 // ---------------- 렌더러·씬 ----------------
 const canvas = document.getElementById('c'); const view = document.getElementById('view');
@@ -95,13 +99,15 @@ const scene = new THREE.Scene();
 const hemi = new THREE.HemisphereLight(0xfff4e0, 0x8fb57a, 0.9); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(8, 14, 6); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); const sc = sun.shadow.camera; sc.left = -18; sc.right = 18; sc.top = 18; sc.bottom = -18; sc.near = 1; sc.far = 50; sun.shadow.bias = -0.0005; scene.add(sun);
 const lamp = new THREE.PointLight(0xffd27a, 0, 9, 1.6); scene.add(lamp);
+let ISL = null; // 실제 단지 섬 모드면 {cx, cy, map, tierStep, lastTop, poly, ...}
 let camera, controls; const CENTER = new THREE.Vector3(0, 0.8, 0);
 function makeCamera(kind) {
   const w = view.clientWidth || 800, h = view.clientHeight || 600, a = w / h;
-  if (kind === 'persp') { camera = new THREE.PerspectiveCamera(42, a, 0.1, 200); camera.position.set(11, 8, 11); }
-  else if (kind === 'close') { camera = new THREE.PerspectiveCamera(34, a, 0.1, 200); camera.position.set(4.2, 3.2, 5.2); }
-  else if (kind === 'top') { const s = 11; camera = new THREE.OrthographicCamera(-s * a, s * a, s, -s, 0.1, 200); camera.position.set(0.01, 30, 0.02); }
-  else { const s = 6; camera = new THREE.OrthographicCamera(-s * a, s * a, s, -s, 0.1, 200); camera.position.set(14, 14 * Math.tan(THREE.MathUtils.degToRad(35.264)) * 1.0 + 6, 14); }
+  const big = !!ISL;
+  if (kind === 'persp') { camera = new THREE.PerspectiveCamera(42, a, 0.1, 200); camera.position.set(big ? 21 : 11, big ? 15 : 8, big ? 21 : 11); }
+  else if (kind === 'close') { camera = new THREE.PerspectiveCamera(34, a, 0.1, 200); camera.position.set(big ? 2.6 : 4.2, big ? 2.0 : 3.2, big ? 3.2 : 5.2); }
+  else if (kind === 'top') { const s = big ? 16 : 11; camera = new THREE.OrthographicCamera(-s * a, s * a, s, -s, 0.1, 200); camera.position.set(0.01, 30, 0.02); }
+  else { const s = big ? 12 : 6; camera = new THREE.OrthographicCamera(-s * a, s * a, s, -s, 0.1, 200); camera.position.set(14, 14 * Math.tan(THREE.MathUtils.degToRad(35.264)) * 1.0 + 6, 14); }
   camera.lookAt(CENTER);
   if (controls) controls.dispose(); controls = new OrbitControls(camera, canvas); controls.target.copy(CENTER); controls.enableDamping = true; controls.dampingFactor = 0.08; controls.maxPolarAngle = Math.PI / 2 - 0.05; controls.minDistance = 2.5; controls.maxDistance = 60; controls.update();
 }
@@ -128,13 +134,16 @@ const capsule = (r, l) => SEL.world === 'voxel' ? new THREE.BoxGeometry(r * 1.8,
 
 // ---------------- 디오라마 ----------------
 const GW = 20, GH = 14, CELL = 1.5; const world = new THREE.Group(); scene.add(world);
+const worldXZ = (fx, fy) => ISL ? [(fx - ISL.cx) * CELL, (fy - ISL.cy) * CELL] : [(fx - GW / 2) * CELL, (fy - GH / 2) * CELL]; // 타일 실수 좌표 → 월드 xz
+const tileOf = (wx, wz) => ISL ? [Math.floor(wx / CELL + ISL.cx), Math.floor(wz / CELL + ISL.cy)] : [Math.floor(wx / CELL + GW / 2), Math.floor(wz / CELL + GH / 2)];
 const isRoad = (x, y) => y === 7 || x === 9;
 const tierOf = (x, y) => isRoad(x, y) ? 0 : Math.max(0, Math.min(2, Math.floor((x * 0.55 + (13 - y) * 0.45) / 5) - 0)); // 오른쪽·위로 갈수록 높은 단
-const topY = (x, y) => 0.25 + tierOf(x, y) * 0.55;
-const cellPos = (x, y) => new THREE.Vector3((x - GW / 2 + 0.5) * CELL, 0, (y - GH / 2 + 0.5) * CELL);
+const topY = (x, y) => { if (ISL) { const r = ISL.map.get(x + ',' + y); return r ? r.top : ISL.lastTop; } return 0.25 + tierOf(x, y) * 0.55; };
+const cellPos = (x, y) => { const [wx, wz] = worldXZ(x + 0.5, y + 0.5); return new THREE.Vector3(wx, 0, wz); };
 const PAL = {grass:['#9ad178', '#8ec76e', '#a6d987'], road:'#d9d2c3', curb:'#efe8d6', wall:['#fff1d6', '#ffe4e1', '#e6f3ff', '#f3ffe0', '#fff8c7', '#f1e4ff'], roof:['#e07b67', '#5f8f7a', '#4f7fb3', '#c59a3c', '#8d6cb9', '#d96a8a'], apt:'#fff5e4', aptRoof:'#f08a66', trunk:'#8a5a3b', leaf:['#5fa852', '#4e9a46', '#7cc26a']};
 function buildWorld() {
-  while (world.children.length) { const c = world.children.pop(); c.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.dispose && o.material !== OUTLINE) o.material.dispose(); }); }
+  while (world.children.length) { const c = world.children.pop(); c.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.dispose && o.material !== OUTLINE) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose && m.dispose()); }); }
+  if (ISL) { buildIsland(); return; }
   // 지형(단) — 셀마다 박스. 길은 베이지 포장 + 연석
   for (let y = 0; y < GH; y++) for (let x = 0; x < GW; x++) {
     const h = topY(x, y); const p = cellPos(x, y); const road = isRoad(x, y);
@@ -179,6 +188,78 @@ function tree(x, y, i) {
   else { const c = shadowed(new THREE.Mesh(sphere(0.58), mat(leaf))); c.position.set(0, 1.1, 0); g.add(withOutline(c)); const c2 = shadowed(new THREE.Mesh(sphere(0.42), mat(PAL.leaf[(i + 1) % 3]))); c2.position.set(0.1, 1.55, -0.05); g.add(withOutline(c2)); }
   g.scale.setScalar(s); g.position.set(p.x, h0, p.z); return g;
 }
+const SURF = {0:['#9ad178', '#8ec76e', '#a6d987'], 1:'#d9d2c3', 2:'#e9e1cf', 3:'#d8cdb5', 4:'#cfc6b4', 5:'#86c66a', 6:'#dbe6b4', 7:'#d9bf9a'};
+const ROCK = ['#8b6b4e', '#7f6147', '#96765a'];
+// 단지별 입면 팔레트: Codex 레인 사진 36장 관찰(codex/src/architecture/profiles.ts)에서 색만 가져옴 — 하이베르 밝은 벽·청록 띠, 왕십리자이 회백색·주황 세로 띠, 라체르보 밝은 프레임·어두운 창
+const PROFILES = {HYBER:{wall:'#ecece2', accent:'#6aa5a2', glass:'#769b9e', base:'#baa99b'}, WJAI:{wall:'#e2e3df', accent:'#b78262', glass:'#6a9295', base:'#68716f'}, LACERVO:{wall:'#d9ded8', accent:'#a49678', glass:'#4f737b', base:'#56615f'}};
+const pip = (x, y, poly) => { let ins = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins; } return ins; };
+function buildIsland() { // 실제 단지: 타일 기둥(단 지형) + OSM 건물 돌출 + 나무·라벨·출입구 깃발 + 아래 떠 있는 바위
+  const I = ISL; const toon = SEL.world === 'toon' || SEL.world === 'paper';
+  for (const t of I.tiles) {
+    const [x, y, k, r, cr, st, tier] = t; const rec = I.map.get(x + ',' + y); const top = rec.top; const p = cellPos(x, y); const bottom = -1.3 - hashf(x, y, 5) * 0.5;
+    const side = new THREE.Mesh(new THREE.BoxGeometry(CELL, top - 0.12 - bottom, CELL), mat(ROCK[(x * 3 + y) % 3])); side.position.set(p.x, (top - 0.12 + bottom) / 2, p.z); side.receiveShadow = true; world.add(side);
+    const col = k === 0 ? SURF[0][(x * 7 + y * 3) % 3] : (SURF[k] || SURF[0][0]); const slabG = new THREE.BoxGeometry(CELL, 0.12, CELL); const slab = new THREE.Mesh(slabG, mat(col, {grain:SEL.world === 'paper'})); slab.position.set(p.x, top - 0.06, p.z); slab.receiveShadow = true; world.add(slab);
+    if (toon) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(slabG), new THREE.LineBasicMaterial({color:0x8a7560, transparent:true, opacity:SEL.world === 'paper' ? .35 : .16})); e.position.copy(slab.position); world.add(e); }
+    if (k === 1 && r >= 8) { const dash = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.015, 0.07), mat('#f7f1dc')); dash.position.set(p.x, top + 0.01, p.z); dash.rotation.y = (rec.ew ? 0 : Math.PI / 2); world.add(dash); }
+    if (cr) { for (let i = -1; i <= 1; i++) { const z = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.015, 0.9), mat('#ffffff')); z.position.set(p.x + i * 0.28, top + 0.012, p.z); z.rotation.y = rec.ew ? Math.PI / 2 : 0; world.add(z); } }
+    if (st && !(k === 1 && r >= 8)) { for (let i = -1; i <= 1; i++) { const z = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.03, 0.08), mat('#5a4634')); z.position.set(p.x, top + 0.015 + i * 0.005, p.z + i * 0.3); world.add(z); } }
+    // 나무·꽃(연출): 공원 50%·땅 12%
+    const inC = I.poly && I.poly.length && pip(x + 0.5, y + 0.5, I.poly); const chance = k === 5 ? 0.5 : k === 0 ? (inC ? 0.38 : 0.12) : 0; /* 단지 안 조경은 촘촘히(연출) */ if (chance && hashf(x, y, 11) < chance) { const tr = treeAt(p.x + (hashf(x, y, 12) - 0.5) * 0.8, top, p.z + (hashf(x, y, 13) - 0.5) * 0.8, (x + y) % 3, 0.55 + hashf(x, y, 14) * 0.3); world.add(tr); }
+    else if (k === 0 && SEL.world !== 'voxel' && hashf(x, y, 15) < 0.08) { const f = new THREE.Mesh(sphere(0.06), mat(['#f472b6', '#ffd43b', '#ffffff'][(x + y) % 3])); f.position.set(p.x + 0.3, top + 0.07, p.z - 0.2); world.add(f); }
+  }
+  // 건물: OSM 폴리곤 돌출(층수 × 0.22, 소형은 0.3 상한 1.0)
+  const winPos = []; const cmeta = I;
+  for (const b of I.buildings) {
+    const pts = b.poly.map(([fx, fy]) => worldXZ(fx, fy)); if (pts.length < 3) continue;
+    const cx0 = pts.reduce((a, q) => a + q[0], 0) / pts.length, cz0 = pts.reduce((a, q) => a + q[1], 0) / pts.length;
+    const [tx, ty] = tileOf(cx0, cz0); const base = topY(tx, ty);
+    const apt = b.complex || b.kind === 'apartments' || b.levels >= 8; const depth = apt ? Math.max(0.5, b.levels * 0.22) : Math.min(1.0, Math.max(0.35, b.levels * 0.3));
+    const shape = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(x - cx0, -(z - cz0))));
+    const geo = new THREE.ExtrudeGeometry(shape, {depth, bevelEnabled:false}); geo.rotateX(-Math.PI / 2);
+    const roofCol = b.complex ? cmeta.color : apt ? '#f08a66' : b.kind === 'house' || b.kind === 'residential' ? PAL.roof[b.id % PAL.roof.length] : b.kind === 'commercial' || b.kind === 'retail' ? '#8aa2c0' : b.kind === 'school' ? '#d9b36c' : '#c9b9a0';
+    const pf = b.complex ? PROFILES[b.complex] : null;
+    const wallCol = pf ? pf.wall : apt ? '#fff5e4' : b.kind === 'house' || b.kind === 'residential' ? PAL.wall[b.id % PAL.wall.length] : b.kind === 'commercial' || b.kind === 'retail' ? '#e8eef5' : b.kind === 'school' ? '#f6ecd2' : '#efe7d6';
+    const m = new THREE.Mesh(geo, [mat(roofCol), mat(wallCol, {grain:SEL.world === 'paper'})]); m.position.set(cx0, base, cz0); m.castShadow = true; m.receiveShadow = true; world.add(m);
+    if (pf) { // 사진 관찰 띠: 상단 1개 층 높이의 악센트 링(폴리곤을 얇게 돌출) + 기단
+      const band = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, {depth:0.12, bevelEnabled:false}).rotateX(-Math.PI / 2), [mat(pf.accent), mat(pf.accent)]); band.scale.set(1.03, 1, 1.03); band.position.set(cx0, base + depth - 0.34, cz0); world.add(band);
+      const plinth = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, {depth:0.16, bevelEnabled:false}).rotateX(-Math.PI / 2), [mat(pf.base), mat(pf.base)]); plinth.scale.set(1.04, 1, 1.04); plinth.position.set(cx0, base, cz0); world.add(plinth); }
+    if (toon) { const o = new THREE.Mesh(geo, SEL.world === 'paper' ? new THREE.MeshBasicMaterial({color:0x6b5a4a, side:THREE.BackSide}) : OUTLINE); o.scale.set(1.015, 1.01, 1.015); o.position.copy(m.position); world.add(o); }
+    if (apt && b.levels >= 5) { // 창: 변마다 층마다 인스턴스
+      for (let i = 0; i < pts.length; i++) { const a = pts[i], c = pts[(i + 1) % pts.length]; const dx = c[0] - a[0], dz = c[1] - a[1]; const len = Math.hypot(dx, dz); const cnt = Math.floor(len / 0.34); if (cnt < 1) continue; let nx = dz / len, nz = -dx / len; const mx = (a[0] + c[0]) / 2 - cx0, mz = (a[1] + c[1]) / 2 - cz0; if (nx * mx + nz * mz < 0) { nx = -nx; nz = -nz; } const rot = Math.atan2(nx, nz);
+        for (let f = 0; f < b.levels; f++) for (let k2 = 0; k2 < cnt; k2++) { const tt = (k2 + 0.5) / cnt; winPos.push([a[0] + dx * tt + nx * 0.02, base + f * 0.22 + 0.12, a[1] + dz * tt + nz * 0.02, rot]); } }
+    }
+    if (b.complex && b.label) { const lab = labelSprite(b.label); lab.position.set(cx0, base + depth + 0.45, cz0); lab.scale.set(0.95, 0.36, 1); world.add(lab); }
+  }
+  if (winPos.length) { const wg = new THREE.BoxGeometry(0.16, 0.12, 0.03); const gl = PROFILES[I.id] ? PROFILES[I.id].glass : '#cfe6f5'; const wm = mat(SEL.night ? '#ffe08a' : gl, {emissive:SEL.night ? 0xffb347 : 0x000000}); const im = new THREE.InstancedMesh(wg, wm, winPos.length); const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S1 = new THREE.Vector3(1, 1, 1); winPos.forEach((w, i) => { if (SEL.night && (i * 7) % 5 === 0) S1.set(0.001, 0.001, 0.001); else S1.set(1, 1, 1); Q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), w[3]); P.set(w[0], w[1], w[2]); M.compose(P, Q, S1); im.setMatrixAt(i, M); }); im.instanceMatrix.needsUpdate = true; world.add(im); }
+  // 출입구 깃발 · 공원/학교 라벨 · 단지 명패
+  for (const g of I.gates) { const [wx, wz] = worldXZ(g.x, g.y); const [tx, ty] = tileOf(wx, wz); const top = topY(tx, ty); const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.1, 8), mat('#5a4634')); pole.position.set(wx, top + 0.55, wz); world.add(pole); const flag = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.28, 0.03), mat(I.color)); flag.position.set(wx + 0.24, top + 0.95, wz); world.add(flag); const lab = labelSprite(g.name.replace(/\(.*\)/, '')); lab.position.set(wx, top + 1.45, wz); lab.scale.set(1.1, 0.42, 1); world.add(lab); }
+  for (const a of I.areas) { const [wx, wz] = worldXZ(a.x, a.y); const [tx, ty] = tileOf(wx, wz); const lab = labelSprite((a.kind === 'school' ? '🏫 ' : '🌳 ') + a.name); lab.position.set(wx, topY(tx, ty) + 0.9, wz); lab.scale.set(1.5, 0.57, 1); world.add(lab); }
+  const title = labelSprite(I.name); title.position.set(0, I.maxTop + 5.0, 0); title.scale.set(2.6, 0.98, 1); world.add(title);
+  // 떠 있는 바위
+  for (let i = 0; i < 7; i++) { const r = 0.35 + hashf(i, 1, 21) * 0.5; const rock = new THREE.Mesh(SEL.world === 'voxel' ? new THREE.BoxGeometry(r * 1.6, r * 1.2, r * 1.6) : new THREE.DodecahedronGeometry(r, 0), mat(ROCK[i % 3])); const ang = hashf(i, 2, 22) * 6.28, rad = I.radius * CELL * (0.35 + hashf(i, 3, 23) * 0.5); rock.position.set(Math.cos(ang) * rad, -2.1 - hashf(i, 4, 24) * 1.6, Math.sin(ang) * rad); rock.userData.bob = hashf(i, 5, 25) * 6.28; rock.castShadow = false; world.add(rock); rocks.push(rock); }
+}
+const hashf = (x, y, s = 0) => { let h = (x * 374761393 + y * 668265263 + s * 2246822519) | 0; h = (h ^ (h >>> 13)) * 1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+function treeAt(wx, top, wz, i, s) { const g = tree(0, 0, i); g.position.set(wx, top, wz); g.scale.setScalar(s); return g; }
+let rocks = [];
+function prepareIsland(id) {
+  const src = ISLANDS[id]; if (!src) { ISL = null; return; }
+  const maxTier = Math.max(...src.tiles.map(t => t[6])); const tierStep = Math.min(0.5, 2.6 / Math.max(1, maxTier));
+  const map = new Map(); let maxTop = 0; for (const t of src.tiles) { const top = 0.35 + t[6] * tierStep; maxTop = Math.max(maxTop, top); map.set(t[0] + ',' + t[1], {top, k:t[2], r:t[3], cr:t[4], st:t[5]}); }
+  for (const t of src.tiles) { const rec = map.get(t[0] + ',' + t[1]); const l = map.get((t[0] - 1) + ',' + t[1]), rr = map.get((t[0] + 1) + ',' + t[1]); rec.ew = !!((l && l.k === 1) || (rr && rr.k === 1)); } // 길 방향(동서 이웃 도로면 동서)
+  const xs = src.tiles.map(t => t[0]), ys = src.tiles.map(t => t[1]);
+  ISL = Object.assign({}, src, {map, tierStep, maxTop, lastTop:0.35, radius:Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) / 2, bbox:[Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]});
+}
+function islandRoute() { // 정문에 가까운 보행 타일에서 출발해 길·보도·계단 타일만 따라 무작위 산책(왕복 루프)
+  const walk = new Set(); for (const t of ISL.tiles) if (t[2] === 1 || t[2] === 2 || t[2] === 3) walk.add(t[0] + ',' + t[1]);
+  const g = ISL.gates[0] || {x:ISL.cx, y:ISL.cy}; let best = null, bd = 1e9; for (const k of walk) { const [x, y] = k.split(',').map(Number); const d = Math.hypot(x + 0.5 - g.x, y + 0.5 - g.y); if (d < bd) { bd = d; best = [x, y]; } }
+  if (!best) return [cellPos(Math.floor(ISL.cx), Math.floor(ISL.cy))];
+  const pts = []; let cur = best, prev = null, seed = 7;
+  for (let i = 0; i < 60; i++) { pts.push(cellPos(cur[0], cur[1])); const nb = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([dx, dy]) => [cur[0] + dx, cur[1] + dy]).filter(([x, y]) => walk.has(x + ',' + y) && !(prev && x === prev[0] && y === prev[1])); if (!nb.length) break; seed = (seed * 9301 + 49297) % 233280; const pick = nb[Math.floor(seed / 233280 * nb.length)]; prev = cur; cur = pick; }
+  return pts.concat(pts.slice(0, -1).reverse());
+}
+// 구름(섬 모드 분위기): 아래·위에 떠서 천천히 흐른다
+const clouds = new THREE.Group(); scene.add(clouds);
+(() => { const c = document.createElement('canvas'); c.width = 256; c.height = 128; const g = c.getContext('2d'); for (const [x, y, r] of [[70, 80, 42], [120, 60, 52], [170, 78, 44], [110, 90, 36]]) { const gr = g.createRadialGradient(x, y, r * 0.2, x, y, r); gr.addColorStop(0, 'rgba(255,255,255,.95)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); } const t = new THREE.CanvasTexture(c); for (let i = 0; i < 12; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:t, transparent:true, opacity:0.85, depthWrite:false})); const sc = 2.5 + hashf(i, 9, 31) * 3; sp.scale.set(sc, sc * 0.5, 1); sp.position.set((hashf(i, 1, 32) - 0.5) * 44, i < 9 ? -1.5 - hashf(i, 2, 33) * 3.5 : 3.5 + hashf(i, 2, 33) * 2.5, (hashf(i, 3, 34) - 0.5) * 44); sp.userData.v = 0.15 + hashf(i, 4, 35) * 0.25; clouds.add(sp); } })();
 function labelSprite(text) { const c = document.createElement('canvas'); c.width = 128; c.height = 48; const g = c.getContext('2d'); g.fillStyle = 'rgba(255,253,246,.95)'; g.strokeStyle = 'rgba(74,59,47,.5)'; g.lineWidth = 3; g.beginPath(); g.roundRect(4, 4, 120, 40, 20); g.fill(); g.stroke(); g.fillStyle = '#4a3b2f'; g.font = '600 22px "Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 64, 25); const t = new THREE.CanvasTexture(c); const s = new THREE.Sprite(new THREE.SpriteMaterial({map:t, depthTest:false})); s.scale.set(1.3, 0.49, 1); return s; }
 
 // ---------------- 캐릭터(절차 메시) ----------------
@@ -270,6 +351,7 @@ const party = new THREE.Group(); scene.add(party); let members = []; let rideG =
 function buildParty() {
   while (party.children.length) party.remove(party.children[0]); members = [];
   const cols = CONCEPT_COL[SEL.party], crews = CREW_FOR[SEL.party]; rideG = ride(SEL.ride); party.add(rideG);
+  party.scale.setScalar(ISL ? 0.5 : 1); // 실제 단지 섬에서는 건물 축척에 맞춰 절반
   const n = SEL.party === 'solo' ? 1 : SEL.party === 'couple' ? 2 : 3;
   for (let i = 0; i < n; i++) {
     const child = SEL.party === 'family' && i === 1; const scale = child ? 0.62 : 1; const g = makeChar(SEL.char, cols[i], scale, SEL.species === 'cat' && i === 1 ? 'bunny' : SEL.species, crews[i]);
@@ -282,14 +364,16 @@ function buildParty() {
 }
 
 // ---------------- 산책(자동 경로 + 수동 WASD) ----------------
-const route = [[1, 7], [9, 7], [9, 12], [9, 7], [18, 7], [9, 7], [9, 2], [9, 7]].map(([x, y]) => cellPos(x, y)); let segI = 0, segT = 0; const pos = route[0].clone(); let heading = 0; const keys = new Set();
+const dioRoute = () => [[1, 7], [9, 7], [9, 12], [9, 7], [18, 7], [9, 7], [9, 2], [9, 7]].map(([x, y]) => cellPos(x, y));
+let route = []; let segI = 0, segT = 0; const pos = new THREE.Vector3(); let heading = 0; const keys = new Set();
+function resetRoute() { route = ISL ? islandRoute() : dioRoute(); segI = 0; segT = 0; pos.copy(route[0]); }
 window.addEventListener('keydown', e => { const k = e.key.toLowerCase(); if ('wasd'.includes(k) || e.key.startsWith('Arrow')) { keys.add(k); SEL.manual = true; e.preventDefault(); } });
 window.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 function step(dt) {
   const speed = SEL.ride === 'car' ? 4.2 : SEL.ride === 'bike' ? 2.6 : 1.5; let moving = false;
-  if (SEL.manual) { let dx = 0, dz = 0; if (keys.has('w') || keys.has('arrowup')) dz -= 1; if (keys.has('s') || keys.has('arrowdown')) dz += 1; if (keys.has('a') || keys.has('arrowleft')) dx -= 1; if (keys.has('d') || keys.has('arrowright')) dx += 1; if (dx || dz) { const l = Math.hypot(dx, dz); pos.x = THREE.MathUtils.clamp(pos.x + dx / l * speed * dt, -GW / 2 * CELL + 0.5, GW / 2 * CELL - 0.5); pos.z = THREE.MathUtils.clamp(pos.z + dz / l * speed * dt, -GH / 2 * CELL + 0.5, GH / 2 * CELL - 0.5); heading = Math.atan2(dx, dz); moving = true; } }
+  if (SEL.manual) { let dx = 0, dz = 0; if (keys.has('w') || keys.has('arrowup')) dz -= 1; if (keys.has('s') || keys.has('arrowdown')) dz += 1; if (keys.has('a') || keys.has('arrowleft')) dx -= 1; if (keys.has('d') || keys.has('arrowright')) dx += 1; if (dx || dz) { const l = Math.hypot(dx, dz); const nx = pos.x + dx / l * speed * dt, nz = pos.z + dz / l * speed * dt; if (ISL) { const [tx, ty] = tileOf(nx, nz); const r = ISL.map.get(tx + ',' + ty); if (r && r.k !== 4) { pos.x = nx; pos.z = nz; moving = true; } } else { pos.x = THREE.MathUtils.clamp(nx, -GW / 2 * CELL + 0.5, GW / 2 * CELL - 0.5); pos.z = THREE.MathUtils.clamp(nz, -GH / 2 * CELL + 0.5, GH / 2 * CELL - 0.5); moving = true; } heading = Math.atan2(dx, dz); } }
   else { const a = route[segI], b = route[(segI + 1) % route.length]; const len = a.distanceTo(b) || 1; segT += speed * dt / len; if (segT >= 1) { segT = 0; segI = (segI + 1) % route.length; } const a2 = route[segI], b2 = route[(segI + 1) % route.length]; pos.lerpVectors(a2, b2, segT); heading = Math.atan2(b2.x - a2.x, b2.z - a2.z); moving = true; }
-  const cx = Math.floor(pos.x / CELL + GW / 2), cz = Math.floor(pos.z / CELL + GH / 2); const y = topY(THREE.MathUtils.clamp(cx, 0, GW - 1), THREE.MathUtils.clamp(cz, 0, GH - 1));
+  const [cx, cz] = tileOf(pos.x, pos.z); const y = ISL ? topY(cx, cz) : topY(THREE.MathUtils.clamp(cx, 0, GW - 1), THREE.MathUtils.clamp(cz, 0, GH - 1));
   party.position.set(pos.x, y, pos.z); party.rotation.y = heading; return moving;
 }
 let t = 0, blinkT = 0;
@@ -306,7 +390,9 @@ function animate(dt, moving) {
     if (g.userData.billboard) { g.rotation.z = walk ? Math.sin(ph * 0.5) * 0.12 : 0; }
   });
   if (rideG) rideG.children.forEach(c => { if (c.geometry && c.geometry.type === 'TorusGeometry' && moving) c.rotation.x += dt * 6; });
-  if (SEL.follow && controls) { const tgt = new THREE.Vector3(party.position.x, party.position.y + 0.8, party.position.z); const d = new THREE.Vector3().subVectors(camera.position, controls.target); controls.target.lerp(tgt, 0.08); camera.position.copy(controls.target).add(d); }
+  const bobI = ISL ? Math.sin(t * 0.6) * 0.06 : 0; world.position.y = bobI; party.position.y += bobI; for (const r of rocks) { r.position.y += Math.sin(t * 0.8 + r.userData.bob) * 0.002; r.rotation.y += dt * 0.05; }
+  clouds.children.forEach(sp => { sp.position.x += sp.userData.v * dt; if (sp.position.x > 24) sp.position.x = -24; });
+  if (SEL.follow && controls) { const tgt = new THREE.Vector3(party.position.x, party.position.y + 0.8 * party.scale.y, party.position.z); const d = new THREE.Vector3().subVectors(camera.position, controls.target); controls.target.lerp(tgt, 0.08); camera.position.copy(controls.target).add(d); }
 }
 
 // ---------------- 장면 상태(낮/밤) ----------------
@@ -317,28 +403,28 @@ function applyScene() {
 // ---------------- UI ----------------
 const $ = (s) => document.querySelector(s);
 function group(el, list, key, extra) { el.innerHTML = list.map(it => `<button data-id="${it.id}" aria-pressed="${String(SEL[key] === it.id)}">${it.name}${it.desc ? `<small>${it.desc}</small>` : ''}</button>`).join(''); el.querySelectorAll('button').forEach(b => b.onclick = () => { if (extra) return extra(b.dataset.id); SEL[key] = b.dataset.id; rebuild(key); }); }
-function syncUI() { group($('#optChar'), CHARS, 'char'); group($('#optSpecies'), SPECIES, 'species'); group($('#optWorld'), WORLDS, 'world'); group($('#optCam'), CAMS, 'cam'); group($('#optParty'), PARTIES, 'party'); group($('#optRide'), RIDES, 'ride');
+function syncUI() { group($('#optPlace'), PLACES, 'place'); group($('#optChar'), CHARS, 'char'); group($('#optSpecies'), SPECIES, 'species'); group($('#optWorld'), WORLDS, 'world'); group($('#optCam'), CAMS, 'cam'); group($('#optParty'), PARTIES, 'party'); group($('#optRide'), RIDES, 'ride');
   const sc = $('#optScene'); sc.innerHTML = `<button data-id="day" aria-pressed="${String(!SEL.night)}">낮</button><button data-id="night" aria-pressed="${String(SEL.night)}">밤</button><button data-id="follow" aria-pressed="${String(SEL.follow)}">카메라 따라가기</button><button data-id="auto" aria-pressed="${String(!SEL.manual)}">자동 산책</button>`;
   sc.querySelectorAll('button').forEach(b => b.onclick = () => { const id = b.dataset.id; if (id === 'day' || id === 'night') { SEL.night = id === 'night'; rebuild('world'); } else if (id === 'follow') { SEL.follow = !SEL.follow; syncUI(); } else { SEL.manual = !SEL.manual; syncUI(); } });
   updateExport(); updateHud();
 }
-function rebuild(key) { if (key === 'cam') makeCamera(SEL.cam); else if (key === 'world') { buildWorld(); buildParty(); applyScene(); } else buildParty(); syncUI(); try { history.replaceState(null, '', '#' + [SEL.char, SEL.species, SEL.world, SEL.cam].join('-')); } catch (e) {} }
+function rebuild(key) { if (key === 'cam') makeCamera(SEL.cam); else if (key === 'place') { rocks = []; prepareIsland(SEL.place === 'dio' ? null : SEL.place); makeCamera(SEL.cam); resize(); buildWorld(); buildParty(); applyScene(); resetRoute(); } else if (key === 'world') { rocks = []; buildWorld(); buildParty(); applyScene(); } else buildParty(); syncUI(); try { history.replaceState(null, '', '#' + [SEL.place, SEL.char, SEL.species, SEL.world, SEL.cam].join('-')); } catch (e) {} }
 function updateExport() {
   const ch = CHARS.find(c => c.id === SEL.char), wd = WORLDS.find(w => w.id === SEL.world), sp = SPECIES.find(s => s.id === SEL.species);
-  const obj = {stylelab3d:'imjang-world 2026-10-12', character:{id:ch.id, name:ch.name, desc:ch.desc, species:(SEL.char === 'villager' || SEL.char === 'clay' || SEL.char === 'paper') ? sp.id : null, headRatio:'2등신(머리 r0.44 / 몸 캡슐 r0.3)', eyes:'흰 구+짙은 동공+하이라이트, 3.2초 깜빡임', blush:true, outline:SEL.world === 'toon' ? 'inverted-hull 1.045 갈색' : 'none', toon:SEL.world === 'toon' ? '3-step gradient' : null}, world:{id:wd.id, name:wd.name, desc:wd.desc, terrain:'단(0.55m) 박스 지형·길 베이지·코티지 박공(4각뿔)·아파트 창 그리드·구형 2단 나무', night:SEL.night}, camera:{id:SEL.cam, iso:'Orthographic 35.264° 고도·45° 방위', persp:'Perspective 42°', close:'Perspective 34° · 거리 약 7m 따라가기'}, party:{concept:SEL.party, ride:SEL.ride, colors:CONCEPT_COL[SEL.party]}, mapToCodex:{character:{villager:'새 메시(round-buddy 머리·귀·눈 규격 교체)', clay:'plush-crew 질감', bean:'round-buddy', paper:'paper-scout', minifig:'voxel-walker 변형', voxelcrew:'crew-pixel 복셀 승격'}[SEL.char], building:{toon:'soft-isometric+윤곽', clay:'clay-toy', lowpoly:'white-model/flat-roof', voxel:'pixel-blocks', paper:'paper-cut'}[SEL.world], map:{toon:'soft-village', clay:'toy-island', lowpoly:'topo-outdoor', voxel:'pixel-grid', paper:'paper-layers'}[SEL.world]}, source:'github.com/flykimjiwon/aptHanimo prototype/stylelab3d/index.html'};
-  $('#exportTxt').value = `# 임장월드 3D 스타일 선택\n- 캐릭터: ${ch.name} (${ch.id})${obj.character.species ? ' · 종족 ' + sp.name : ''} — ${ch.desc}\n- 월드: ${wd.name} (${wd.id}) — ${wd.desc}\n- 시점: ${CAMS.find(c => c.id === SEL.cam).name} · 컨셉: ${PARTIES.find(p => p.id === SEL.party).name} · 탈것: ${RIDES.find(r => r.id === SEL.ride).name} · ${SEL.night ? '밤' : '낮'}\n- Codex 레인 대응: 캐릭터 ${obj.mapToCodex.character} / 건물 ${obj.mapToCodex.building} / 지도 ${obj.mapToCodex.map}\n\n` + JSON.stringify(obj, null, 1);
+  const pl = PLACES.find(p => p.id === SEL.place); const obj = {stylelab3d:'imjang-world 2026-10-12', place:{id:SEL.place, name:pl.name, source:ISL ? ISL.source : '가상 디오라마'}, character:{id:ch.id, name:ch.name, desc:ch.desc, species:(SEL.char === 'villager' || SEL.char === 'clay' || SEL.char === 'paper') ? sp.id : null, headRatio:'2등신(머리 r0.44 / 몸 캡슐 r0.3)', eyes:'흰 구+짙은 동공+하이라이트, 3.2초 깜빡임', blush:true, outline:SEL.world === 'toon' ? 'inverted-hull 1.045 갈색' : 'none', toon:SEL.world === 'toon' ? '3-step gradient' : null}, world:{id:wd.id, name:wd.name, desc:wd.desc, terrain:'단(0.55m) 박스 지형·길 베이지·코티지 박공(4각뿔)·아파트 창 그리드·구형 2단 나무', night:SEL.night}, camera:{id:SEL.cam, iso:'Orthographic 35.264° 고도·45° 방위', persp:'Perspective 42°', close:'Perspective 34° · 거리 약 7m 따라가기'}, party:{concept:SEL.party, ride:SEL.ride, colors:CONCEPT_COL[SEL.party]}, mapToCodex:{character:{villager:'새 메시(round-buddy 머리·귀·눈 규격 교체)', clay:'plush-crew 질감', bean:'round-buddy', paper:'paper-scout', minifig:'voxel-walker 변형', voxelcrew:'crew-pixel 복셀 승격'}[SEL.char], building:{toon:'soft-isometric+윤곽', clay:'clay-toy', lowpoly:'white-model/flat-roof', voxel:'pixel-blocks', paper:'paper-cut'}[SEL.world], map:{toon:'soft-village', clay:'toy-island', lowpoly:'topo-outdoor', voxel:'pixel-grid', paper:'paper-layers'}[SEL.world]}, source:'github.com/flykimjiwon/aptHanimo prototype/stylelab3d/index.html'};
+  $('#exportTxt').value = `# 임장월드 3D 스타일 선택\n- 장소: ${pl.name}${ISL ? ' — ' + ISL.source : ''}\n- 캐릭터: ${ch.name} (${ch.id})${obj.character.species ? ' · 종족 ' + sp.name : ''} — ${ch.desc}\n- 월드: ${wd.name} (${wd.id}) — ${wd.desc}\n- 시점: ${CAMS.find(c => c.id === SEL.cam).name} · 컨셉: ${PARTIES.find(p => p.id === SEL.party).name} · 탈것: ${RIDES.find(r => r.id === SEL.ride).name} · ${SEL.night ? '밤' : '낮'}\n- Codex 레인 대응: 캐릭터 ${obj.mapToCodex.character} / 건물 ${obj.mapToCodex.building} / 지도 ${obj.mapToCodex.map}\n\n` + JSON.stringify(obj, null, 1);
 }
 let fps = 0, fpsN = 0, fpsT = 0;
-function updateHud() { $('#hud').textContent = `${CHARS.find(c => c.id === SEL.char).name} × ${WORLDS.find(w => w.id === SEL.world).name} × ${CAMS.find(c => c.id === SEL.cam).name} · ${PARTIES.find(p => p.id === SEL.party).name} · ${fps ? fps + ' fps' : ''}`; }
+function updateHud() { $('#hud').textContent = `${PLACES.find(p => p.id === SEL.place).name} · ${CHARS.find(c => c.id === SEL.char).name} × ${WORLDS.find(w => w.id === SEL.world).name} × ${CAMS.find(c => c.id === SEL.cam).name} · ${PARTIES.find(p => p.id === SEL.party).name} · ${fps ? fps + ' fps' : ''}`; }
 $('#copyBtn').onclick = () => { const ta = $('#exportTxt'); const ok = () => $('#copyMsg').textContent = '복사됨. 3D 본편(Codex 레인) 인계문에 붙여 넣으세요.'; const fail = () => { ta.focus(); ta.select(); $('#copyMsg').textContent = '자동 복사가 막혀 텍스트를 선택했어요.'; }; try { navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(ta.value).then(ok, fail) : fail(); } catch (e) { fail(); } };
 $('#pngBtn').onclick = () => { try { renderer.render(scene, camera); const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = `stylelab3d_${SEL.char}_${SEL.world}_${SEL.cam}.png`; a.click(); $('#copyMsg').textContent = 'PNG 저장'; } catch (e) { $('#copyMsg').textContent = '저장 실패: ' + e.message; } };
 
 // ---------------- 부팅·루프 ----------------
-makeCamera(SEL.cam); resize(); buildWorld(); buildParty(); applyScene(); syncUI();
+prepareIsland(SEL.place === 'dio' ? null : SEL.place); makeCamera(SEL.cam); resize(); buildWorld(); buildParty(); applyScene(); resetRoute(); syncUI();
 let last = performance.now();
 function loop(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now; const moving = step(dt); animate(dt, moving); controls.update(); renderer.render(scene, camera); fpsN++; fpsT += dt; if (fpsT >= 1) { fps = Math.round(fpsN / fpsT); fpsN = 0; fpsT = 0; updateHud(); } requestAnimationFrame(loop); }
 requestAnimationFrame(loop);
-self.__lab = {SEL, rebuild, scene, renderer, get fps() { return fps; }, members: () => members.length, world: () => world.children.length};
+self.__lab = {SEL, rebuild, scene, renderer, get fps() { return fps; }, members: () => members.length, world: () => world.children.length, island: () => ISL ? {id:ISL.id, tiles:ISL.tiles.length, buildings:ISL.buildings.length, maxTop:ISL.maxTop, route:route.length} : null};
 </script>
 </body>
 </html>

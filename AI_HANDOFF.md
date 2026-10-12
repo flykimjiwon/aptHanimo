@@ -118,6 +118,7 @@ python3 -m http.server 8793 --bind 127.0.0.1 --directory prototype
 |---|---|---|
 | Claude → Codex | 계단·일방통행 규칙: `prototype/src/04_route.js`의 `isStairs`·`moveAllowed`, 굽기의 `odir`(진행 방향 0..7) | Codex 경로 메타 `stairs`·`slope`가 0이고 일방통행 필드가 없음(Codex 인계 §9-2 "실제 출입구·통행 데이터") |
 | Claude → Codex | 골든값 테스트 방식(`tests/golden.json`, 의도한 변화만 `--update`)과 데이터 무결성 검증기(복합키 집합·게이트 도달·정본↔산출 동기) | Codex 인계 §9-1 "브라우저 회귀 자동화·CI" |
+| Claude → Codex | **실제 단지 '떠 있는 섬' 연출**(v12): 단지 중심 반경 잘라 타일 기둥+OSM 건물 돌출+바위·구름, `prototype/stylelab3d/build_island_data.py`·`buildIsland()` | 사용자 요청 "게임 맵처럼 떠 있는 실제 지도 모양 섬". Codex 월드(1.3km 정사각)에도 섬 마스크·절벽 옆면·바위로 같은 연출 가능 |
 | Claude → Codex | **3D 캐릭터·월드 풍 규격**: `prototype/stylelab3d/`(three.js)에서 고른 조합 JSON(2등신 비율·귀 4종·눈/볼·inverted-hull 윤곽·toon 3단·재질 세트 5·걷기 수치)을 `solid-person.ts`·`building-style.ts`·`map-style.ts` 파라미터로 | 사용자 1순위 "three.js 3D 귀여운 캐릭터·여러 풍". 이식법 `prototype/stylelab3d/STYLE_LAB_3D_2026-10-12.md` §6 |
 | Claude → Codex | 단지 사실·이슈 카드의 **출처 등급 계약**(`tools/complexes.json`: A/A-est/B/C/X/F, 6분류 cls) | Codex 단지 비교·수첩 재방문(§9-4)에 사실 표기 기준 필요 |
 | Codex → Claude | 실제 입구·접근 가능한 인근 길 완료 구분(`arrived`/`complete`/`blocked`), 차량 선분 충돌 검사 개념 | 프로토는 25m 타일이라 출입구가 타일 단위. 셀 해상도 올릴 때 참고 |
