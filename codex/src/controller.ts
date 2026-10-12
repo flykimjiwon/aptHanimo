@@ -168,6 +168,15 @@ export class Controller {
         {
           onSelect: (id) => this.selectPlace(id),
           onGround: (point) => this.onGround(point),
+          onComplete: (blocked) => {
+            this.refresh();
+            this.status(
+              blocked
+                ? "길이 막혀 안내를 멈췄어요 · 다른 길을 골라주세요"
+                : "선택한 길 끝에 도착했어요 · 출입구는 현장에서 확인해 주세요",
+            );
+            getElement("#world-stage", HTMLElement).dataset.currentNode = "free";
+          },
           onArrive: (id) => {
             this.refresh();
             const arrived = this.places.find((place) => place.id === this.world?.nearPlace);

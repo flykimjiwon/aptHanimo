@@ -4,21 +4,12 @@ import type { SpatialPOI, SpatialWorld, XY } from "../spatial/types";
 import { type MotorPosition, MovementMotor } from "./motor";
 import { SpatialNavigation } from "./navigation";
 import { hasGroundPoints } from "./route-visual";
+import { projectOnSegment } from "./segment-clearance";
 
 type SpatialRoute = Route & { readonly endpointDistance: number };
 
 function project(point: XY, start: XY, end: XY): { readonly point: XY; readonly distance: number } {
-  const dx = end[0] - start[0];
-  const dz = end[1] - start[1];
-  const lengthSquared = dx * dx + dz * dz;
-  const amount =
-    lengthSquared === 0
-      ? 0
-      : Math.max(
-          0,
-          Math.min(1, ((point[0] - start[0]) * dx + (point[1] - start[1]) * dz) / lengthSquared),
-        );
-  const projected: XY = [start[0] + dx * amount, start[1] + dz * amount];
+  const projected = projectOnSegment(point, start, end);
   return {
     point: projected,
     distance: Math.hypot(projected[0] - point[0], projected[1] - point[1]),
@@ -179,18 +170,25 @@ export class SpatialDriver {
     delta: number,
     input: XY,
     paused: boolean,
-  ): { readonly kind: "arrived"; readonly id: string } | { readonly kind: "complete" } | null {
+  ):
+    | { readonly kind: "arrived"; readonly id: string }
+    | { readonly kind: "complete" | "blocked" }
+    | null {
     const manual = Math.hypot(input[0], input[1]) > 0.01;
     const direction = manual ? input : this.autoInput(paused);
     const target = this.stops[0];
     const distanceBefore = target
       ? Math.hypot(target[0] - this.position.x, target[2] - this.position.z)
       : 0;
-    this.motor.step(delta, paused ? [0, 0] : direction);
+    this.motor.step(
+      delta,
+      paused ? [0, 0] : direction,
+      !manual && !paused && target ? [target[0], target[2]] : undefined,
+    );
     if (!manual && !paused && target) {
       const distanceAfter = Math.hypot(target[0] - this.position.x, target[2] - this.position.z);
       this.stalledFor = distanceAfter < distanceBefore - 0.001 ? 0 : this.stalledFor + delta;
-      if (this.stalledFor >= 0.75 && this.recover()) return { kind: "complete" };
+      if (this.stalledFor >= 0.75 && this.recover()) return { kind: "blocked" };
     }
     if (this.stops.length > 0 || !this.routeGoal) return null;
     const arrived = this.destination;
@@ -226,7 +224,7 @@ export class SpatialDriver {
       const dx = target[0] - this.position.x;
       const dz = target[2] - this.position.z;
       const remaining = Math.hypot(dx, dz);
-      if (remaining >= 0.65) return [dx / remaining, dz / remaining];
+      if (remaining >= 0.01) return [dx / remaining, dz / remaining];
       this.stops.shift();
       target = this.stops[0];
     }

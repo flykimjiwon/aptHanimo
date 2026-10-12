@@ -103,6 +103,40 @@ describe("SpatialNavigation", () => {
 const xi = parseSpatial(await Bun.file("public/worlds/xi.json").json());
 
 describe("actual-world navigation", () => {
+  for (const complex of ["haiver", "xi", "cherbo"] as const) {
+    test(`${complex} car routes reach every mapped POI approach without crossing obstacles`, async () => {
+      const data = parseSpatial(await Bun.file(`public/worlds/${complex}.json`).json());
+      const navigation = new SpatialNavigation(data);
+      const driver = new SpatialDriver(data, "car");
+      for (const poi of data.pois) {
+        driver.teleport("home");
+        const route = driver.planTo(poi.id);
+        expect(route, `${complex}/${poi.id} car approach`).not.toBeNull();
+        if (!route?.points) throw new RangeError(`${complex}/${poi.id} car route missing`);
+        for (let index = 1; index < route.points.length; index += 1) {
+          const from = route.points[index - 1];
+          const to = route.points[index];
+          if (!from || !to) continue;
+          const end = navigation.sweep([from[0], from[2]], [to[0], to[2]], "car");
+          expect(
+            Math.hypot(end[0] - to[0], end[1] - to[2]),
+            `${complex}/${poi.id} segment ${index}`,
+          ).toBeLessThan(0.01);
+        }
+        driver.move(route);
+        let blocked = false;
+        for (let frame = 0; frame < 90000 && driver.moving; frame += 1) {
+          if (driver.step(1 / 60, [0, 0], false)?.kind === "blocked") blocked = true;
+        }
+        const end = route.points.at(-1);
+        if (!end) throw new RangeError("Route endpoint missing");
+        expect(blocked, `${complex}/${poi.id} stalled while following`).toBe(false);
+        expect(driver.moving).toBe(false);
+        expect(Math.hypot(driver.position.x - end[0], driver.position.z - end[2])).toBeLessThan(1);
+      }
+    });
+  }
+
   test("plans only segments the movement sweep can traverse", () => {
     // Given
     const navigation = new SpatialNavigation(xi);

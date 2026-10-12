@@ -1,5 +1,6 @@
 import type { Mode } from "../data";
 import type { SpatialBuilding, SpatialWorld, XY } from "../spatial/types";
+import { clearsRing, projectOnSegment, staysOnRoads } from "./segment-clearance";
 
 const BUCKET = 24;
 const MAX_RADIUS = 1.2;
@@ -121,6 +122,47 @@ export class SpatialCollision {
       );
     }
     return true;
+  }
+
+  carSegmentPassable(start: XY, end: XY): boolean {
+    if (!this.passable(start, "car") || !this.passable(end, "car")) return false;
+    const buildings = this.along(this.buildings, start, end);
+    if (buildings.some((building) => !clearsRing(start, end, building.ring, RADII.car)))
+      return false;
+    return staysOnRoads(
+      start,
+      end,
+      this.along(this.segments, start, end).filter((segment) => segment.kind === "road"),
+      RADII.car,
+    );
+  }
+
+  carPoint(point: XY): XY | null {
+    let nearest: XY | null = null;
+    let distance = Math.SQRT2;
+    for (const segment of this.segments.get(this.key(point)) ?? []) {
+      if (segment.kind !== "road" || segment.width < RADII.car * 2) continue;
+      const candidate = projectOnSegment(point, segment.start, segment.end);
+      const gap = Math.hypot(candidate[0] - point[0], candidate[1] - point[1]);
+      if (gap <= distance && this.passable(candidate, "car")) {
+        nearest = candidate;
+        distance = gap;
+      }
+    }
+    return nearest;
+  }
+
+  private along<T>(buckets: ReadonlyMap<number, readonly T[]>, start: XY, end: XY): readonly T[] {
+    const bounds = this.world.bounds;
+    const x0 = Math.floor((Math.min(start[0], end[0]) - bounds.minX) / BUCKET);
+    const x1 = Math.floor((Math.max(start[0], end[0]) - bounds.minX) / BUCKET);
+    const z0 = Math.floor((Math.min(start[1], end[1]) - bounds.minZ) / BUCKET);
+    const z1 = Math.floor((Math.max(start[1], end[1]) - bounds.minZ) / BUCKET);
+    const items = new Set<T>();
+    for (let z = z0; z <= z1; z += 1)
+      for (let x = x0; x <= x1; x += 1)
+        for (const item of buckets.get(z * this.columns + x) ?? []) items.add(item);
+    return [...items];
   }
 
   private index<T>(buckets: Map<number, T[]>, item: T, bounds: Bounds): void {

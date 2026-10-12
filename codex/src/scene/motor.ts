@@ -71,7 +71,7 @@ export class MovementMotor {
     this.speed = 0;
   }
 
-  step(delta: number, input: XY): boolean {
+  step(delta: number, input: XY, target?: XY): boolean {
     const magnitude = Math.min(1, Math.hypot(input[0], input[1]));
     const desiredSpeed = SPEEDS[this.mode] * magnitude;
     const acceleration = magnitude > 0 ? ACCELERATION[this.mode] : ACCELERATION[this.mode] * 2;
@@ -94,10 +94,13 @@ export class MovementMotor {
     }
     if (this.speed < 0.001) return false;
     const start: XY = [this.x, this.z];
-    const end: XY = [
-      this.x + Math.sin(this.heading) * this.speed * delta,
-      this.z + Math.cos(this.heading) * this.speed * delta,
-    ];
+    const remaining = target ? Math.hypot(target[0] - this.x, target[1] - this.z) : Infinity;
+    const travel = Math.min(this.speed * delta, remaining);
+    const direction: XY =
+      target && remaining > 0
+        ? [(target[0] - this.x) / remaining, (target[1] - this.z) / remaining]
+        : [Math.sin(this.heading), Math.cos(this.heading)];
+    const end: XY = [this.x + direction[0] * travel, this.z + direction[1] * travel];
     const direct = this.navigation.sweep(start, end, this.mode);
     let result = direct;
     if (distanceSquared(direct, end) > 0.0001) {

@@ -249,6 +249,7 @@ export class World {
         manual: this.manualActive,
         input: this.manualActive ? this.rig.toWorldInput(this.manualInput) : [0, 0],
         paused: this.paused,
+        onComplete: (blocked) => this.events.onComplete?.(blocked),
       },
       delta,
     );
