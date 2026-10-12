@@ -14,6 +14,25 @@ const UPDATE = process.argv.includes('--update');
 const goldenPath = path.join(here, 'golden.json');
 const data = fs.readFileSync(path.join(root, 'data', 'cell_data.json'), 'utf8');
 const src = (f) => fs.readFileSync(path.join(root, 'src', f), 'utf8');
+const cell = JSON.parse(data);
+const cellCount = cell.meta.W * cell.meta.H;
+if (!Array.isArray(cell.oneway) || !Array.isArray(cell.odir) ||
+    cell.oneway.length !== cellCount || cell.odir.length !== cellCount ||
+    !cell.oneway.every(v => v === 0 || v === 1) ||
+    !cell.odir.every((v, i) => Number.isInteger(v) && v >= -1 && v <= 7 && (!cell.oneway[i] || v >= 0))) {
+  throw new Error('v8 oneway/odir 배열이 없거나 잘못되었습니다. 셀 원자료와 재굽기 결과를 확인하세요.');
+}
+let golden = null;
+if (!UPDATE) {
+  try {
+    golden = JSON.parse(fs.readFileSync(goldenPath, 'utf8'));
+  } catch (cause) {
+    throw new Error('golden.json을 읽을 수 없습니다. 기준 파일을 복원하거나 의도한 변경 검토 후 --update를 사용하세요.', { cause });
+  }
+  if (!golden || !golden.metrics || typeof golden.metrics !== 'object' || Array.isArray(golden.metrics)) {
+    throw new Error('golden.json의 metrics 객체가 올바르지 않습니다.');
+  }
+}
 
 // ---- 샌드박스: 브라우저 전역 최소 스텁 ----
 const sandbox = {
@@ -112,11 +131,12 @@ const metrics = {};
     if (X.moveAllowed) ok(!!cex, `${c.id} 출구→정문 차 경로 존재(일방통행 적용 후)`);
   }
   console.log('   ' + JSON.stringify(metrics).slice(0, 600) + '…');
-  let golden = null; try { golden = JSON.parse(fs.readFileSync(goldenPath, 'utf8')); } catch (e) {}
-  if (UPDATE || !golden) { fs.writeFileSync(goldenPath, JSON.stringify({ generated: new Date().toISOString().slice(0, 10), metrics }, null, 1)); console.log('   golden.json ' + (golden ? '갱신' : '생성')); }
-  else {
-    for (const id of Object.keys(golden.metrics)) {
+  if (!UPDATE) {
+    const keys = (value) => JSON.stringify(Object.keys(value).sort());
+    if (keys(golden.metrics) !== keys(metrics)) throw new Error('골든 단지 목록이 현재 셀과 다릅니다. 전체 변경을 검토하세요.');
+    for (const id of Object.keys(metrics)) {
       const a = golden.metrics[id], b = metrics[id];
+      if (!a || typeof a !== 'object' || Array.isArray(a) || keys(a) !== keys(b)) throw new Error(`골든 ${id}의 지표 목록이 현재 계산과 다릅니다.`);
       for (const k of Object.keys(a)) ok(JSON.stringify(a[k]) === JSON.stringify(b && b[k]), `골든 ${id}.${k}`, `${JSON.stringify(a[k])} → ${JSON.stringify(b && b[k])}`);
     }
   }
@@ -155,9 +175,13 @@ if (X.moveAllowed && DATA.odir) {
   let checked = 0, bad = 0;
   for (let i = 0; i < W * H; i++) { if (!OW[i] || OD[i] < 0) continue; const v = DIRV[OD[i]]; const x = i % W, y = (i / W) | 0; const nx = x - v[0], ny = y - v[1]; if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue; const j = idx(nx, ny); checked++; if (X.moveAllowed(i, j, 'car', -v[0], -v[1])) bad++; /* 역주행 */ const fromOpposed = OW[j] && OD[j] >= 0 && (DIRV[OD[j]][0] * v[0] + DIRV[OD[j]][1] * v[1]) < 0; if (!fromOpposed && !X.moveAllowed(j, i, 'car', v[0], v[1])) bad++; /* 순방향(출발 타일이 반대 방향 일방통행이면 제외) */ if (!X.moveAllowed(i, j, 'walk', -v[0], -v[1])) bad++; /* 보행 무관 */ }
   ok(checked > 0 && bad === 0, '역주행 차단·순방향 허용·보행 무관', `${bad} 위반 / ${checked}`);
-} else console.log('   (odir 없음 — 재굽기 전 데이터, 건너뜀)');
+} else ok(false, 'v8 일방통행 함수와 데이터는 필수');
 
 // ======================================================================
 console.log(`\n결과: ${pass} 통과 / ${fail} 실패`);
 for (const f of fails) console.log('  ✗ ' + f);
+if (UPDATE && fail === 0) {
+  fs.writeFileSync(goldenPath, JSON.stringify({ generated: new Date().toISOString().slice(0, 10), metrics }, null, 1));
+  console.log('golden.json 갱신 — 모든 규칙·데이터 검사 통과');
+}
 process.exit(fail ? 1 : 0);
