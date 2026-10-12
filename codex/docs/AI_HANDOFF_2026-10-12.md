@@ -2,6 +2,8 @@
 
 작성일: 2026-10-12 KST. 대상은 `flykimjiwon/aptHanimo`의 **`codex/` 앱**이다. 이번 세션은 기존 V5를 인수해 전체 검수하고, 재현한 결함 5건을 수정·검증·커밋·푸시했다. 이 문서는 다음 AI가 같은 조사를 반복하지 않고 코드와 증거를 찾아 이어서 작업하기 위한 정본이다.
 
+협업 전체의 첫 진입은 개인 메타 저장소의 [Claude·Codex 통합 인계](https://github.com/flykimjiwon/kimjiwon/blob/main/docs/prompts/APTHANIMO_UNIFIED_HANDOFF_2026-10-12.md)다(해당 저장소 접근 권한 필요). 이 공개 문서는 Codex 앱의 기술·재현 안내를 맡는다. 환경별 로컬 경로와 다른 세션의 상세 운영 기록은 메타 문서에서 관리한다.
+
 **소스·검증 기준:** `ed3a1ca2e77b7c24f5c83210d60b6d35651f7709`. 가이드 작성 직전 로컬 `main`과 GitHub `main`이 이 SHA로 일치했고 제품 작업 폴더는 clean이었다. 이 가이드와 README 갱신은 그 이후의 문서 변경이다. 다음 세션의 실제 HEAD는 Git으로 다시 확인한다.
 
 ## 1. 먼저 알아야 할 상태
@@ -62,30 +64,28 @@
 - 이동 수정: `b0082aa1827b1a2ea437541c58f320de3ddbce43`
 - 조작부·복구: `e5c1767b3ab3c32672aa7d5bb93939aa8fe14181`
 - 검증 기록: `ed3a1ca2e77b7c24f5c83210d60b6d35651f7709`
-- 부모 보고·증거 발행: `00d7955b729ed76389059ac367ed1e9435f315f9` (`flykimjiwon/kimjiwon`, 다른 문서와 함께 발행됨)
-- 부모의 제품 푸시 영수증: `ca4112d8084e8c4495293dd461f33622f7d87847`
 
-위 항목은 모두 `main`에 푸시 후 원격 SHA를 확인했다. PR 생성이나 공개 서비스 배포는 하지 않았다.
+위 제품 커밋은 모두 `main`에 푸시 후 원격 SHA를 확인했다. 메타 보고서의 발행 이력은 통합 인계를 따른다. PR 생성이나 공개 서비스 배포는 하지 않았다.
 
 ## 3. 실행과 점검
 
-### 이 워크스페이스에서 시작
+### 저장소 확인
 
 ```sh
-cd ~/Desktop/kimjiwon
-cd my-projects/aptHanimo
+# aptHanimo checkout의 루트에서 실행
 git status --short
 git branch --show-current
 git log -8 --oneline
 git ls-remote origin refs/heads/main
 ```
 
-이 워크스페이스는 nested repo 구조다. 제품 Git 작업은 `aptHanimo/`, 보고·원장은 부모 `kimjiwon/`에서 한다. 상위 `AGENTS.md`와 대상 repo의 새 지침을 먼저 확인한다. 다른 세션의 dirty가 있으면 범위를 확인하고 보존한다. 원격과 차이가 있을 때 기존 변경을 덮어쓰지 않고 fast-forward 가능 여부를 확인한다.
+적용되는 `AGENTS.md`와 현재 작업 범위를 먼저 확인한다. 다른 세션의 dirty가 있으면 범위를 확인하고 보존한다. 원격과 차이가 있을 때 기존 변경을 덮어쓰지 않고 fast-forward 가능 여부를 확인한다. 개인 nested workspace에서의 보고·원장 절차는 통합 인계에 있다.
 
 ### 앱 실행
 
 ```sh
-cd ~/Desktop/kimjiwon/my-projects/aptHanimo/codex
+# aptHanimo checkout의 루트에서 실행
+cd codex
 bun install --frozen-lockfile
 bun run build
 bun start
@@ -289,7 +289,7 @@ flowchart TD
 | 제품 안의 검증 요약 | [repair-2026-10-12.md](../qa/v5/repair-2026-10-12.md): 제품 SHA·검사 결과·잔여 한계 |
 | 데이터 품질 | [공간 품질](../research/spatial/QUALITY.md), [공원·철도](../research/spatial/V5_CONTEXT.md), [브랜드 관찰](../research/brands/README.md) |
 
-로컬 부모 경로는 `~/Desktop/kimjiwon/docs/analysis/`다. 후속 수정 폴더의 핵심 파일:
+메타 저장소의 후속 수정 보고 폴더에 다음 증거가 있다. 로컬 배치와 접근 경로는 통합 인계를 따른다.
 
 - `route-probe.mjs`, `route-probe.json`: 80경로 주행 재현과 결과.
 - `browser-car-matrix.json`: 자동차 17목적지 UI 검사.
@@ -336,7 +336,8 @@ manifest의 `UNCOMMITTED @ f7da8c1...` 등은 QA 당시의 이력이다. 현재 
 
 ```text
 aptHanimo의 codex/ 한바퀴 V5를 이어서 작업한다.
-상위 AGENTS.md를 읽고 codex/docs/AI_HANDOFF_2026-10-12.md부터 확인해라.
+적용되는 AGENTS.md와 codex/docs/AI_HANDOFF_2026-10-12.md를 확인해라.
+메타 저장소에 접근 가능하면 APTHANIMO_UNIFIED_HANDOFF_2026-10-12.md부터 읽어라.
 이번 이전 세션의 F1~F5는 b0082aa/e5c1767에서 수정됐고 ed3a1ca에 검증 기록이 있다.
 현재 Git 상태·원격·실행 서버를 새로 확인하고, 다른 세션의 dirty를 보존해라.
 prototype/의 Claude V8과 codex/의 기능·테스트 수를 합치지 마라.

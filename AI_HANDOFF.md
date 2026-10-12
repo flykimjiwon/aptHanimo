@@ -1,12 +1,12 @@
 # aptHanimo · AI 인계 (두 레인 합본) — 2026-10-12
 
 > 이 저장소를 처음 여는 AI와 사람을 위한 **최상위 입구**다. 한 저장소에 서로 다른 AI 두 레인의 산출물이 동거한다. 레인별 상세 인계는 각 레인 문서가 정본이고, 이 문서는 둘을 한 장으로 묶어 **공통 지도·경계·상태·백로그**를 준다.
-> 기준 커밋: `04b2e2e`(2026-10-12 KST). 다음 세션은 `git log --oneline -8`과 `git ls-remote origin refs/heads/main`으로 실제 HEAD를 다시 확인한다.
+> 병행 세션 반영 기준: `5c67025`(Claude v9, 2026-10-12 KST). 이후 생성물·검증기 보강도 아래에 기록했다. 다음 세션은 `git log --oneline -8`과 `git ls-remote origin refs/heads/main`으로 실제 HEAD를 다시 확인한다. 환경별 운영·전체 증거는 개인 메타의 [통합 인계](https://github.com/flykimjiwon/kimjiwon/blob/main/docs/prompts/APTHANIMO_UNIFIED_HANDOFF_2026-10-12.md)를 따른다(접근 권한 필요).
 
 | 레인 | 경로 | 정본 인계 문서 | 작성 AI |
 |---|---|---|---|
-| **Codex 레인 · 한바퀴 V5** | `codex/` | [`codex/docs/AI_HANDOFF_2026-10-12.md`](codex/docs/AI_HANDOFF_2026-10-12.md) (347줄) | Codex |
-| **Claude 레인 · 프로토타입 v8** | `prototype/` + 루트 기획서·카탈로그 | [`prototype/AI_HANDOFF_2026-10-12.md`](prototype/AI_HANDOFF_2026-10-12.md) | Claude Code |
+| **Codex 레인 · 한바퀴 V5** | `codex/` | [`codex/docs/AI_HANDOFF_2026-10-12.md`](codex/docs/AI_HANDOFF_2026-10-12.md) | Codex |
+| **Claude 레인 · 프로토타입 v9** | `prototype/` + 루트 기획서·카탈로그 | [`prototype/AI_HANDOFF_2026-10-12.md`](prototype/AI_HANDOFF_2026-10-12.md) | Claude Code, 검증기·생성물 후속은 Codex |
 
 ---
 
@@ -19,7 +19,7 @@
 | 공간 데이터 | `public/worlds/*.json`(코어 동 외곽선·OSM·DEM), DEM은 **Mapzen/Tilezen Terrarium 타일** 재표본(코드 `scripts/collect-spatial.mjs` 기준; 옛 문서의 "OpenTopoData"는 오기) | `data/cell_data.json`(OSM Overpass 2026-10-12 추출 + **OpenTopoData SRTM 30m** 저장본 + 손입력 단지 사실 `tools/complexes.json`) |
 | 이동 규칙 | 2m 격자 A*·차량 탐색점 도로 투영·선분 충돌 검사. 경로 메타 `stairs`·`slope`는 아직 0, 일방통행 필드 없음 | 타일 A*·수단별 속도·경사 계수·계단(`isStairs`)·횡단·**일방통행 방향 `odir`+`moveAllowed`**(v8) |
 | 검증 | Bun 81 테스트(3,282 assertions, 18파일) · 엔진 80경로 · 브라우저 차량 17목적지 · 화면 8조건 · axe | `node prototype/tests/run.mjs` 149 검사(골든값 `tests/golden.json`) · Ego 브라우저 6조합·데스크톱·모바일 세로/가로 |
-| 상태 | F1~F5 수정·검증 완료(`b0082aa`·`e5c1767`·`ed3a1ca`), 공개 배포·실기 미검증 | v7 검수 반영·v8 재굽기 완료(`f7da8c1`·`bd240cc`), 실기 미검증 |
+| 상태 | F1~F5 수정·검증 완료(`b0082aa`·`e5c1767`·`ed3a1ca`), 공개 배포·실기 미검증 | v9(`5c67025`) + 스타일랩 동기화·검증기 회귀11개 보강. 실기 미검증 |
 | 그림체 | 캐릭터 10·건물 11·지도 11·시점 3, 프리셋 7, URL/저장 | `STYLE` 해시 `#캐릭터-월드`(pixelcrew\|villager × terrace\|sketch\|watermap), 스타일 랩 10×10×10 |
 
 두 레인의 **기능 수·테스트 수·검증 수치를 합산하지 않는다.** 코드·데이터 파이프라인도 섞지 않는다. 같은 단지 세 곳(래미안신당하이베르·왕십리자이·라체르보푸르지오써밋)을 다루지만 좌표계·데이터 계약이 다르다.
@@ -66,29 +66,40 @@ aptHanimo/
 | `e5c1767` | Codex | F3·F4·F5 모바일 조작부·순간이동 취소·로딩 재시도 |
 | `ed3a1ca` | Codex | 후속 테스트·브라우저 검증 기록 |
 | `04b2e2e` | Codex | V5 작업 이력·AI 인계 가이드 |
+| `c73d9c5` | Claude | 공개 저장소 합본·prototype 인계 |
+| `5c67025` | Claude | V9 화살표·비교표 차 행·불빛 지연 생성·캐시 |
+| `1ecd401` | Codex 후속 | 스타일랩 생성물 동기화·재굽기 연결·검증기 실패 처리·회귀11개 |
 
 ---
 
 ## 4. 실행·검사 명령 (레인별)
 
+각 명령은 저장소 루트에서 실행한다. 생성물·검증기 후속은 [테스트 안내](prototype/tests/README.md)를 따른다. 기본 테스트는 골든을 쓰지 않으며 누락·손상·필수 방향 자료 오류를 실패로 처리한다. `--update`는 전체 차이를 검토한 뒤 별도로 실행하고 모든 규칙 검사가 성공해야 파일을 쓴다.
+
 ```sh
 # Codex 레인
-cd codex && bun install --frozen-lockfile && bun run build && bun start      # http://localhost:5178/  · /style-lab.html
-bun test && bun run check && bun run lint                                     # 81 pass 기준(2026-10-12 재확인)
-
-# Claude 레인
-node prototype/tests/run.mjs                 # 149 검사. 골든 불일치는 먼저 원인 해석, 의도한 변화만 --update
-cd prototype && python3 assemble.py && python3 build.py                      # src/ 수정 후 재조립
-bash prototype/tools/bake.sh [--refresh]     # OSM 재취득(UA 헤더 필요)→굽기→조립→테스트
-python3 -m http.server 8793 --bind 127.0.0.1 # prototype/ 에서. dev.html 을 서버로 열어 실측(charset 헤더 없는 조건)
+(cd codex && bun install --frozen-lockfile && bun test && bun run build && bun run lint)
+(cd codex && bun start)
 ```
+
+```sh
+# Claude 레인
+node prototype/tests/run.mjs
+node --test prototype/tests/harness.test.mjs
+python3 prototype/assemble.py
+python3 prototype/build.py
+python3 prototype/stylelab/build_stylelab.py
+python3 -m http.server 8793 --bind 127.0.0.1 --directory prototype
+```
+
+서버는 각 전용 터미널에서 실행하고 자신이 띄운 프로세스만 Ctrl-C로 종료한다. Codex는 `http://localhost:5178/`, Claude는 `http://127.0.0.1:8793/dev.html`이다. `bash prototype/tools/bake.sh`는 셀→본편·스타일랩→두 검사를 실행한다. 원자료가 없으면 다운로드하며, 명시적 `--refresh`는 원자료를 갱신하므로 기본 검사와 분리한다.
 
 ---
 
 ## 5. 공통 작업 경계 (두 레인 모두)
-1. **상대 레인 폴더를 수정·스테이징·커밋하지 않는다.** 같은 로컬 체크아웃을 두 세션이 동시에 쓸 수 있다. `git status`에 상대 레인의 변경이 보여도 보존한다.
-2. 커밋은 **경로 지정 `git add`**. `git add -A`·`git add .`·force push·hard reset·타인 dirty 제거 금지. 커밋 전 `git pull --ff-only origin main`.
-3. 생성물(Claude: `template.html`·`index.html`·`dev.html`·`cell_data.json` / Codex: `dist/`)은 정본에서 재생성한다.
+1. 최신 사용자 지시와 병행 작업의 경로 소유권으로 수정 범위를 정한다. 저자 이름은 영구 수정 권한이 아니다. 다른 세션의 dirty는 보존한다.
+2. 커밋은 경로·hunk 단위로 선별한다. `git add -A`·`git add .`·force push·hard reset·타인 dirty 제거 금지. dirty·staged·원격 차이를 확인하고 fast-forward 가능한 상태에서만 `git pull --ff-only origin main`을 실행한다.
+3. 생성물(Claude: `prototype/template.html`·본편/스타일랩 HTML·셀 JSON / Codex: `dist/`)은 정본에서 재생성한다. 루트 `template.html`은 문서 뷰어 원본이므로 구분한다.
 4. 좌표·DEM·도로 폭·충돌 반경·경사 규칙을 화면 효과나 테스트 통과를 위해 임의로 바꾸지 않는다. 데이터 변경은 출처·이유를 기록한다.
 5. 실제 단지에 확인되지 않은 균열·해충·하자·평판을 사실로 넣지 않는다(기획서 P5·P6, D-12·D-13). 커뮤니티·지하주차장은 구조 예시다.
 6. 출처 고지 유지: OSM © OpenStreetMap contributors(ODbL), DEM 출처(레인별 상이), 사진·브랜드 원장, PixelCrew 스프라이트(작성자 본인 MIT, 원문 수정 0).
@@ -114,7 +125,7 @@ python3 -m http.server 8793 --bind 127.0.0.1 # prototype/ 에서. dev.html 을 �
 1. [양쪽] **실기 iOS Safari·Android Chrome** 검증. 둘 다 에뮬레이션까지만.
 2. [Codex] 브라우저 회귀 자동화·CI(깨끗한 checkout에서 설치·빌드·3단지 흐름·4화면 재현).
 3. [Codex] 실제 출입구·통행 데이터(계단·경사·차량 방향) — Claude 규칙 차용 후보.
-4. [Claude] 불빛 캔버스 지연 생성, 시계→비교표 재계산, 일방통행 화살표 렌더, 프레임당 할당 정리.
+4. [완료] Claude v9의 불빛 지연 생성·시계→비교표·화살표·캐시, 후속 스타일랩 재생성·재굽기 연결·검증기 보강. OCC 등 남은 성능 항목은 레인 가이드 참조.
 5. [Claude] 셀 추가(`complexes.json`+bbox→`bake.sh`→`--update`), 스타일 랩 나머지 id 이식.
 6. [Codex] 단지 비교·수첩 재방문, 계정·동기화·초대, 데이터 갱신 재현성.
 7. [양쪽·결정 필요] 양산 방향: 기획서 §11은 Phaser+React+Supabase, 사용자 스택은 Next.js(JS)·Supabase·Python. 어느 레인을 양산 기반으로 삼을지는 사용자 결정(두 인계 문서 모두 "프레임워크 교체는 별도 목표가 생겼을 때").
@@ -126,12 +137,12 @@ python3 -m http.server 8793 --bind 127.0.0.1 # prototype/ 에서. dev.html 을 �
 ```text
 [공통] aptHanimo를 이어서 작업한다. AI_HANDOFF.md(이 문서)로 두 레인을 구분한 뒤 맡은 레인의 정본 인계만 깊이 읽어라.
 git status·원격 HEAD를 새로 확인하고 상대 레인의 변경은 보존해라. 두 레인의 기능·테스트 수치를 합치지 마라.
-커밋은 경로 지정 add, pull --ff-only 후 push. 결과·한계·증거·SHA를 레인 문서와 부모 보고에 남겨라.
+dirty·staged·원격 차이를 확인해 fast-forward 동기화하고 경로·hunk 단위로 커밋해라. 결과·한계·증거·SHA를 레인 문서와 부모 보고에 남겨라.
 
 [Codex 레인] codex/docs/AI_HANDOFF_2026-10-12.md 를 읽어라. F1~F5는 b0082aa/e5c1767, 검증 기록 ed3a1ca.
 기준 검증 = Bun 81테스트·엔진 80경로·브라우저 차량 17목적지·레이아웃 8조건(새 변경엔 재실행).
 
-[Claude 레인] prototype/AI_HANDOFF_2026-10-12.md 를 읽어라. v7=f7da8c1, v8=bd240cc.
-node prototype/tests/run.mjs 149건이 먼저. 정문 유모차 11분·496m, 비교표 유모차 11/19/8분이 기준점.
+[Claude 레인] prototype/AI_HANDOFF_2026-10-12.md 를 읽어라. v9=5c67025, 후속 검증기=1ecd401.
+규칙149개와 검증기 회귀11개가 먼저. 정문 유모차 11분·496m, 비교표11/19/8분은 현재 데이터의 회귀 기준이다.
 src/ 만 고치고 assemble.py→build.py 로 재생성, 브라우저 실측 후 커밋.
 ```
