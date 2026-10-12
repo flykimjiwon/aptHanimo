@@ -1,3 +1,5 @@
+// ---------- 호환: roundRect 폴리필(Safari 16.4 미만·구형 WebView에서 buildStatic이 첫 프레임 전에 죽던 문제, 검수 P0) ----------
+if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) { CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) { if (Array.isArray(r)) r = r.length ? r[0] : 0; if (typeof r === 'object' && r) r = r.x || 0; r = Math.max(0, Math.min(+r || 0, Math.abs(w) / 2, Math.abs(h) / 2)); this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r); this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); this.closePath(); }; }
 // ---------- 데이터·상수 ----------
 const DATA = JSON.parse(document.getElementById('cell').textContent);
 const W = DATA.meta.W, H = DATA.meta.H, TILE_M = DATA.meta.tile_m;
@@ -39,8 +41,10 @@ const HUBS = ['강남','삼성','시청','광화문','여의도','성수','구�
 // ---------- 상태 ----------
 const S = {concept:null, mode:'walk', complex:null, px:0, py:0, face:1, night:false, clock:'am', zoom:1, camX:0, camY:0, follow:true,
   traveling:null, visited:new Set(), cardsSeen:new Set(), done:new Set(), events:[], lastInterstitial:0, commuteDone:0, interior:false, metrics:{}, routeLog:[], npcs:[]};
-try { const sv = JSON.parse(localStorage.getItem('imjang-proto-v1') || 'null'); if (sv && sv.done) { S.done = new Set(sv.done); S.cardsSeen = new Set(sv.cardsSeen||[]); S.routeLog = sv.routeLog||[]; } } catch(e){}
-const save = () => { try { localStorage.setItem('imjang-proto-v1', JSON.stringify({done:[...S.done], cardsSeen:[...S.cardsSeen], routeLog:S.routeLog.slice(-30)})); } catch(e){} };
+try { self.__S = S; } catch (e) {} // 자동 검증용 읽기 전용 참조
+// 저장 v2: 체크 키에 컨셉 포함(concept:complex:item). v1(컨셉 없는 키)은 읽지 않는다
+try { const sv = JSON.parse(localStorage.getItem('imjang-proto-v2') || 'null'); if (sv && sv.done) { S.done = new Set(sv.done); S.cardsSeen = new Set(sv.cardsSeen||[]); S.routeLog = sv.routeLog||[]; } } catch(e){}
+const save = () => { try { localStorage.setItem('imjang-proto-v2', JSON.stringify({done:[...S.done], cardsSeen:[...S.cardsSeen], routeLog:S.routeLog.slice(-30)})); } catch(e){} };
 
 // ---------- 결정적 해시 ----------
 const hash = (x, y, s = 0) => { let h = (x * 374761393 + y * 668265263 + s * 2246822519) | 0; h = (h ^ (h >>> 13)) * 1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };

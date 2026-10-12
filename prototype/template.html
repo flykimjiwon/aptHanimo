@@ -1,5 +1,6 @@
+<meta charset="utf-8">
 <title>임장월드 신당 한바퀴</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* Layout: full-viewport canvas world. 종이 수첩 톤의 UI: 좌상단 단지 명패, 우상단 둥근 버튼·미니맵, 하단 이동수단 독, 길잡이 대화창, 서랍(데스크톱 우측 카드 / 모바일 하단 시트) */
@@ -13,7 +14,7 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#1d1915; --paper:#2a241e; --paper2:#332c25; --fg:#f1e8d8; --muted:#b3a38f; --line:#4a4035; --line2:#5c5044; --accent:#7cc98a; --accent-ink:#17251a; --accent2:#f29b7c; --signal:#f0c050; --danger:#ef7b70; --sky:#1f2a1c; --A:#7cc98a; --B:#85b6ef; --C:#e1b16a; --X:#a39a8c; --F:#b89cf7; --shadow:0 6px 18px rgba(0,0,0,.45); color-scheme:dark } }
 :root[data-theme="dark"]{ --bg:#1d1915; --paper:#2a241e; --paper2:#332c25; --fg:#f1e8d8; --muted:#b3a38f; --line:#4a4035; --line2:#5c5044; --accent:#7cc98a; --accent-ink:#17251a; --accent2:#f29b7c; --signal:#f0c050; --danger:#ef7b70; --sky:#1f2a1c; --A:#7cc98a; --B:#85b6ef; --C:#e1b16a; --X:#a39a8c; --F:#b89cf7; --shadow:0 6px 18px rgba(0,0,0,.45); color-scheme:dark }
 *{box-sizing:border-box} html,body{height:100%;margin:0;overflow:hidden}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%;touch-action:none}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
 #world{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;background:var(--bg)}
 button{font:500 14px var(--body);color:var(--fg);background:var(--paper);border:2px solid var(--line2);border-radius:14px;padding:8px 12px;cursor:pointer;min-height:40px;box-shadow:0 2px 0 var(--line2)}
 button:active{transform:translateY(1px);box-shadow:0 1px 0 var(--line2)}
@@ -23,7 +24,7 @@ button.round{width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;
 button[aria-pressed="true"]{background:var(--fg);color:var(--paper);border-color:var(--fg)}
 button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
 /* 상단: 단지 명패(좌) · 둥근 버튼 묶음(우) */
-#top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 10px) 10px 0;display:flex;gap:8px;align-items:flex-start;justify-content:space-between;pointer-events:none;z-index:5}
+#top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 10px) 10px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;justify-content:space-between;pointer-events:none;z-index:5}
 #top>*{pointer-events:auto}
 .plate{background:var(--paper);border:2px solid var(--line2);border-radius:18px;padding:6px 14px 6px 10px;display:inline-flex;gap:8px;align-items:center;box-shadow:var(--shadow);max-width:60vw}
 .plate .leaf{width:26px;height:26px;border-radius:50% 50% 50% 4px;background:var(--accent);flex:none;position:relative;transform:rotate(-20deg)}
@@ -33,7 +34,7 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
 #topRight{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 #topRight .row{display:flex;gap:6px;align-items:center}
 #topRight button{box-shadow:var(--shadow)}
-.chip{background:var(--paper);border:2px solid var(--line2);border-radius:999px;padding:0 12px;min-height:44px;font-size:13px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap;box-shadow:var(--shadow);cursor:pointer}
+.chip{background:var(--paper);border:2px solid var(--line2);border-radius:999px;padding:0 12px;min-height:44px;font-size:13px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap;max-width:48vw;overflow:hidden;box-shadow:var(--shadow);cursor:pointer}
 .chip b{font-family:var(--display);font-weight:400;font-size:15px}
 #minimap{width:150px;height:88px;border:2px solid var(--line2);border-radius:14px;background:var(--paper);touch-action:none;box-shadow:var(--shadow)}
 /* 하단: 이동수단 독 · HUD · 액션 */
@@ -52,8 +53,11 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
 #actions .lab{font-size:10px;line-height:1;margin-top:2px}
 #btnSkip{border-radius:999px;background:var(--accent2);color:#fff;border-color:transparent}
 @media (max-width:899px){ body.drawer-open #hud, body.drawer-open #actions, body.drawer-open #dock, body.drawer-open #dialog{display:none} }
+@media (min-width:900px){ body.drawer-open #actions{right:380px} } /* 서랍(360px)이 액션 버튼을 덮지 않게 */
 /* 광고 슬롯(DOM) */
-#adslot{position:fixed;left:0;right:0;bottom:0;height:calc(50px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper2);border-top:2px solid var(--line);display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;color:var(--muted);z-index:5}
+#adslot{position:fixed;left:0;right:0;bottom:0;height:calc(50px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper2);border-top:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:12px;color:var(--muted);z-index:5}
+#adslot .adline{display:flex;align-items:center;gap:8px}
+#adslot .credit{font-size:10px;line-height:1.2;max-width:96vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #adslot .lab{border:1px solid var(--line2);border-radius:4px;padding:0 5px;font-size:10px}
 /* 토스트(작은 말풍선) · 길잡이 대화창 */
 #toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 72px);background:var(--fg);color:var(--paper);padding:8px 14px;border-radius:999px;font-size:13px;z-index:9;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
@@ -87,8 +91,9 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
   #dialog .face{width:44px;height:44px} #dialog .face canvas{width:40px;height:37px}
   #dialog .txt{font-size:12.5px} #dialog .tip{display:none}
 }
+@media (max-width:899px) and (max-height:520px){ #minimap{display:none} #dialog{top:calc(env(safe-area-inset-top,0px) + 62px)} #toast{top:calc(env(safe-area-inset-top,0px) + 8px)} } /* 가로 모드 폰: 미니맵 접고 대화창을 올려 HUD와 겹치지 않게 */
 .badge{display:inline-block;font-size:10.5px;border:1px solid currentColor;border-radius:4px;padding:0 5px;margin-right:4px;line-height:16px;vertical-align:middle}
-.g-A,.g-A-est{color:var(--A)} .g-B{color:var(--B)} .g-C{color:var(--C)} .g-X,.g-unknown,.g-X→확인{color:var(--X)} .g-F,.g-concept{color:var(--F)}
+.g-A,.g-A-est,.g-official{color:var(--A)} .g-B,.g-review{color:var(--B)} .g-C,.g-estimate{color:var(--C)} .g-X,.g-unknown,.g-X→확인{color:var(--X)} .g-F,.g-concept{color:var(--F)}
 .card{border:1.5px solid var(--line);border-radius:14px;padding:8px 10px;margin:8px 0;background:var(--paper2)}
 .card h4{margin:0 0 4px;font-size:13.5px}
 .card p{margin:3px 0;font-size:12.5px}
@@ -180,17 +185,19 @@ textarea.note{width:100%;min-height:200px;font:12.5px/1.5 ui-monospace,Menlo,mon
   <div class="body" id="drawerBody"></div>
 </div>
 
-<div id="adslot"><span class="lab">광고</span><span>DOM 배너 슬롯(모의) · 캔버스 밖 · 정보는 광고 뒤에 잠기지 않음</span></div>
+<div id="adslot"><div class="adline"><span class="lab">광고</span><span>DOM 배너 슬롯(모의) · 캔버스 밖 · 정보는 광고 뒤에 잠기지 않음</span></div><div class="credit" id="credit">지도 데이터 © OpenStreetMap contributors (ODbL) · 고도 SRTM 30m(OpenTopoData) · 단지 사실 네이버부동산·호갱노노 수동 열람 요약(추정 포함)</div></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="interstitial" class="interstitial hidden"><div><span class="badge" style="color:#fff">광고</span> 셀 이동 전면 광고(모의)</div><div id="interCount">3</div><button id="interSkip" class="small">건너뛰기</button></div>
 
-<div id="modal"><div class="box" id="modalBox"></div></div>
+<div id="modal" class="hidden" role="dialog" aria-modal="true" aria-label="대화 상자"><div class="box" id="modalBox"></div></div>
 
 <script id="cell" type="application/json">/*__DATA__*/</script>
 <script>
 window.__errs = []; window.addEventListener('error', e => window.__errs.push((e.message||'err') + ' @' + e.lineno + ':' + e.colno)); window.addEventListener('unhandledrejection', e => window.__errs.push('rej ' + (e.reason && e.reason.message || e.reason)));
 (() => {
 'use strict';
+// ---------- 호환: roundRect 폴리필(Safari 16.4 미만·구형 WebView에서 buildStatic이 첫 프레임 전에 죽던 문제, 검수 P0) ----------
+if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) { CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) { if (Array.isArray(r)) r = r.length ? r[0] : 0; if (typeof r === 'object' && r) r = r.x || 0; r = Math.max(0, Math.min(+r || 0, Math.abs(w) / 2, Math.abs(h) / 2)); this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r); this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); this.closePath(); }; }
 // ---------- 데이터·상수 ----------
 const DATA = JSON.parse(document.getElementById('cell').textContent);
 const W = DATA.meta.W, H = DATA.meta.H, TILE_M = DATA.meta.tile_m;
@@ -232,8 +239,10 @@ const HUBS = ['강남','삼성','시청','광화문','여의도','성수','구�
 // ---------- 상태 ----------
 const S = {concept:null, mode:'walk', complex:null, px:0, py:0, face:1, night:false, clock:'am', zoom:1, camX:0, camY:0, follow:true,
   traveling:null, visited:new Set(), cardsSeen:new Set(), done:new Set(), events:[], lastInterstitial:0, commuteDone:0, interior:false, metrics:{}, routeLog:[], npcs:[]};
-try { const sv = JSON.parse(localStorage.getItem('imjang-proto-v1') || 'null'); if (sv && sv.done) { S.done = new Set(sv.done); S.cardsSeen = new Set(sv.cardsSeen||[]); S.routeLog = sv.routeLog||[]; } } catch(e){}
-const save = () => { try { localStorage.setItem('imjang-proto-v1', JSON.stringify({done:[...S.done], cardsSeen:[...S.cardsSeen], routeLog:S.routeLog.slice(-30)})); } catch(e){} };
+try { self.__S = S; } catch (e) {} // 자동 검증용 읽기 전용 참조
+// 저장 v2: 체크 키에 컨셉 포함(concept:complex:item). v1(컨셉 없는 키)은 읽지 않는다
+try { const sv = JSON.parse(localStorage.getItem('imjang-proto-v2') || 'null'); if (sv && sv.done) { S.done = new Set(sv.done); S.cardsSeen = new Set(sv.cardsSeen||[]); S.routeLog = sv.routeLog||[]; } } catch(e){}
+const save = () => { try { localStorage.setItem('imjang-proto-v2', JSON.stringify({done:[...S.done], cardsSeen:[...S.cardsSeen], routeLog:S.routeLog.slice(-30)})); } catch(e){} };
 
 // ---------- 결정적 해시 ----------
 const hash = (x, y, s = 0) => { let h = (x * 374761393 + y * 668265263 + s * 2246822519) | 0; h = (h ^ (h >>> 13)) * 1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -485,8 +494,10 @@ function drawBuilding(g, gl, b, cx) {
 }
 function buildStatic() {
   const w = Math.ceil((WX1 - WX0) * SS), h = Math.ceil((WY1 - WY0) * SS);
-  staticCv = document.createElement('canvas'); staticCv.width = w; staticCv.height = h; const g = staticCv.getContext('2d'); g.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS);
-  lightsCv = document.createElement('canvas'); lightsCv.width = Math.ceil((WX1 - WX0) * SL); lightsCv.height = Math.ceil((WY1 - WY0) * SL); const gl = lightsCv.getContext('2d'); gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL);
+  staticCv = document.createElement('canvas'); staticCv.width = w; staticCv.height = h; const g = staticCv.getContext('2d');
+  lightsCv = document.createElement('canvas'); lightsCv.width = Math.ceil((WX1 - WX0) * SL); lightsCv.height = Math.ceil((WY1 - WY0) * SL); const gl = lightsCv.getContext('2d');
+  if (!g || !gl) throw new Error(`정적 레이어 캔버스를 만들지 못했어요(${w}×${h}px, 메모리 부족 가능)`); // bootSafe가 받아서 고지
+  g.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS); gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL);
   if (TOP) { // 수채 지도 패스: 종이 결 → 블롭 타일(행 순서) → 손그림 길(이웃 연결선·지터·계단·횡단보도). 건물·나무는 아래 공통 루프(평면, 가림 목록 없음)
     g.fillStyle = 'rgba(90,70,50,.05)'; const n = Math.round((WX1 - WX0) * (WY1 - WY0) / 450); for (let i = 0; i < n; i++) g.fillRect(WX0 + hash(i, 1, 91) * (WX1 - WX0), WY0 + hash(i, 2, 92) * (WY1 - WY0), 1.2, 1.2);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) drawTile(g, x, y);
@@ -525,7 +536,7 @@ const PIN = {elem:'#f0a24b', mid:'#f0a24b', high:'#f0a24b', kinder:'#f78fb3', ma
 const TARGETS = []; // {type, name, x, y, ref, id, complex}
 DATA.pois.forEach((p, i) => TARGETS.push({...p, id: 'poi' + i}));
 DATA.exits.forEach((e, i) => TARGETS.push({type:'exit', name:`${e.station}역 ${e.ref}번 출구`, x:e.x, y:e.y, id:'exit' + i, station:e.station, ref:e.ref}));
-DATA.complexes.forEach(c => c.gates.forEach((gt, i) => TARGETS.push({type:'gate', name:`${c.short} ${gt.name}`, x:gt.x, y:gt.y, id:'gate-' + c.id + '-' + i, complex:c.id})));
+DATA.complexes.forEach(c => (c.gates || []).forEach((gt, i) => TARGETS.push({type:'gate', name:`${c.short} ${gt.name}`, x:gt.x, y:gt.y, id:'gate-' + c.id + '-' + i, complex:c.id})));
 
 // ---------- 경로 (A*, 모드별 비용: 분) — 원본 고도 E 기준(연출 단과 무관) ----------
 function slopeFactor(mode, grade) { // grade: % (양수 오르막)
@@ -536,13 +547,15 @@ function slopeFactor(mode, grade) { // grade: % (양수 오르막)
   if (mode === 'bike') return up < 2 ? 1 : up < 5 ? 1.18 : up < 9 ? 1.54 : up < 15 ? 2.5 : Infinity;
   return 1;
 }
+// 계단 판정: steps 플래그가 있으면 계단. 단, 대로(등급 8+) 타일에 겹친 계단(지하도·육교 계단)은 25m 타일 해상도 한계로 대로 보행을 막지 않는다(검수 P1: 굽기에서 계단 33칸 중 24칸이 ROAD로 분류돼 유모차가 통과하던 문제)
+const isStairs = (i) => !!ST[i] && !(K[i] === KIND.ROAD && R[i] >= 8);
 function tileAllowed(i, mode, goal) {
   const k = K[i];
   if (i === goal) return true;
   if (k === KIND.BLD) return false;
   if (mode === 'car') return k === KIND.ROAD && R[i] >= 4;
   if (k === KIND.SCHOOL || k === KIND.CONST) return false;
-  if (ST[i] && k !== KIND.ROAD && mode !== 'walk') return false; // 계단: 도보만
+  if (isStairs(i) && mode !== 'walk') return false; // 계단: 도보만
   return true;
 }
 function stepCost(from, to, mode, diag) {
@@ -555,7 +568,7 @@ function stepCost(from, to, mode, diag) {
   if (mode !== 'car') {
     if (k === KIND.GROUND) m *= 1.5;               // 길 없는 땅
     if (k === KIND.ROAD && R[to] >= 8) m *= 1.1;   // 대로변 보행
-    if (ST[to] && k !== KIND.ROAD) m *= 1.6;       // 계단(도보)
+    if (isStairs(to)) m *= 1.6;                    // 계단(도보)
     if (mode === 'bike' && k === KIND.FOOT) m *= 1.3; // 보도에서는 느리게/끌기
     if (R[to] >= 8 && R[from] < 8) m += mode === 'bike' ? 0.33 : 0.5; // 횡단(대로 진입)
   } else {
@@ -565,10 +578,10 @@ function stepCost(from, to, mode, diag) {
   return m;
 }
 function astar(sx, sy, gx, gy, mode) {
-  const start = idx(sx, sy), goal = idx(gx, gy);
-  if (!tileAllowed(goal, mode, goal) && K[goal] === KIND.BLD) return null;
+  const start = idx(sx, sy), goal = idx(gx, gy); // 목표 타일은 tileAllowed(i===goal)로 항상 통행 가능 취급(건물 중심 목표는 startTravel이 nearestWalkable로 미리 옮긴다)
   const gS = new Float64Array(W * H).fill(Infinity), came = new Int32Array(W * H).fill(-1), closed = new Uint8Array(W * H);
-  const h = (i) => { const x = i % W, y = (i / W) | 0; return Math.hypot(x - gx, y - gy) * TILE_M / (SPEED[mode] * 1000 / 60); };
+  const hf = mode === 'bike' ? 0.8 : 1; // 자전거 내리막 계수 0.8 하한(허용 휴리스틱)
+  const h = (i) => { const x = i % W, y = (i / W) | 0; return Math.hypot(x - gx, y - gy) * TILE_M / (SPEED[mode] * 1000 / 60) * hf; };
   const open = [[h(start), start]]; gS[start] = 0;
   const push = (f, i) => { open.push([f, i]); let c = open.length - 1; while (c > 0) { const p = (c - 1) >> 1; if (open[p][0] <= open[c][0]) break; [open[p], open[c]] = [open[c], open[p]]; c = p; } };
   const pop = () => { const top = open[0]; const last = open.pop(); if (open.length) { open[0] = last; let c = 0; for (;;) { let l = 2 * c + 1, r = l + 1, m = c; if (l < open.length && open[l][0] < open[m][0]) m = l; if (r < open.length && open[r][0] < open[m][0]) m = r; if (m === c) break; [open[m], open[c]] = [open[c], open[m]]; c = m; } } return top; };
@@ -594,14 +607,14 @@ function routeStats(path, mode) {
     const a = path[i - 1], b = path[i]; const ax = a % W, ay = (a / W) | 0, bx = b % W, by = (b / W) | 0; const diag = ax !== bx && ay !== by;
     const d = diag ? TILE_M * 1.4142 : TILE_M; dist += d; const dz = E[b] - E[a]; if (dz > 0) up += dz; maxGrade = Math.max(maxGrade, Math.abs(dz / d * 100));
     min += stepCost(a, b, mode, diag);
-    if (R[b] >= 8 && R[a] < 8) cross++; if (ST[b] && K[b] !== KIND.ROAD) stairs++;
+    if (R[b] >= 8 && R[a] < 8) cross++; if (isStairs(b)) stairs++;
   }
   if (mode === 'car') min += 3; // 주차
   return {min, dist, up, cross, stairs, maxGrade};
 }
 function nearestWalkable(x, y, mode) {
   let best = null, bd = 1e9;
-  for (let r = 0; r <= 7; r++) for (let dx = -r; dx <= r; dx++) for (let dy = -r; dy <= r; dy++) { const nx = x + dx, ny = y + dy; if (!inb(nx, ny)) continue; const i = idx(nx, ny); if (tileAllowed(i, mode, -1) && K[i] !== KIND.BLD) { const d = dx * dx + dy * dy; if (d < bd) { bd = d; best = [nx, ny]; } } }
+  const r = 7; for (let dx = -r; dx <= r; dx++) for (let dy = -r; dy <= r; dy++) { const nx = x + dx, ny = y + dy; if (!inb(nx, ny)) continue; const i = idx(nx, ny); if (tileAllowed(i, mode, -1) && K[i] !== KIND.BLD) { const d = dx * dx + dy * dy; if (d < bd) { bd = d; best = [nx, ny]; } } }
   return best;
 }
 
@@ -1110,6 +1123,7 @@ function startTravel(gx, gy, target) {
   if (!path) { say(S.mode === 'stroller' ? '유모차로 갈 수 있는 경로를 데이터에서 찾지 못했어요(계단·급경사). 도보로 바꿔 볼까요?' : S.mode === 'car' ? '차로 닿는 도로 경로를 찾지 못했어요(도로 데이터 한계).' : '경로 없음: 데이터상 통행 가능 경로를 확인하지 못했어요.'); return; }
   const st = routeStats(path, S.mode);
   const seg = []; let acc = 0; for (let i = 1; i < path.length; i++) { const a = path[i - 1], b = path[i]; const diag = (a % W) !== (b % W) && ((a / W) | 0) !== ((b / W) | 0); const c = stepCost(a, b, S.mode, diag); acc += c; seg.push(acc); }
+  if (S.mode === 'car' && path.length > 1) { path.push(path[path.length - 1]); seg.push(acc + 3); } // 주차 +3분: HUD(routeStats)와 재생 시간을 맞춘다 — 마지막 타일에서 3분 정지
   S.traveling = {path, seg, t0:performance.now(), stats:st, target, mode:S.mode, from:S.lastArrive || null, maxGradeSeen:0, notified:new Set()};
   S.follow = true; document.getElementById('btnSkip').hidden = false;
   updateStats(st, 0);
@@ -1128,7 +1142,8 @@ function tickTravel(now) {
   // 이벤트: 급경사·계단·횡단
   const dz = E[b] - E[a]; const d = (ax !== bx && ay !== by) ? TILE_M * 1.414 : TILE_M; const grade = dz / d * 100;
   if (grade >= 9 && !t.notified.has('g' + b)) { t.notified.add('g' + b); toast(`⛰ 경사 ${Math.round(grade)}% 오르막${S.mode === 'stroller' ? ' — 유모차 밀기 힘듦' : S.mode === 'bike' ? ' — 내려서 끌기' : ''}`); }
-  if (ST[b] && K[b] !== KIND.ROAD && !t.notified.has('s' + b)) { t.notified.add('s' + b); toast('🪜 계단 구간'); }
+  if (isStairs(b) && !t.notified.has('s' + b)) { t.notified.add('s' + b); toast('🪜 계단 구간'); }
+  if (t.mode === 'car' && k === t.seg.length - 1 && a === b && !t.notified.has('park')) { t.notified.add('park'); toast('🅿️ 지하주차장 진입·주차 +3분(모델 가정)'); }
   if (R[b] >= 8 && R[a] < 8 && !t.notified.has('c' + b)) { t.notified.add('c' + b); toast(CR[b] ? '🚦 횡단보도 건너기 (+30초)' : '🚦 대로 횡단 (+30초, 횡단보도 데이터 없음)'); }
   updateStats(t.stats, elapsedMin);
 }
@@ -1141,22 +1156,25 @@ function finishTravel() {
 }
 function onArrive(target, mode, st) {
   let msg = `${target.name} 도착 · ${MODE_KO[mode]} ${fmtMin(st.min)}`;
-  if (target.type === 'gate' && mode === 'car') msg += ' · 지하주차장 진입 +3분(주차 ' + (cur().facts.find(f => f.k === '주차') || {v:''}).v.split(',')[0] + ')';
+  const tc = (target.complex && DATA.complexes.find(c => c.id === target.complex)) || cur(); // 도착 단지(출발 단지가 아님)
+  if (target.type === 'gate' && mode === 'car') msg += ' · 지하주차장 진입 +3분(주차 ' + ((tc.facts || []).find(f => f.k === '주차') || {v:'자료 없음'}).v.split(',')[0] + ')';
   if (target.type === 'exit' && mode === 'stroller') msg += ' · 출구 엘리베이터 유무는 데이터 미확인';
   if (target.type === 'elem') msg += ` · 횡단 ${st.cross}회` + (target.name.includes('신당') && S.complex === 'HYBER' ? ' · 배정교' : ' · 배정 여부 확인 필요');
   say(msg);
   S.events.push({arrive:target.type, poi:target.type, mode, targetId:target.id, complex:target.complex});
   evalChecklist();
-  if (target.type === 'gate' && target.complex && target.complex !== S.complex) { setComplex(target.complex, false); }
-  // 카드 노출
-  const c = cur(); const cat = {elem:'school', exit:'traffic', gate:'parking', mart:'commerce', med:'community', park:'community', play:'community'}[target.type];
-  const card = c.cards.find(cd => (cd.cat === cat || (target.type === 'gate' && cd.cat === 'slope')) && !S.cardsSeen.has(cd.id));
+  if (target.type === 'gate' && target.complex && target.complex !== S.complex) { setComplex(target.complex, false); evalChecklist(); } // 전환 뒤 새 단지 기준으로 한 번 더
+  // 카드 노출: 도착 유형 → 카테고리 후보(순서대로 미획득 첫 장). construction·regulation은 정문에서(단지 자체 쟁점)
+  const c = cur(); const cats = CARD_CATS[target.type] || [];
+  const card = (c.cards || []).find(cd => cats.includes(cd.cat) && !S.cardsSeen.has(cd.id));
   if (card) { S.cardsSeen.add(card.id); setTimeout(() => say(`🗂 카드 획득 [${card.grade}] ${card.title} — 서랍의 이슈 카드에서 출처를 볼 수 있어요.`), 2600); }
 }
+const CARD_CATS = {elem:['school'], mid:['school'], high:['school'], kinder:['school', 'community'], exit:['traffic'], gate:['parking', 'slope', 'construction', 'regulation'], mart:['commerce'], conv:['commerce'], med:['community'], park:['community'], play:['community'], lib:['community'], gym:['community']};
+const checkKey = (cid, itemId) => S.concept + ':' + cid + ':' + itemId; // 저장 v2: 컨셉별 체크
 function evalChecklist() {
   const list = CHECKLISTS[S.concept] || []; const cid = S.complex;
   for (const it of list) {
-    const key = cid + ':' + it.id; if (S.done.has(key)) continue; const c = it.c; let ok = false;
+    const key = checkKey(cid, it.id); if (S.done.has(key)) continue; const c = it.c; let ok = false;
     for (const ev of S.events) {
       if (c.arrive && ev.arrive === c.arrive && (!c.mode || ev.mode === c.mode) && (ev.complex === cid || !ev.complex)) ok = true;
       if (c.poi && ev.poi && c.poi.includes(ev.poi) && (!c.mode || ev.mode === c.mode)) ok = true;
@@ -1169,6 +1187,8 @@ function evalChecklist() {
 
 // ---------- UI 공통 ----------
 const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); // 데이터 문자열은 전부 이스케이프해서 innerHTML에 넣는다
+const gradeLabel = (g) => ({unknown:'미확인', F:'개념', concept:'개념'})[g] || g;
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._h); toast._h = setTimeout(() => t.classList.remove('show'), 3200); }
 const dlgFace = document.getElementById('dlgFace'), dlgCtx = dlgFace.getContext('2d');
 if (STYLE.char === 'pixelcrew') { dlgFace.width = 24; dlgFace.height = 22; dlgFace.style.imageRendering = 'pixelated'; } else { dlgFace.width = 96; dlgFace.height = 88; }
@@ -1203,24 +1223,25 @@ const badge = (cls) => `<span class="badge g-${cls}">${({official:'공식',estim
 function renderDrawer() {
   const c = cur(); const body = $('#drawerBody'); if ($('#drawer').classList.contains('hidden')) return;
   if (tab === 'info') {
-    body.innerHTML = `<h3 style="margin:0 0 4px;font-family:var(--display);font-weight:400;font-size:21px">${c.name}</h3><div class="muted small">${c.address}</div>
-      <dl class="kv" style="margin:10px 0">${c.facts.map(f => `<dt>${f.k}</dt><dd>${badge(f.cls)}${f.v}${f.note ? ` <span class="muted">(${f.note})</span>` : ''}<div class="muted" style="font-size:11px">출처: ${f.src}</div></dd>`).join('')}</dl>
+    body.innerHTML = `<h3 style="margin:0 0 4px;font-family:var(--display);font-weight:400;font-size:21px">${esc(c.name)}</h3><div class="muted small">${esc(c.address)}</div>
+      <dl class="kv" style="margin:10px 0">${(c.facts || []).map(f => `<dt>${esc(f.k)}</dt><dd>${badge(f.cls)}${esc(f.v)}${f.note ? ` <span class="muted">(${esc(f.note)})</span>` : ''}<div class="muted" style="font-size:11px">출처: ${esc(f.src)}</div></dd>`).join('')}</dl>
       <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="small" id="btnInterior">🏢 단지 내부 열기</button><button class="small" id="btnCommute">🚇 출근 레그</button><button class="small" id="btnSwitch">🔁 다른 단지로</button></div>
       <div class="legend"><span><i style="background:#c99a6b"></i>절벽=8m 단(연출)</span><span><i style="background:#b4b9c3"></i>대로</span><span><i style="background:#d4d0c6"></i>골목</span><span><i style="background:#eadcb5"></i>보도</span><span><i style="background:#5fa852;border-radius:50%"></i>나무(배치 연출)</span></div>
-      <p class="small muted" style="margin-top:6px">언덕은 실제 고도(SRTM)를 8m 단으로 양자화해 절벽·경사로로 그렸고, 경로 시간은 양자화 전 고도로 계산합니다. 주민 캐릭터는 연출이며 실제 이용자가 아닙니다. 정정 신청 폼은 이 프로토에 없습니다(실서비스는 카드마다 24시간 내 비노출).</p>
+      <p class="small muted" style="margin-top:6px">${TOP ? '수채 지도(탑뷰)는 고도·절벽을 그리지 않지만' : '언덕은 실제 고도(SRTM)를 8m 단으로 양자화해 절벽·경사로로 그렸고,'} 경로 시간은 원본 고도로 계산합니다. 주민 캐릭터는 연출이며 실제 이용자가 아닙니다. 정정 신청 폼은 이 프로토에 없습니다(실서비스는 카드마다 24시간 내 비노출).</p>
+      <p class="small muted" style="margin-top:4px">지도 데이터 © OpenStreetMap contributors(ODbL) · 고도 OpenTopoData SRTM 30m · 단지 사실은 네이버부동산·호갱노노 수동 열람 요약(출처 등급 표기).</p>
       <div class="small muted" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">그림체 <select id="selChar">${[['pixelcrew', '픽셀크루 도트 유령'], ['villager', '동숲 주민']].map(([v, l]) => `<option value="${v}"${STYLE.char === v ? ' selected' : ''}>${l}</option>`).join('')}</select> × 코티지 × <select id="selWorld">${[['terrace', '8m 단 지형'], ['sketch', '연필 스케치'], ['watermap', '수채 지도(탑뷰)']].map(([v, l]) => `<option value="${v}"${STYLE.world === v ? ' selected' : ''}>${l}</option>`).join('')}</select> <button class="small" id="btnStyle">적용</button><span>주소 끝에 #캐릭터-월드(예 #villager-watermap)를 붙여도 돼요</span></div>`;
-    $('#btnStyle').onclick = () => { const h = `${$('#selChar').value}-${$('#selWorld').value}`; try { if (location.hash.slice(1) !== h) { location.hash = h; } location.reload(); } catch (e) { toast('새로고침이 막혀 있어요. 주소 끝에 #' + h + ' 를 붙여 다시 열어 주세요.'); } };
+    $('#btnStyle').onclick = () => { const h = `${$('#selChar').value}-${$('#selWorld').value}`; try { if (location.hash.slice(1) !== h) { location.hash = h; } else location.reload(); } catch (e) { toast('새로고침이 막혀 있어요. 주소 끝에 #' + h + ' 를 붙여 다시 열어 주세요.'); } };
     $('#btnInterior').onclick = openInterior; $('#btnCommute').onclick = openCommute; $('#btnSwitch').onclick = () => openComplexPicker(true);
   } else if (tab === 'check') {
     const list = CHECKLISTS[S.concept] || [];
-    body.innerHTML = `<div class="small muted" style="margin-bottom:6px">${CONCEPTS[S.concept].name} · ${c.short} · 항목은 해당 위치에 실제로 가야 체크됩니다</div><ul class="check">${list.map(it => `<li class="${S.done.has(c.id + ':' + it.id) ? 'done' : ''}"><span class="box"></span><span>${it.l}</span></li>`).join('')}</ul>`;
+    body.innerHTML = `<div class="small muted" style="margin-bottom:6px">${CONCEPTS[S.concept].name} · ${c.short} · 항목은 해당 위치에 실제로 가야 체크됩니다</div><ul class="check">${list.map(it => `<li class="${S.done.has(checkKey(c.id, it.id)) ? 'done' : ''}"><span class="box"></span><span>${esc(it.l)}</span></li>`).join('')}</ul>`;
   } else if (tab === 'cards') {
-    body.innerHTML = `<div class="small muted">등급: A 공식 · A-est 계산 추정 · B 준사실 · C 체감(월드 비렌더링) · X/미확인 · 개념=F. 흐린 카드는 아직 월드에서 만나지 못한 카드.</div>` + c.cards.map(cd => `<div class="card" style="${S.cardsSeen.has(cd.id) ? '' : 'opacity:.6'}"><h4><span class="badge g-${cd.grade}">${cd.grade}</span>${cd.title}</h4><p>${cd.text}</p>${cd.counter ? `<p><b>반론·해명:</b> ${cd.counter}</p>` : ''}<p class="src">출처: ${cd.src} · ${cd.date}</p></div>`).join('') + `<p class="small muted">이 정보는 공공데이터·뉴스·온라인 커뮤니티 언급을 요약한 것이며 사실 확인이 필요합니다.</p>`;
+    body.innerHTML = `<div class="small muted">등급: A 공식 · A-est 계산 추정 · B 준사실 · C 체감(월드 비렌더링) · X/미확인 · 개념=F. 흐린 카드는 아직 월드에서 만나지 못한 카드.</div>` + (c.cards || []).map(cd => `<div class="card" style="${S.cardsSeen.has(cd.id) ? '' : 'opacity:.6'}"><h4><span class="badge g-${esc(cd.grade)}">${esc(gradeLabel(cd.grade))}</span>${esc(cd.title)}</h4><p>${esc(cd.text)}</p>${cd.counter ? `<p><b>반론·해명:</b> ${esc(cd.counter)}</p>` : ''}<p class="src">출처: ${esc(cd.src)}${cd.date && !String(cd.src).includes(cd.date) ? ' · ' + esc(cd.date) : ''}</p></div>`).join('') + `<p class="small muted">이 정보는 공공데이터·뉴스·온라인 커뮤니티 언급을 요약한 것이며 사실 확인이 필요합니다.</p>`;
   } else if (tab === 'dest') {
     const near = TARGETS.map(t => ({...t, d:Math.hypot(t.x - c.x, t.y - c.y) * TILE_M})).filter(t => t.type !== 'conv' || t.d < 400).filter(t => t.type !== 'play' || t.d < 500).sort((a, b) => a.d - b.d);
     const groups = [['gate','단지 출입구'],['exit','지하철 출구'],['elem','초등학교'],['mid','중·고등학교'],['high',''],['mart','마트'],['conv','편의점'],['med','병원·약국'],['kinder','어린이집·유치원'],['park','공원'],['play','놀이터'],['lib','도서관·체육관'],['gym','']];
     let html = `<div class="small muted">단지 중심 기준 직선거리. 탭하면 현재 수단(${MODE_KO[S.mode]})으로 이동합니다.</div>`;
-    for (const [ty, label] of groups) { const items = near.filter(t => t.type === ty).slice(0, ty === 'exit' ? 10 : 6); if (!items.length) continue; if (label) html += `<h4 style="margin:10px 0 2px;font-size:13px">${label}</h4>`; html += `<div class="poi-list">${items.map(t => `<button data-id="${t.id}">${ICON[t.type]} ${t.name} <span class="muted small">${Math.round(t.d)}m</span></button>`).join('')}</div>`; }
+    for (const [ty, label] of groups) { const items = near.filter(t => t.type === ty).slice(0, ty === 'exit' ? 10 : 6); if (!items.length) continue; if (label) html += `<h4 style="margin:10px 0 2px;font-size:13px">${label}</h4>`; html += `<div class="poi-list">${items.map(t => `<button data-id="${esc(t.id)}">${ICON[t.type]} ${esc(t.name)} <span class="muted small">${Math.round(t.d)}m</span></button>`).join('')}</div>`; }
     body.innerHTML = html;
     body.querySelectorAll('button[data-id]').forEach(b => b.onclick = () => { const t = TARGETS.find(x => x.id === b.dataset.id); if (window.innerWidth < 900) { $('#drawer').classList.add('hidden'); syncDrawer(); } startTravel(Math.floor(t.x), Math.floor(t.y), t); });
   } else if (tab === 'cmp') {
@@ -1228,18 +1249,21 @@ function renderDrawer() {
   }
 }
 function renderCompare() {
-  const rows = [['역 출구→정문 도보', m => m.exit && m.exit.walk ? `${m.exit.name}: ${fmtMin(m.exit.walk.min)} / ${Math.round(m.exit.walk.dist)}m ↑${Math.round(m.exit.walk.up)}m` : '—'], ['역 출구→정문 유모차', m => m.exit ? (m.exit.stroller ? `${fmtMin(m.exit.stroller.min)} · 횡단 ${m.exit.stroller.cross}` : '경로 없음(계단·경사)') : '—'], ['가까운 초등 도보', m => m.elem && m.elem.walk ? `${m.elem.name} ${fmtMin(m.elem.walk.min)} · 횡단 ${m.elem.walk.cross}` : '—'], ['가까운 마트 도보', m => m.mart && m.mart.walk ? `${m.mart.name} ${fmtMin(m.mart.walk.min)}` : '—'], ['병원·약국 도보', m => m.med && m.med.walk ? `${m.med.name} ${fmtMin(m.med.walk.min)}` : '—'], ['세대당 주차', m => m.parking], ['준공', m => m.year], ['세대·동', m => m.hh]];
-  return `<div class="small muted" style="margin-bottom:6px">세 단지를 같은 규칙(도보 4km/h, 경사·횡단·계단 가중, 정문 기준)으로 자동 계산한 값. 전부 '추정'. 역·초등·마트는 직선거리 기준 가장 가까운 곳.</div><div class="tblwrap"><table class="cmp"><tr><th></th>${DATA.complexes.map(c => `<th style="color:${c.color};filter:saturate(1.6) brightness(.7)">${c.short}</th>`).join('')}</tr>${rows.map(([l, f]) => `<tr><th>${l}</th>${DATA.complexes.map(c => `<td>${f(S.metrics[c.id] || {})}</td>`).join('')}</tr>`).join('')}</table></div>`;
+  const rows = [['역 출구→정문 도보', m => m.exit && m.exit.walk ? `${esc(m.exit.name)}: ${fmtMin(m.exit.walk.min)} / ${Math.round(m.exit.walk.dist)}m ↑${Math.round(m.exit.walk.up)}m` : '—'], ['역 출구→정문 유모차', m => m.exit ? (m.exit.stroller ? `${fmtMin(m.exit.stroller.min)} · 횡단 ${m.exit.stroller.cross}` : '경로 없음(계단·경사)') : '—'], ['가까운 초등 도보', m => m.elem && m.elem.walk ? `${esc(m.elem.name)} ${fmtMin(m.elem.walk.min)} · 횡단 ${m.elem.walk.cross}` : '—'], ['가까운 마트 도보', m => m.mart && m.mart.walk ? `${esc(m.mart.name)} ${fmtMin(m.mart.walk.min)}` : '—'], ['병원·약국 도보', m => m.med && m.med.walk ? `${esc(m.med.name)} ${fmtMin(m.med.walk.min)}` : '—'], ['세대당 주차', m => esc(m.parking)], ['준공', m => esc(m.year)], ['세대·동', m => esc(m.hh)]];
+  return `<div class="small muted" style="margin-bottom:6px">세 단지를 같은 규칙(도보 4km/h, 경사·횡단·계단 가중, 정문 기준)으로 자동 계산한 값. 전부 '추정'. 역·초등·마트는 직선거리 기준 가장 가까운 곳.</div><div class="tblwrap"><table class="cmp"><tr><th></th>${DATA.complexes.map(c => `<th style="color:${esc(c.color)};filter:saturate(1.6) brightness(.7)">${esc(c.short)}</th>`).join('')}</tr>${rows.map(([l, f]) => `<tr><th>${l}</th>${DATA.complexes.map(c => `<td>${f(S.metrics[c.id] || {})}</td>`).join('')}</tr>`).join('')}</table></div>`;
 }
 function computeMetrics() {
   for (const c of DATA.complexes) {
-    const gate = c.gates[0]; const gx = Math.floor(gate.x), gy = Math.floor(gate.y); const g0 = nearestWalkable(gx, gy, 'walk') || [gx, gy];
+    const facts = c.facts || []; const gate = (c.gates || [])[0];
+    if (!gate) { S.metrics[c.id] = {exit:null, elem:null, mart:null, med:null, parking:'?', year:'?', hh:'?'}; continue; } // 게이트 좌표가 아직 없는 단지(셀 추가 중)
+    const gx = Math.floor(gate.x), gy = Math.floor(gate.y); const g0 = nearestWalkable(gx, gy, 'walk') || [gx, gy];
     const nearest = (type) => TARGETS.filter(t => t.type === type).map(t => ({t, d:Math.hypot(t.x - c.x, t.y - c.y)})).sort((a, b) => a.d - b.d)[0];
     const run = (t, mode, toGate) => { if (!t) return null; const goal = nearestWalkable(Math.floor(t.t.x), Math.floor(t.t.y), mode); if (!goal) return null; const p = toGate ? astar(goal[0], goal[1], g0[0], g0[1], mode) : astar(g0[0], g0[1], goal[0], goal[1], mode); return p ? routeStats(p, mode) : null; };
-    const ex = TARGETS.filter(t => t.type === 'exit').map(t => ({t, d:Math.hypot(t.x - gate.x, t.y - gate.y)})).sort((a, b) => a.d - b.d)[0];
+    const exitsOf = (st) => TARGETS.filter(t => t.type === 'exit' && (!st || t.station === st)).map(t => ({t, d:Math.hypot(t.x - gate.x, t.y - gate.y)})).sort((a, b) => a.d - b.d)[0];
+    const ex = exitsOf(c.spawn_station) || exitsOf(null); // 출근 레그 제목(spawn_station)과 같은 역의 출구를 우선
     const el = nearest('elem'), ma = nearest('mart'), me = nearest('med');
     S.metrics[c.id] = {exit: ex ? {name:ex.t.name, walk:run(ex, 'walk', true), stroller:run(ex, 'stroller', true)} : null, elem: el ? {name:el.t.name, walk:run(el, 'walk')} : null, mart: ma ? {name:ma.t.name, walk:run(ma, 'walk')} : null, med: me ? {name:me.t.name, walk:run(me, 'walk')} : null,
-      parking:(c.facts.find(f => f.k === '주차') || {v:'?'}).v.replace(/.*세대당\s*([0-9.]+)대.*/, '$1대'), year:(c.facts.find(f => f.k === '사용승인') || {v:'?'}).v.slice(0, 7), hh:(c.facts.find(f => f.k === '세대수') || {v:'?'}).v.split(' ')[0] + ' · ' + ((c.facts.find(f => f.k === '동수·층수') || {v:'?'}).v.split(' ')[0])};
+      parking:(facts.find(f => f.k === '주차') || {v:'?'}).v.replace(/.*세대당\s*([0-9.]+)대.*/, '$1대'), year:(facts.find(f => f.k === '사용승인') || {v:'?'}).v.slice(0, 7), hh:(facts.find(f => f.k === '세대수') || {v:'?'}).v.split(' ')[0] + ' · ' + ((facts.find(f => f.k === '동수·층수') || {v:'?'}).v.split(' ')[0])};
   }
 }
 function scoreFor(cid, concept) {
@@ -1250,22 +1274,22 @@ function scoreFor(cid, concept) {
   let total = 0; for (const k in w) total += s[k] * w[k] / 100; return {s, total:Math.round(total)};
 }
 function openNote() {
-  const c = cur(); const sc = scoreFor(c.id, S.concept); const m = S.metrics[c.id] || {}; const list = CHECKLISTS[S.concept] || []; const done = list.filter(it => S.done.has(c.id + ':' + it.id));
-  const seen = c.cards.filter(cd => S.cardsSeen.has(cd.id)); const logs = S.routeLog.filter(r => r.complex === c.id).filter((r, i, a) => a.findIndex(q => q.mode === r.mode && q.target === r.target && q.min === r.min) === i).slice(-8);
-  const txt = [`# 임장 노트 · ${c.name} (${CONCEPTS[S.concept].name})`, `생성 ${new Date().toISOString().slice(0, 10)} · 임장월드 프로토(데이터 기반 추정, 현장 확인 필요)`, '', `## 점수(추정) ${sc.total}/100 — 교통 ${Math.round(sc.s.traffic)} · 학군 ${Math.round(sc.s.school)} · 편의 ${Math.round(sc.s.conv)} · 환경 ${Math.round(sc.s.env)} · 주차 ${Math.round(sc.s.park)} · 치안 ${sc.s.safe}(데이터 없음)`, '', '## 걸어 본 경로', ...(logs.length ? logs.map(r => `- ${MODE_KO[r.mode]} → ${r.target}: ${r.min}분 · ${r.dist}m · ↑${r.up}m · 횡단 ${r.cross} · 계단 ${r.stairs} · 최대경사 ${r.maxGrade}%`) : ['- (아직 없음)']), '', '## 기준 구간 자동 계산', ...(m.exit ? [`- 역 출구(${m.exit.name}) 도보 ${m.exit.walk ? fmtMin(m.exit.walk.min) : '—'} / 유모차 ${m.exit.stroller ? fmtMin(m.exit.stroller.min) : '경로 없음'}`] : []), ...(m.elem ? [`- 초등(${m.elem.name}) 도보 ${m.elem.walk ? fmtMin(m.elem.walk.min) + ' · 횡단 ' + m.elem.walk.cross : '—'} (배정 여부는 별도 확인)`] : []), ...(m.mart ? [`- 마트(${m.mart.name}) 도보 ${m.mart.walk ? fmtMin(m.mart.walk.min) : '—'}`] : []), '', `## 체크리스트 ${done.length}/${list.length}`, ...list.map(it => `- [${S.done.has(c.id + ':' + it.id) ? 'x' : ' '}] ${it.l}`), '', `## 확인한 이슈 카드 ${seen.length}/${c.cards.length}`, ...seen.map(cd => `- [${cd.grade}] ${cd.title} (출처: ${cd.src})`), '', '## 실제 임장에서 확인할 것', '- 출구 엘리베이터 유무(유모차)', '- 배정 초등학교·통학로 횡단보도', '- 커뮤니티 시설 운영·요금(이 프로토는 개념 재현)', '- 지하주차장 동 직결 여부', ...(c.id === 'LACERVO' ? ['- 전체 준공·이전고시·등기 현황(2026-08 기준 지연, 구청·시의회 주장 엇갈림)'] : []), '', '출처: OSM(ODbL)·OpenTopoData SRTM·네이버부동산·호갱노노(수동 열람 요약)·뉴스. 이 노트는 온라인 자료 요약이며 사실 확인이 필요합니다.'].join('\n');
-  showModal(`<h2>임장 노트</h2><p class="small muted">복사해서 메모앱·카톡에 붙여 넣으세요. 점수는 모델 가정의 추정치입니다.</p><textarea class="note" id="noteTxt">${txt.replace(/</g, '&lt;')}</textarea><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="primary" id="copyNote">복사</button><button id="cmpBtn">세 단지 비교 보기</button><button id="closeNote">닫기</button></div><div class="small muted" id="copyMsg" style="margin-top:6px"></div>`);
+  const c = cur(); const sc = scoreFor(c.id, S.concept); const m = S.metrics[c.id] || {}; const list = CHECKLISTS[S.concept] || []; const done = list.filter(it => S.done.has(checkKey(c.id, it.id)));
+  const seen = (c.cards || []).filter(cd => S.cardsSeen.has(cd.id)); const logs = S.routeLog.filter(r => r.complex === c.id).filter((r, i, a) => a.findIndex(q => q.mode === r.mode && q.target === r.target && q.min === r.min) === i).slice(-8);
+  const txt = [`# 임장 노트 · ${c.name} (${CONCEPTS[S.concept].name})`, `생성 ${new Date().toISOString().slice(0, 10)} · 임장월드 프로토(데이터 기반 추정, 현장 확인 필요)`, '', `## 점수(추정) ${sc.total}/100 — 교통 ${Math.round(sc.s.traffic)} · 학군 ${Math.round(sc.s.school)} · 편의 ${Math.round(sc.s.conv)} · 환경 ${Math.round(sc.s.env)} · 주차 ${Math.round(sc.s.park)} · 치안 ${sc.s.safe}(데이터 없음)`, '', '## 걸어 본 경로', ...(logs.length ? logs.map(r => `- ${MODE_KO[r.mode]} → ${r.target}: ${r.min}분 · ${r.dist}m · ↑${r.up}m · 횡단 ${r.cross} · 계단 ${r.stairs} · 최대경사 ${r.maxGrade}%`) : ['- (아직 없음)']), '', '## 기준 구간 자동 계산', ...(m.exit ? [`- 역 출구(${m.exit.name}) 도보 ${m.exit.walk ? fmtMin(m.exit.walk.min) : '—'} / 유모차 ${m.exit.stroller ? fmtMin(m.exit.stroller.min) : '경로 없음'}`] : []), ...(m.elem ? [`- 초등(${m.elem.name}) 도보 ${m.elem.walk ? fmtMin(m.elem.walk.min) + ' · 횡단 ' + m.elem.walk.cross : '—'} (배정 여부는 별도 확인)`] : []), ...(m.mart ? [`- 마트(${m.mart.name}) 도보 ${m.mart.walk ? fmtMin(m.mart.walk.min) : '—'}`] : []), '', `## 체크리스트 ${done.length}/${list.length}`, ...list.map(it => `- [${S.done.has(checkKey(c.id, it.id)) ? 'x' : ' '}] ${it.l}`), '', `## 확인한 이슈 카드 ${seen.length}/${(c.cards || []).length}`, ...seen.map(cd => `- [${cd.grade}] ${cd.title} (출처: ${cd.src})`), '', '## 실제 임장에서 확인할 것', '- 출구 엘리베이터 유무(유모차)', '- 배정 초등학교·통학로 횡단보도', '- 커뮤니티 시설 운영·요금(이 프로토는 개념 재현)', '- 지하주차장 동 직결 여부', ...(c.id === 'LACERVO' ? ['- 전체 준공·이전고시·등기 현황(2026-08 기준 지연, 구청·시의회 주장 엇갈림)'] : []), '', '출처: OSM(ODbL)·OpenTopoData SRTM·네이버부동산·호갱노노(수동 열람 요약)·뉴스. 이 노트는 온라인 자료 요약이며 사실 확인이 필요합니다.'].join('\n');
+  showModal(`<h2>임장 노트</h2><p class="small muted">복사해서 메모앱·카톡에 붙여 넣으세요. 점수는 모델 가정의 추정치입니다.</p><textarea class="note" id="noteTxt">${esc(txt)}</textarea><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="primary" id="copyNote">복사</button><button id="cmpBtn">세 단지 비교 보기</button><button id="closeNote">닫기</button></div><div class="small muted" id="copyMsg" style="margin-top:6px"></div>`);
   $('#copyNote').onclick = () => { const ta = $('#noteTxt'); const done = () => $('#copyMsg').textContent = '복사됨'; const fail = () => { ta.focus(); ta.select(); $('#copyMsg').textContent = '자동 복사가 막혀 텍스트를 선택했어요. 길게 눌러 복사하세요.'; }; try { navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(ta.value).then(done, fail) : fail(); } catch (e) { fail(); } };
   $('#cmpBtn').onclick = () => { closeModal(); openTab('cmp'); }; $('#closeNote').onclick = closeModal;
 }
 function openInterior() {
-  const c = cur(); const parking = (c.facts.find(f => f.k === '주차') || {v:''}).v; const ratio = parseFloat((parking.match(/세대당\s*([0-9.]+)/) || [0, 1])[1]);
+  const c = cur(); const facts = c.facts || []; const am = c.amenities || {known:[], note:'커뮤니티 시설 자료 없음'}; const parking = (facts.find(f => f.k === '주차') || {v:'주차 자료 없음'}).v; const ratio = parseFloat((parking.match(/세대당\s*([0-9.]+)/) || [0, 1])[1]) || 1;
   S.events.push({interior:true}); evalChecklist();
-  showModal(`<h2>${c.short} 내부</h2><p class="small muted">실내 재현 3단계: <span class="badge g-A">실제 기반</span> 공개 도면·권한 있음 / <span class="badge g-F">개념 재현</span> 존재만 확인 / <span class="badge g-X">미확인</span> 자료 없음</p>
-    <h3>🅿️ 지하주차장 <span class="badge g-A">실제 기반(수치)</span></h3><p>${parking}. 체감: <b>${ratio >= 1.2 ? '여유' : ratio >= 1.0 ? '보통' : '부족(이중주차 가능성)'}</b>. 동 엘리베이터 직결 여부 <span class="badge g-X">미확인</span>. 차로 도착하면 진입·주차 +3분을 더합니다.</p>
+  showModal(`<h2>${esc(c.short)} 내부</h2><p class="small muted">실내 재현 3단계: <span class="badge g-A">실제 기반</span> 공개 도면·권한 있음 / <span class="badge g-F">개념 재현</span> 존재만 확인 / <span class="badge g-X">미확인</span> 자료 없음</p>
+    <h3>🅿️ 지하주차장 <span class="badge g-A">실제 기반(수치)</span></h3><p>${esc(parking)}. 체감: <b>${ratio >= 1.2 ? '여유' : ratio >= 1.0 ? '보통' : '부족(이중주차 가능성)'}</b>. 동 엘리베이터 직결 여부 <span class="badge g-X">미확인</span>. 차로 도착하면 진입·주차 +3분을 더합니다.</p>
     <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:8px 0">${Array.from({length:12}, (_, i) => `<div style="height:26px;border-radius:6px;background:${i < Math.round(12 * Math.min(1, 1 / ratio)) ? 'var(--line2)' : 'var(--paper2)'};border:1.5px dashed var(--line2);display:flex;align-items:center;justify-content:center;font-size:12px">${i < Math.round(12 * Math.min(1, 1 / ratio)) ? '🚗' : ''}</div>`).join('')}</div><p class="small muted">주차면 12칸 모형: 세대당 ${ratio}대 기준으로 찬 칸 비율만 표현(실제 배치 아님).</p>
-    <h3>🏊 커뮤니티 <span class="badge g-F">개념 재현</span></h3><p>${c.amenities.known.length ? '확인된 것: ' + c.amenities.known.join(', ') + '. ' : ''}${c.amenities.note}. 운영·요금·이용 자격은 자료 없음 → 닫힌 문으로 표시합니다.</p>
+    <h3>🏊 커뮤니티 <span class="badge g-F">개념 재현</span></h3><p>${(am.known || []).length ? '확인된 것: ' + esc(am.known.join(', ')) + '. ' : ''}${esc(am.note)}. 운영·요금·이용 자격은 자료 없음 → 닫힌 문으로 표시합니다.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin:8px 0">${['헬스장','독서실','키즈카페','골프연습장','게스트하우스','카페'].map(n => `<div class="card" style="margin:0;text-align:center;opacity:.6">🚪 ${n}<br><span class="small muted">내부 정보 준비 중</span></div>`).join('')}</div>
-    <h3>🛗 엘리베이터·복도 <span class="badge g-A">공식</span></h3><p>${(c.facts.find(f => f.k === '구조·난방' || f.k === '난방·시공') || {v:'계단식 여부 미확인'}).v}</p>
+    <h3>🛗 엘리베이터·복도 <span class="badge g-A">공식</span></h3><p>${esc((facts.find(f => f.k === '구조·난방' || f.k === '난방·시공') || {v:'계단식 여부 미확인'}).v)}</p>
     <button id="closeInt" class="primary">닫기</button>`);
   $('#closeInt').onclick = closeModal;
 }
@@ -1281,8 +1305,11 @@ function openCommute() {
   const run = () => { const hubs = [$('#hub1').value, S.concept === 'couple' ? $('#hub2').value : null].filter(Boolean); let html = ''; const mins = []; for (const h of hubs) { const r = transit(st, h); if (!r) { html += `<p>${h}: 경로 없음(그래프 범위 밖)</p>`; continue; } const total = walk + r.min + 5; mins.push(total); const lineHtml = r.path.map(p => p.split(':')).map(([L, s], i, arr) => (i === 0 || arr[i - 1][0] !== L) ? `<span style="background:${LINE_COLOR[L] || '#888'}">${L}</span>` : '').join(''); html += `<div class="card"><h4>${st} → ${h}: 약 <b>${Math.round(total)}분</b> <span class="badge g-A-est">추정</span></h4><p>도보 ${Math.round(walk)}분 + 지하철 ${r.stations}역 ${r.stations * 2}분 + 환승 ${r.transfers}회 ${r.transfers * 5}분 + 도착 도보 5분</p><p class="lines">${lineHtml} ${r.path.filter((p, i, a) => i === 0 || i === a.length - 1 || p.split(':')[0] !== a[i - 1].split(':')[0]).map(p => p.split(':')[1]).join(' → ')}</p></div>`; } if (hubs.length === 2 && mins.length === 2) { const diff = Math.abs(mins[0] - mins[1]); html += `<p><b>커플 비교:</b> 합 ${Math.round(mins[0] + mins[1])}분 · 차이 ${Math.round(diff)}분 ${diff >= 20 ? '→ 🃏 "한쪽 희생" 카드' : '→ 균형'}</p>`; S.events.push({commute2:true}); } $('#commuteOut').innerHTML = html; S.events.push({commute:true}); S.commuteDone++; evalChecklist(); };
   $('#runCommute').onclick = run; $('#closeCm').onclick = closeModal; run();
 }
-function showModal(html) { $('#modalBox').innerHTML = html; $('#modal').classList.remove('hidden'); }
+function showModal(html) { $('#modalBox').innerHTML = html; $('#modal').classList.remove('hidden'); const f = $('#modalBox').querySelector('button, select, textarea, input, a[href]'); if (f) setTimeout(() => { try { f.focus({preventScroll:true}); } catch (e) {} }, 0); }
 function closeModal() { $('#modal').classList.add('hidden'); }
+const modalDismissable = () => !$('#modal').classList.contains('hidden') && !!S.concept && !!S.complex; // 시작 선택 모달은 닫을 수 없다
+$('#modal').addEventListener('click', (e) => { if (e.target === $('#modal') && modalDismissable()) closeModal(); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalDismissable()) { e.preventDefault(); closeModal(); } });
 
 // ---------- 시작 플로우 ----------
 function openConceptPicker() {
@@ -1292,7 +1319,7 @@ function openConceptPicker() {
   const who = (k) => k === 'solo' ? `${castName(CAST.solo[0])} 혼자 · 역·편의·출근 위주, 도보 기본` : k === 'couple' ? `${castName(CAST.couple[0])}+${castName(CAST.couple[1])} · 두 직장 통근·커뮤니티` : `${castName(CAST.family[0])}+${castName(CAST.family[1])}(아기) · 유모차·초등·주차`;
   showModal(`<div style="display:flex;gap:12px;align-items:center;margin-bottom:6px">${faceCv}<div><h2 style="margin:0;word-break:keep-all">신당 한바퀴, 같이 걸어요</h2><div class="small muted">${GUIDE.name} · ${PC ? '픽셀크루와 함께' : '동물 귀 주민들과 함께'} · 신당·왕십리 클러스터 셀</div></div></div>
     ${lineCv}
-    <p class="small">서울 중구·성동구 2.5km×1.4km. 실제 OSM 도로·건물과 SRTM 고도를 <b>8m 단 언덕</b>으로 굽고, 네이버·호갱노노 단지 사실을 출처 등급과 함께 붙인 체험판이에요. 걷는 시간은 실제 환산(추정)입니다.</p>
+    <p class="small">서울 중구·성동구 2.5km×1.4km. 실제 OSM 도로·건물과 SRTM 고도를 <b>${TOP ? '손그림 수채 지도' : '8m 단 언덕'}</b>으로 굽고, 네이버·호갱노노 단지 사실을 출처 등급과 함께 붙인 체험판이에요. 걷는 시간은 실제 환산(추정)입니다.</p>
     <h3>어떤 임장인가요?</h3><div class="opts">${Object.entries(CONCEPTS).map(([k, v]) => `<button data-c="${k}" aria-pressed="false">${k === 'solo' ? '🧑' : k === 'couple' ? '💑' : '👨‍👩‍👧'} ${v.name}<small>${who(k)}</small></button>`).join('')}</div>
     <p class="small muted" style="margin-top:12px">조작: 지도 탭=이동 · 드래그=화면 이동 · 핀치/휠=확대 · 하단 독=이동 수단 · 📍 목적지 목록 추천. PC는 방향키/WASD로 한 칸씩.</p>`);
   document.querySelectorAll('#modalBox button[data-c]').forEach(b => b.onclick = () => { S.concept = b.dataset.c; setMode(CONCEPTS[S.concept].mode); openComplexPicker(false); });
@@ -1300,12 +1327,12 @@ function openConceptPicker() {
   else { faceDraw($('#introFace').getContext('2d'), 96, 88, GUIDE, 'happy', 0.3); const l = $('#crewLine').getContext('2d'); l.setTransform(2, 0, 0, 2, 0, 0); const line = [GUIDE, CAST.solo[0], CAST.couple[1], CAST.family[0], CAST.family[1], ...NPC_CAST.slice(0, 8)]; line.forEach((w, i) => drawVillager(l, 16 + i * 32, 52, Object.assign({}, w, {face:1, state:i % 4 === 1 ? 'happy' : 'idle', t:i * 0.7, scale:w === CAST.family[1] ? 0.85 : 1.15}))); }
 }
 function openComplexPicker(withAd) {
-  showModal(`<h2>어느 단지부터 가 볼까요?</h2><div class="opts">${DATA.complexes.map(c => `<button data-id="${c.id}" style="border-left:8px solid ${c.color}">${c.name}<small>${c.gu} ${c.dong} · ${(c.facts.find(f => f.k === '세대수') || {v:''}).v.split(' ')[0]} · ${(c.facts.find(f => f.k === '사용승인') || {v:''}).v.slice(0, 7)}</small></button>`).join('')}</div><p class="small muted" style="margin-top:10px">스폰: 가장 가까운 지하철역 출구. 세 단지는 한 월드 안에 있어 걸어서 서로 오갈 수 있어요.</p>`);
+  showModal(`<h2>어느 단지부터 가 볼까요?</h2><div class="opts">${DATA.complexes.map(c => `<button data-id="${esc(c.id)}" style="border-left:8px solid ${esc(c.color)}">${esc(c.name)}<small>${esc(c.gu)} ${esc(c.dong)} · ${esc(((c.facts || []).find(f => f.k === '세대수') || {v:''}).v.split(' ')[0])} · ${esc(((c.facts || []).find(f => f.k === '사용승인') || {v:''}).v.slice(0, 7))}</small></button>`).join('')}</div><p class="small muted" style="margin-top:10px">스폰: 가장 가까운 지하철역 출구. 세 단지는 한 월드 안에 있어 걸어서 서로 오갈 수 있어요.</p>`);
   document.querySelectorAll('#modalBox button[data-id]').forEach(b => b.onclick = () => { closeModal(); const go = () => { setComplex(b.dataset.id, true); }; if (withAd && Date.now() - S.lastInterstitial > 10 * 60 * 1000) { showInterstitial(go); } else go(); });
 }
 function showInterstitial(cb) { const el = $('#interstitial'); el.classList.remove('hidden'); let n = 3; $('#interCount').textContent = n + '초 뒤 건너뛸 수 있어요'; const h = setInterval(() => { n--; $('#interCount').textContent = n > 0 ? n + '초 뒤 건너뛸 수 있어요' : '건너뛰기 가능'; if (n <= 0) clearInterval(h); }, 1000); $('#interSkip').onclick = () => { if (n > 0) return; clearInterval(h); el.classList.add('hidden'); S.lastInterstitial = Date.now(); cb(); }; }
 function setComplex(id, spawn) {
-  S.complex = id; const c = cur(); $('#chipComplex').innerHTML = `<span class="leaf" style="background:${c.color}"></span><div><b>${c.short}</b><small>${c.gu} ${c.dong} · ${CONCEPTS[S.concept].name}</small></div>`; S.events = S.events.filter(e => !e.arrive);
+  S.complex = id; const c = cur(); $('#chipComplex').innerHTML = `<span class="leaf" style="background:${esc(c.color)}"></span><div><b>${esc(c.short)}</b><small>${esc(c.gu)} ${esc(c.dong)} · ${CONCEPTS[S.concept].name}</small></div>`; S.events = S.events.filter(e => !e.arrive || e.complex === id); // 다른 단지 도착 기록만 버린다(이 단지 정문 도착은 체크에 반영)
   if (spawn) { const ex = TARGETS.filter(t => t.type === 'exit' && t.station === c.spawn_station).map(t => ({t, d:Math.hypot(t.x - c.x, t.y - c.y)})).sort((a, b) => a.d - b.d)[0]; const sp = ex ? nearestWalkable(Math.floor(ex.t.x), Math.floor(ex.t.y), 'walk') : null; if (sp) { S.px = sp[0]; S.py = sp[1]; S.lastArrive = ex.t; say(`${ex.t.name}에서 출발! 먼저 ${c.short} 정문까지 ${MODE_KO[S.mode]}로 가 보세요. 📍 목적지 목록에서 고르면 돼요.`); } S.follow = true; }
   openTab('dest'); if (window.innerWidth < 900) { $('#drawer').classList.add('hidden'); syncDrawer(); } renderDrawer();
 }
@@ -1313,10 +1340,10 @@ function setComplex(id, spawn) {
 // ---------- 입력 ----------
 const ptrs = new Map(); let dragStart = null, moved = false, pinch0 = null;
 cv.addEventListener('pointerdown', (e) => { cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 1) { dragStart = [e.clientX, e.clientY, S.camX, S.camY]; moved = false; } else if (ptrs.size === 2) { const p = [...ptrs.values()]; pinch0 = [Math.hypot(p[0][0] - p[1][0], p[0][1] - p[1][1]), S.zoom]; } });
-cv.addEventListener('pointermove', (e) => { if (!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 2 && pinch0) { const p = [...ptrs.values()]; const d = Math.hypot(p[0][0] - p[1][0], p[0][1] - p[1][1]); S.zoom = Math.max(0.55, Math.min(2.6, pinch0[1] * d / pinch0[0])); moved = true; return; } if (dragStart && ptrs.size === 1) { const dx = e.clientX - dragStart[0], dy = e.clientY - dragStart[1]; if (Math.hypot(dx, dy) > 6) { moved = true; S.follow = false; S.camX = dragStart[2] - dx / S.zoom; S.camY = dragStart[3] - dy / S.zoom; } } });
-const endPtr = (e) => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch0 = null; if (ptrs.size === 0 && !moved && dragStart) { onTap(e.clientX, e.clientY); } if (ptrs.size === 0) dragStart = null; };
+cv.addEventListener('pointermove', (e) => { if (!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 2 && pinch0) { const p = [...ptrs.values()]; const d = Math.hypot(p[0][0] - p[1][0], p[0][1] - p[1][1]); const mx = (p[0][0] + p[1][0]) / 2, my = (p[0][1] + p[1][1]) / 2; const before = screenToWorld(mx, my); S.zoom = Math.max(0.55, Math.min(2.6, pinch0[1] * d / pinch0[0])); const after = screenToWorld(mx, my); S.camX += before[0] - after[0]; S.camY += before[1] - after[1]; S.follow = false; moved = true; return; } if (dragStart && ptrs.size === 1) { const dx = e.clientX - dragStart[0], dy = e.clientY - dragStart[1]; if (Math.hypot(dx, dy) > 6) { moved = true; S.follow = false; S.camX = dragStart[2] - dx / S.zoom; S.camY = dragStart[3] - dy / S.zoom; } } });
+const endPtr = (e) => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch0 = null; if (ptrs.size === 1) { const [x, y] = [...ptrs.values()][0]; dragStart = [x, y, S.camX, S.camY]; moved = true; } /* 핀치 뒤 남은 손가락 기준으로 드래그 원점 재설정(카메라 점프 방지) */ if (ptrs.size === 0 && !moved && dragStart) { onTap(e.clientX, e.clientY); } if (ptrs.size === 0) dragStart = null; };
 cv.addEventListener('pointerup', endPtr); cv.addEventListener('pointercancel', endPtr);
-cv.addEventListener('wheel', (e) => { e.preventDefault(); S.zoom = Math.max(0.55, Math.min(2.6, S.zoom * (e.deltaY < 0 ? 1.1 : 0.9))); }, {passive:false});
+cv.addEventListener('wheel', (e) => { e.preventDefault(); const before = screenToWorld(e.clientX, e.clientY); S.zoom = Math.max(0.55, Math.min(2.6, S.zoom * (e.deltaY < 0 ? 1.1 : 0.9))); if (!S.follow) { const after = screenToWorld(e.clientX, e.clientY); S.camX += before[0] - after[0]; S.camY += before[1] - after[1]; } }, {passive:false});
 function onTap(sx, sy) {
   if (!S.concept) return;
   let best = null, bd = 16; // 표식 근처면 POI 선택(화면 좌표)
@@ -1324,17 +1351,18 @@ function onTap(sx, sy) {
   if (best) { startTravel(Math.floor(best.x), Math.floor(best.y), best); return; }
   const tile = pickTile(sx, sy); if (!tile) return; startTravel(tile[0], tile[1], null);
 }
-window.addEventListener('keydown', (e) => { if (!S.concept || S.traveling) return; if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return; const d = {ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0], w:[0,-1], s:[0,1], a:[-1,0], d:[1,0]}[e.key]; if (!d) return; e.preventDefault(); const nx = (S.px | 0) + d[0], ny = (S.py | 0) + d[1]; if (!inb(nx, ny)) return; const i = idx(nx, ny); if (!tileAllowed(i, S.mode, -1)) { toast('막힘: ' + (K[i] === KIND.BLD ? '건물' : ST[i] ? '계단(유모차·자전거 불가)' : '통행 불가')); return; } const c = stepCost(idx(S.px | 0, S.py | 0), i, S.mode, false); if (!isFinite(c)) { toast('급경사: 이 수단으로는 못 올라가요'); return; } S.px = nx; S.py = ny; S.follow = true; const sxp = d[0] - d[1]; if (sxp !== 0) S.face = sxp > 0 ? 1 : -1; const near = TARGETS.find(t => Math.hypot(t.x - nx - 0.5, t.y - ny - 0.5) < 0.8); if (near && !S.visited.has(near.id)) { S.visited.add(near.id); onArrive(near, S.mode, {min:c, dist:TILE_M, up:0, cross:0, stairs:0, maxGrade:0}); } });
+window.addEventListener('keydown', (e) => { if (!S.concept || S.traveling) return; if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return; const d = {ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0], w:[0,-1], s:[0,1], a:[-1,0], d:[1,0]}[e.key]; if (!d) return; e.preventDefault(); const nx = (S.px | 0) + d[0], ny = (S.py | 0) + d[1]; if (!inb(nx, ny)) return; const i = idx(nx, ny); if (!tileAllowed(i, S.mode, -1)) { toast('막힘: ' + (K[i] === KIND.BLD ? '건물' : isStairs(i) ? '계단(유모차·자전거 불가)' : '통행 불가')); return; } const c = stepCost(idx(S.px | 0, S.py | 0), i, S.mode, false); if (!isFinite(c)) { toast('급경사: 이 수단으로는 못 올라가요'); return; } S.px = nx; S.py = ny; S.follow = true; const sxp = d[0] - d[1]; if (sxp !== 0) S.face = sxp > 0 ? 1 : -1; const near = TARGETS.find(t => Math.hypot(t.x - nx - 0.5, t.y - ny - 0.5) < 0.8); if (near && !S.visited.has(near.id)) { S.visited.add(near.id); onArrive(near, S.mode, {min:c, dist:TILE_M, up:0, cross:0, stairs:0, maxGrade:0}); } });
 
 // ---------- 루프 ----------
 function loop(ts) { tickTravel(performance.now()); draw(ts); requestAnimationFrame(loop); }
 function boot() {
   resize(); buildStatic(); computeMetrics(); spawnNpcs();
-  const c0 = DATA.complexes[0]; S.px = Math.floor(c0.gates[0].x); S.py = Math.floor(c0.gates[0].y); const p = proj(S.px, S.py, zAt(S.px, S.py)); S.camX = p[0]; S.camY = p[1];
+  const c0 = DATA.complexes[0]; const g0 = (c0.gates && c0.gates[0]) || {x:W / 2, y:H / 2}; S.px = Math.floor(g0.x); S.py = Math.floor(g0.y); const p = proj(S.px, S.py, zAt(S.px, S.py)); S.camX = p[0]; S.camY = p[1];
   S.zoom = window.innerWidth < 600 ? 1.45 : 1.25;
   openConceptPicker();
   requestAnimationFrame(loop);
 }
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(boot); else boot();
+function bootSafe() { try { boot(); } catch (e) { const msg = String(e && e.message || e); window.__errs.push('boot: ' + msg); try { $('#modalBox').innerHTML = `<h2>월드를 그리지 못했어요</h2><p class="small">브라우저가 오래됐거나(Canvas roundRect 미지원 등) 메모리가 부족할 수 있어요. 최신 Chrome·Safari로 다시 열어 주세요.</p><pre class="small muted" style="white-space:pre-wrap">${esc(msg)}</pre>`; $('#modal').classList.remove('hidden'); } catch (e2) {} } }
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(bootSafe, bootSafe); else bootSafe();
 })();
 </script>

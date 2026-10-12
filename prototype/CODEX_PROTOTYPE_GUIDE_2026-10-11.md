@@ -8,17 +8,18 @@
 1. **빌드 없는 단일 HTML**이다. 정본은 `src/` 7조각(CSS+DOM 1, JS 5, vendor 1 = 픽셀크루 엔진 원문) → `python3 assemble.py` → `template.html` → `python3 build.py`(+ `data/cell_data.json` 544KB) → `index.html`(아티팩트용, doctype 없음) / `dev.html`(로컬용, doctype 있음). 외부 스크립트 0, 폰트만 Google Fonts(Jua·Noto Sans KR). 의존성 설치 없음.
 2. **데이터와 연출을 분리**했다. 경로·시간은 원본 고도 `E[]`와 타일 종류로 계산하고, 그림은 8m 단 지형·나무·NPC 같은 **연출 레이어**를 따로 얹는다. Codex가 가져갈 것은 §3 데이터 계약과 §5 이동 규칙이고, 가져가면 안 되는 것은 §9에 적었다.
 3. **셀 1개 = 타일 99×58(25m)**, 세 단지(래미안신당하이베르 HYBER · 왕십리자이 WJAI · 라체르보푸르지오써밋 LACERVO)가 한 월드에 있는 **클러스터 셀**이다(마스터 D-01·WLD003의 1차 사례).
-4. **코덱스 빌드(`~/sindang-stroll-codex`, Three.js 저폴리곤 디오라마·체험 그래프)와 겹치지 않는다.** 이쪽은 Canvas 2D + 실제 OSM/SRTM 격자 + 타일 A*. 두 결과물은 서로 참고만 하고 코드를 섞지 않는다.
+4. **코덱스 빌드(저장소 `codex/`, Three.js 저폴리곤 디오라마·체험 그래프)와 겹치지 않는다.** 이쪽은 Canvas 2D + 실제 OSM/SRTM 격자 + 타일 A*. 두 결과물은 서로 참고만 하고 코드를 섞지 않는다.
 5. **그림체는 `STYLE`로 고른다**(`src/02_world.js` 맨 위 `STYLE_DEFAULT` + 주소 해시 덮어쓰기, 스타일 랩 '선택 조합 복사' JSON의 id와 같다). 캐릭터 `char`: `pixelcrew`(사용자 본인 프로젝트 PixelCrew Desk의 24×22 도트 유령, `src/vendor/pixelcrew_sprites.js` 원문·MIT) 또는 `villager`(동물 귀 주민, 코드 드로잉). 월드 `world`: `terrace`(8m 단 지형, 아이소), `sketch`(연필 스케치, 아이소), `watermap`(수채 지도, **탑뷰** — 투영·입력·정적 레이어가 바뀌고 고도·절벽·건물 높이는 그리지 않음). 건물은 `cottage`(박공·처마·굴뚝·창틀, 탑뷰에선 평면 워시) 하나다. 기본 조합 = pixelcrew × cottage × sketch. 주소 끝에 `#villager-watermap`처럼 붙이거나 서랍 단지 탭의 그림체 선택기를 쓰면 새로고침과 함께 바뀐다. 어느 조합이든 경로·카드·수치는 같다(§12).
-6. 2026-10-12 사용자 지시로 GitHub `flykimjiwon/aptHanimo`(공개)에 커밋·푸시했다(`imjang_world_2026-10-11/` 폴더 = 저장소 루트, 메타 repo 안의 서브 repo). 이후 커밋·푸시도 사용자가 시킬 때만.
+6. 2026-10-12 사용자 지시로 GitHub `flykimjiwon/aptHanimo`(공개)에 커밋·푸시했다(`imjang_world_2026-10-11/` 폴더 = 저장소 루트, 메타 repo 안의 서브 repo). 이후 커밋·푸시도 사용자가 시킬 때만. 같은 저장소의 `codex/`는 Codex 독립 구현(한바퀴 V5)이며 이 가이드가 말하는 "코덱스 빌드"가 그것이다.
+7. **v7(10-12 오전, 검수 반영)**: 줄번호 대신 **파일·함수 이름**으로 가리킨다(소스가 v4~v6에서 많이 자라 줄번호가 최대 400행 틀어졌었다). 계단 판정은 `isStairs()`(04_route.js) 하나로 통일, 카드 매핑은 `CARD_CATS`(05_dynamic.js), 데이터 문자열은 `esc()`로 넣는다. 변경 목록은 `PROTOTYPE_NOTES.md` 머리말 v7.
 
 ## 0-1. v2~v6에서 바뀐 것 — 사용자 피드백 "자유분방하고 귀엽거나 동물의숲 느낌이 없다"에 대한 대응
 v1(`template_v1_backup.html`)은 OSM 폴리곤 1,768개를 회색 상자로, 도로 타일 59%를 회색 면으로 그려 실측 덤프처럼 보였다. v2는 **기능·수치를 손대지 않고 연출만** 아래처럼 바꿨다(아티팩트 v4, 같은 URL).
 
 | 바꾼 것 | 요지 | 위치 |
 |---|---|---|
-| 계단식 언덕 | 실제 고도를 **8m 단으로 양자화**해 절벽·경사로로 그린다. **경로 시간은 양자화 전 고도**로 계산하므로 v1과 수치 동일 | `TIERZ·CZ·surfZ` 235~274행, §6-1 |
-| 길 정리 | 골목·보도는 폭 좁은 띠로 자동 타일링, 대로만 전면 포장 → 회색 면이 대부분이던 화면에서 잔디가 드러나는 마을로 | `drawTile` 326행 |
+| 계단식 언덕 | 실제 고도를 **8m 단으로 양자화**해 절벽·경사로로 그린다. **경로 시간은 양자화 전 고도**로 계산하므로 v1과 수치 동일 | `TIERZ·CZ·surfZ`(02_world.js), §6-1 |
+| 길 정리 | 골목·보도는 폭 좁은 띠로 자동 타일링, 대로만 전면 포장 → 회색 면이 대부분이던 화면에서 잔디가 드러나는 마을로 | `drawTile`(03_static.js) |
 | 연필 스케치 월드(v5) | `STYLE.world='sketch'`: 종이 팔레트로 `C`를 덮어쓰고, 길은 띠 대신 잉크 두 줄(보도 한 줄, 끝점 ±0.5px 지터), 대로 포장·연석·중앙선·흰 횡단보도 없음(횡단보도는 엷은 줄무늬), 절벽 해칭 4줄, 타일 윗면 격자선, 풀 포기 없음, 나무는 번짐 블롭, 정적 캔버스 전체에 종이 결 점, 하늘은 종이색(저녁은 살짝 따뜻하게). 밤은 공통(틴트+불빛). 건물은 코티지 그대로(스타일 랩 조합 미리보기와 같음) | `SK`, `drawTile·drawTree·buildStatic`, `draw` 하늘 |
 | 수채 지도 월드(v6, 탑뷰) | `STYLE.world='watermap'`: `proj`가 `[x·28, y·28]` 정사각 타일(고도 무시), `pickTile`은 나눗셈, 정적 레이어는 종이 결 → 타일마다 번진 블롭(공원·학교·땅 색, 길 타일은 종이) → 손그림 길(이웃 연결선·지터·굵기 3단, 계단 잉크 줄·횡단보도 흰 줄) → 평면 건물(단지색 또는 베이지 워시 .65 + 잉크 윤곽, 동 라벨 흰 테두리 글자) → 위에서 본 번짐 나무. 캐릭터는 측면 스프라이트를 타일 중심보다 0.3타일 아래에(RPG 관습), 가림 목록 없음, 밤은 틴트 + 아파트 중심 은은한 불빛 + 가로등 | `TOP·TT`, `proj·pickTile`, `drawTile·drawBuilding·drawTree·buildStatic` 탑뷰 분기 |
 | 그림체 전환(v6) | `STYLE_DEFAULT` + 주소 해시 덮어쓰기(`#캐릭터-월드`), `hashchange`면 자동 새로고침, 서랍 단지 탭의 캐릭터·월드 선택기 + 적용 버튼 | `STYLE`(02_world.js), `renderDrawer` |
@@ -26,12 +27,12 @@ v1(`template_v1_backup.html`)은 OSM 폴리곤 1,768개를 회색 상자로, 도
 | 나무·꽃·캐릭터 | 나무·꽃(연출 배치; 단 지형은 둥근 2톤+풀 포기, 스케치는 번짐 블롭), 캐릭터는 `STYLE.char`: **픽셀크루 도트 유령**(v3·v5: 1인=픽셀 · 커플=픽셀+루마 · 가족=비트+닷, 유모차엔 닷 탑승) 또는 **동숲풍 주민**(v4: 나비 · 나비+토토 · 곰돌+콩알). 한 배역이 두 스타일 값을 다 가진다. 탈것(유모차·자전거·차)은 프로토가 그리고 캐릭터를 얹음, 건물 뒤로 지나갈 때 가림, 밤 창문 불빛 | `PROPS`, `ghostCanvas·drawGhost` / `SPECIES·drawVillager`, `CAST·drawActor·drawParty·drawActorOccluded`, `lightsCv` |
 | 주민 NPC 10명 | 골목·보도만 걷는 **연출**(픽셀크루면 나머지 크루 9종, 주민이면 종족 10: 강아지·개구리·여우·판다·생쥐·사슴·코알라·토끼·고양이·곰). 서 있는 3명은 think/idle/happy. "실제 이용자 아님"을 단지 탭·길잡이 문구로 명시 | `NPC_CAST·spawnNpcs·tickNpcs·drawActor` |
 | 길잡이 픽셀/보리 | 마스코트(픽셀크루면 픽셀, 주민이면 강아지 보리; talk→happy) 대화창이 출발·도착·카드 획득·경로 없음을 안내, 사소한 이벤트는 토스트. 첫 화면 라인업(크루 9명 / 길잡이+배역 4+주민 8) | `GUIDE·say()·dlgAnimate·faceDraw`, `#dialog`, `openConceptPicker` |
-| 크림 수첩 UI | 좌상단 잎사귀 명패, 우상단 둥근 버튼+미니맵, 하단 이동수단 독, 우측 둥근 액션, 다크 토큰은 갈색 종이 | CSS 1~195행 |
+| 크림 수첩 UI | 좌상단 잎사귀 명패, 우상단 둥근 버튼+미니맵, 하단 이동수단 독, 우측 둥근 액션, 다크 토큰은 갈색 종이 | CSS(01_head.html) |
 
 바뀌지 않은 것: 타일 25m·99×58, `cell_data.json` 스키마, A*·수단 비용·경사 규칙, 카드·체크리스트·노트·비교·출근 레그·내부·광고 슬롯·전면 광고, DOM id. 멀티플레이 실접속은 여전히 마스터 §9(Colyseus) 몫이라 이 프로토는 NPC 연출까지만이다.
 
 ## 0-2. 원 브리프 대조표 — 사용자가 적은 요구가 어디에 있나
-사용자 원문 순서대로. "프로토"는 이 폴더, "코덱스"는 `~/sindang-stroll-codex`, "마스터"는 통합 기획서 절·티켓.
+사용자 원문 순서대로. "프로토"는 이 폴더, "코덱스"는 저장소 `codex/`, "마스터"는 통합 기획서 절·티켓.
 
 | # | 사용자 요구 | 프로토(이 폴더) | 코덱스 빌드 | 마스터 |
 |---|---|---|---|---|
@@ -74,7 +75,7 @@ prototype/
 ├─ template_v4_villager_backup.html  # v4(주민×코티지×단 지형) 보관 — STYLE 로도 재현 가능
 ├─ data/cell_data.json           # 구운 월드(§3). tools/build_cell.py 산출물
 ├─ tools/
-│  ├─ build_cell.py              # OSM+SRTM+complexes.json → cell_data.json (표준 라이브러리만, 284행)
+│  ├─ build_cell.py              # OSM+SRTM+complexes.json → cell_data.json (표준 라이브러리만; 산출은 `data/cell_data.json`)
 │  ├─ complexes.json             # 손입력 단지 사실·카드·출입구(§4) — 편집 대상
 │  ├─ elev_srtm.json / elev_srtm_east.json   # OpenTopoData srtm30m 격자(50m 간격)
 │  └─ overpass_query.ql          # Overpass 질의(bbox 37.5520–37.5710 / 127.0100–127.0420)
@@ -142,21 +143,21 @@ prototype/
 ```
 `facts`의 `k` 중 코드가 읽는 키: `주차`(세대당 N대 정규식 → 비교표·내부 체감), `사용승인`(앞 7자 → 준공), `세대수`, `동수·층수`, `구조·난방`/`난방·시공`. 나머지 키는 표시만 한다.
 
-## 5. 이동·시간 규칙(마스터 §7 대응) — `template.html` 459~535행
+## 5. 이동·시간 규칙(마스터 §7 대응) — `src/04_route.js`(속도 상수 `SPEED`는 02_world.js)
 - 속도 km/h: 도보 4.0 · 유모차 3.2 · 자전거 12 · 차 22. `stepCost(from,to,mode,diag)` = 거리/속도 × 경사계수 + 가산.
 - 경사계수 `slopeFactor` (경사 % = Δ고도/거리): 도보 <5 ×1 · <9 ×1.1 · <15 ×1.4 · ≥15 ×1.6 / 유모차 <2 ×1 · <5 ×1.11 · <9 ×1.33 · <15 ×2.0 · ≥15 불가 / 자전거 <2 ×1 · <5 ×1.18 · <9 ×1.54 · <15 ×2.5 · ≥15 불가 / 내리막 자전거 ×0.8·유모차 ×1.1. 차 무관.
-- 통행 `tileAllowed`: 건물 불가. 차는 도로 등급 4+만. 비차량은 학교·공사구역 불가, 계단은 도보만.
-- 가산: 길 없는 땅 ×1.5, 대로변 보행 ×1.1, 계단 ×1.6, 자전거 보도 ×1.3, 대로 진입 횡단 +0.5분(자전거 +0.33), 차 러시아워(시계 am/pm) 등급 7+ ×2.0, 차 신호 +0.67분, 차 주차 +3분(`routeStats`).
+- 통행 `tileAllowed`: 건물 불가. 차는 도로 등급 4+만. 비차량은 학교·공사구역 불가, 계단은 도보만. **계단 판정 `isStairs(i)`** = steps 플래그가 있고, 대로(등급 8+) 타일에 겹친 계단(지하도·육교 계단, 4칸)이 아닌 것 — 25m 타일 해상도 한계로 대로 보행은 막지 않는다. (v6까지는 `K≠ROAD` 조건이라 굽기에서 ROAD로 분류된 계단 24칸을 유모차가 통과했다.)
+- 가산: 길 없는 땅 ×1.5, 대로변 보행 ×1.1, 계단 ×1.6, 자전거 보도 ×1.3, 대로 진입 횡단 +0.5분(자전거 +0.33), 차 러시아워(시계 am/pm) 등급 7+ ×2.0, 차 신호 +0.67분, 차 주차 +3분(`routeStats`; v7부터 재생 타임라인에도 마지막 타일 3분 정지로 포함).
 - `astar` 8방향·이진힙·대각선 코너컷 금지·20만 반복 상한. 결과 `routeStats` = {min, dist, up, cross, stairs, maxGrade}.
 - 재생: `TIME_SCALE=22`(실제 1초=월드 22초), `tickTravel`이 누적 비용 `seg[]`로 위치 보간, 경사 9%+·계단·대로 횡단에서 토스트, 건너뛰기는 `t0=-1e12`.
-- 기준 구간 `computeMetrics`(781행): 단지별 gates[0] 기준 역 출구(출구→정문, 도보·유모차)·초등·마트·병원(정문→목적지, 도보). 비교표·노트·점수의 공통 소스. 마스터 §7-4 route_metric의 클라이언트판.
-- 점수 `scoreFor`(792행): 컨셉 가중치(1인 교통35·편의20·환경25·치안15·주차5 / 커플 30·10·25·20·10·5 / 가족 교통20·학군30·편의15·환경20·주차10·치안5). 치안은 데이터 없음=50 고정. 노트에 "추정" 명시.
+- 기준 구간 `computeMetrics`(06_ui.js; 역 출구는 `spawn_station` 소속 출구 우선): 단지별 gates[0] 기준 역 출구(출구→정문, 도보·유모차)·초등·마트·병원(정문→목적지, 도보). 비교표·노트·점수의 공통 소스. 마스터 §7-4 route_metric의 클라이언트판.
+- 점수 `scoreFor`(06_ui.js): 컨셉 가중치(1인 교통35·편의20·환경25·치안15·주차5 / 커플 30·10·25·20·10·5 / 가족 교통20·학군30·편의15·환경20·주차10·치안5). 치안은 데이터 없음=50 고정. 노트에 "추정" 명시.
 
 ## 6. 렌더링 — 정적 1장 + 동적
-### 6-1. 정적 레이어 `buildStatic` (308~449행)
+### 6-1. 정적 레이어 `buildStatic` (03_static.js)
 - 월드 전체를 오프스크린 캔버스 1장에 굽는다(배율 `SS=min(1.5,DPR)`, 약 2,600×1,600 논리 px). 야간 창문·가로등은 별도 `lightsCv`(배율 1)에 굽고 밤에 `lighter`로 합성.
 - 투영 `proj(x,y,z) = [(x−y)·16, (x+y)·8 − z·1.6]`. 타일 32×16px, 고도 1.6px/m, 층 2.4px.
-- **단 지형**(235~274행): `E` 3×3 평활 → `TIERZ = round(E/8)·8` → 3×3 최빈값 2회 → 건물 아래 타일은 건물 중심 단으로 평탄화(`PAD`) → 모서리 높이 `CZ[i*4+k]` (NW,NE,SE,SW). 길 타일은 더 높은 길 이웃 쪽 모서리를 그 단으로 올려 **경사로**. `surfZ(fx,fy)` = 모서리 이중선형 = 캐릭터·표식이 서는 높이.
+- **단 지형**(02_world.js `TIERZ`): `E` 3×3 평활 → `TIERZ = round(E/8)·8` → 3×3 최빈값 2회 → 건물 아래 타일은 건물 중심 단으로 평탄화(`PAD`) → 모서리 높이 `CZ[i*4+k]` (NW,NE,SE,SW). 길 타일은 더 높은 길 이웃 쪽 모서리를 그 단으로 올려 **경사로**. `surfZ(fx,fy)` = 모서리 이중선형 = 캐릭터·표식이 서는 높이.
 - 화가 알고리즘: `s = x+y` 오름차순으로 타일 → 그 깊이의 소품(나무·꽃) → 그 깊이에 앵커(폴리곤의 x+y 최대 꼭짓점)된 건물. 절벽은 타일의 동·남 변에서 이웃 모서리보다 0.5m 이상 높을 때 사각형으로, 월드 가장자리는 받침대(`BASEZ`)까지.
 - 길: 대로(등급 8+) 전면 포장·연석·중앙 점선·횡단보도, 골목·보도·계단은 중심 원 + 8방향 이웃 반쪽 띠(`roadLinks`: 대각선은 양옆 직교 이웃이 모두 길이면 생략).
 - 건물 `bldStyle`→`drawBuilding`(v4 코티지): 보이는 면만(중심→변 바깥 방향 x+y>0), 남향 면 ×0.86·동향 ×0.96, 윤곽 `CT.outline`(#5a4634, 1.4px). 지붕은 꼭짓점 4개면 긴 변 방향 박공(용마루 높이 = 짧은 변×0.45, 4~13px, 박공벽 삼각형 + 처마 1.5px 기하 확장), 그 외는 중심으로 0.45 축소해 올린 모임지붕. 아파트(단지 소속 또는 apartments/10층+)는 따뜻한 크림 벽+층마다 창틀 창(틀 두께는 층 높이에 맞춤)+단지색 지붕(`mixHex(단지색, 갈색, .25)`)+용마루 위 동 라벨, 집은 파스텔 벽+색 지붕+십자살 창 1~3+문+굴뚝, 상점은 줄무늬 차양. `old` 테마만 금 1줄. 가림 bbox는 지붕·굴뚝만큼 위로 22px 여유.
@@ -164,7 +165,7 @@ prototype/
 - **수채 지도 월드**(`TOP`, v6, 탑뷰): §0-1 표의 순서대로 별도 패스로 굽는다. 투영이 바뀌므로 `WX0~WY1` 범위·`pickTile`·미니맵 뷰포트도 `TT`로 계산. 절벽·단·건물 높이는 없고(경로 시간은 그대로 원본 고도), 가림 목록은 비어 있다.
 - 가림 목록 `OCC[]`: 건물·나무의 {key:x+y, bbox, draw}. 동적 레이어가 캐릭터를 그린 뒤 key가 더 큰(앞에 있는) 겹치는 소품만 다시 그려 깊이를 맞춘다(`drawActorOccluded`).
 
-### 6-2. 동적 레이어 `draw` (617~662행)
+### 6-2. 동적 레이어 `draw` (05_dynamic.js)
 하늘 그라데이션(아침/저녁/밤) → 카메라(`S.camX/camY/zoom`, follow 보간 0.18) → 정적 캔버스 → 경로 점선·깃발 → NPC 10명 → 플레이어(가림) → 밤 틴트+불빛 → **화면 좌표 고정 크기 표식** `drawMarkers`(단지 명패·역 태그+노선 원·POI 핀·출구 상자·출입구 문기둥, 줌 1.25+ 라벨·1.8+ 출구 글자) → 미니맵(뷰포트 사다리꼴). 입력은 포인터(드래그=카메라, 탭=표식 16px 내 우선 → 타일 `pickTile`), 휠·핀치 줌 0.55~2.6, 방향키/WASD 한 칸 이동. 탑뷰(`TOP`)에서는 하늘이 종이색이고 캐릭터·NPC를 타일 중심보다 0.3타일 아래에 세운다.
 
 ### 6-3. 캐릭터 = `STYLE.char`로 선택: 픽셀크루 도트 유령 | 동숲풍 주민 (`src/05_dynamic.js` 앞부분)
@@ -216,15 +217,15 @@ prototype/
 | 그림체 전환 | 재조립 없이: 주소 끝 `#캐릭터-월드`(예 `#villager-watermap`, 바꾸면 자동 새로고침) 또는 서랍 단지 탭 그림체 선택기 → 적용. 기본값을 바꾸려면 `src/02_world.js` `STYLE_DEFAULT` 수정 후 `python3 assemble.py && python3 build.py`. id = 스타일 랩 '선택 조합 복사'와 동일(char: pixelcrew·villager, world: terrace·sketch·watermap, bld: cottage). 다른 id(watercolor 건물·neon·tiltshift·탑뷰 pixelrpg 등)는 아직 본편에 없다 |
 | 단지 추가(같은 셀) | `complexes.json`에 1건(+`osm_landuse_id`) → `build_cell.py` → `build.py`. 동 폴리곤이 없으면 `synthesize_towers` |
 | 새 셀 | §2 ②③ bbox·`STATIONS` 수정 → 새 폴더로 복제. 템플릿은 그대로 |
-| 수단·경사 수치 | `SPEED`·`slopeFactor`·`stepCost`(459~495행). 비교표·노트는 자동 반영 |
-| 체크리스트·컨셉 가중치 | `CONCEPTS`·`CHECKLISTS`(208~218행) |
-| 카드 노출 규칙 | `onArrive`의 cat 매핑(701행) |
+| 수단·경사 수치 | `SPEED`(02_world.js)·`slopeFactor`·`stepCost`·`isStairs`(04_route.js). 비교표·노트는 자동 반영 |
+| 체크리스트·컨셉 가중치 | `CONCEPTS`·`CHECKLISTS`(02_world.js). 체크 저장 키는 `concept:complex:item`(`checkKey`) |
+| 카드 노출 규칙 | `CARD_CATS`(05_dynamic.js): 도착 유형 → 카테고리 후보 순서. 정문 = parking→slope→construction→regulation |
 | 팔레트·지붕색·지붕 모양 | `C`(02_world.js), `CT·bldStyle`(03_static.js). 박공 높이는 `drawBuilding`의 `rh`(짧은 변×0.45, 4~13px), 처마는 `CT.eave` |
-| 단 높이 | `TIER`(236행, m). 절벽 px = TIER×1.6 |
+| 단 높이 | `TIER`(02_world.js, m). 절벽 px = TIER×1.6 |
 | 표식 라벨 줌 임계 | `drawMarkers` 첫 줄 `showLabels/bigLabels` |
 | 캐릭터 배역·종족·크기 | `CAST`·`GUIDE`·`NPC_CAST`·`CONCEPT_CAR`(05_dynamic.js). 종족 추가는 `SPECIES`에 귀·털색·무늬 1줄, 크기는 `drawVillager`의 `0.68` 또는 호출 `scale` |
 | 소스 수정 후 | `python3 assemble.py && python3 build.py` → `dev.html` 로컬 확인 → `index.html` 재발행 |
-| 출근 허브·노선 | `LINES`·`HUBS`(219~224행) |
+| 출근 허브·노선 | `LINES`·`HUBS`(02_world.js) |
 
 ## 12. 검증 요약(v2, 2026-10-11 저녁, Chromium 에뮬레이션, JS 오류 0건)
 같은 출발·도착으로 계산하면 코덱스 빌드와 대조할 수 있는 기준값이다(전부 '추정', 마스터 MOV007의 ±10% 대조 연습용).
@@ -258,11 +259,11 @@ prototype/
 | 통합 기획서(정본) / HTML | `../IMJANG_WORLD_MASTER_2026-10-11.md` / `../index.html` (아티팩트 https://claude.ai/artifact/Rk1mh2t5bn1LPJLuaXNxba) |
 | 제작 노트(출처·규칙·검증 로그) | `PROTOTYPE_NOTES.md` (§1-1 v2 변경, §4 출처·한계, §7·§7-1 로그) |
 | 25구 단지 카탈로그 | `../SEOUL_25GU_COMPLEX_CATALOG_2026-10-11.md` |
-| 코덱스 빌드와 문서 | `~/sindang-stroll-codex/` — `README.md`, `docs/제작방법_기술스택_구현상세.md`, `docs/Claude_전달용_전체문서.md`, `DESIGN.md`, `qa/QA.md` |
-| 코덱스 통합 기획서(코덱스 측 정본) | `~/Downloads/서울_아파트_임장월드_통합개발기획서.md` (개정 3, S01~S22, U01~U16) |
+| 코덱스 빌드와 문서 | 저장소 `codex/` — `README.md`, `docs/Claude_V5_전체월드스타일_구현가이드.md`, `DESIGN.md`, `qa/v5/QA.md` |
+| 코덱스 통합 기획서(코덱스 측 정본) | 작성자 로컬 보관(저장소 미포함) `서울_아파트_임장월드_통합개발기획서.md` (개정 3, S01~S22, U01~U16) |
 | 스타일 랩(캐릭터·건물·월드맵 각 10종, 조합 미리보기) | `stylelab/index.html`(아티팩트 https://claude.ai/artifact/DsWyzkZp2Ag3wD8LGkFgbv) · `stylelab/STYLE_LAB_2026-10-11.md`(카탈로그·이식 절차) · 정본 `stylelab/src/` — 사용자 선택 1: 동숲풍 세트(villager×cottage×terrace) → v4, **선택 2: pixelcrew×cottage×sketch → v5(기본값)**, v6에서 수채 지도(watermap, 탑뷰)도 `STYLE.world`에 추가. 해시·서랍 선택기로 전환 |
 | 이전 템플릿 보관 | `template_v1_backup.html`(v1 재작업 전) · `template_v3_pixelcrew_backup.html`(v3 픽셀크루 단독) · `template_v4_villager_backup.html`(v4 동숲풍 세트) |
-| 픽셀크루 원본(캐릭터 정본, v5 현재 사용) | `~/Desktop/kimjiwon/my-projects/pixelcrew-desk/` — `src/renderer/shared/sprites.js`(픽셀맵), `src/shared/crew.js`(명부), `src/renderer/shared/fx.js`(조명 5모드), `docs/CHARACTERS.md`(디자인 문법·이름 규칙) |
+| 픽셀크루 원본(캐릭터 정본, v5 현재 사용) | PixelCrew Desk 저장소(작성자 본인, 비공개) — `src/renderer/shared/sprites.js`(픽셀맵), `src/shared/crew.js`(명부), `src/renderer/shared/fx.js`(조명 5모드), `docs/CHARACTERS.md`(디자인 문법·이름 규칙) |
 
 | GitHub 저장소 | https://github.com/flykimjiwon/aptHanimo — 공개, 2026-10-12 사용자 지시로 첫 푸시(`imjang_world_2026-10-11/` 폴더 전체 = 기획서·프로토·스타일 랩·카탈로그). `.omc/`·`osm3.json`·캐시는 제외 |
 

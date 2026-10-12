@@ -1,4 +1,5 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>임장월드 스타일 랩</title>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta charset="utf-8">
+<title>임장월드 스타일 랩</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
@@ -92,7 +93,7 @@ th{color:var(--muted);font-weight:500;white-space:nowrap}
       <div class="row"><label>캐릭터 <select id="selChar"></select></label></div>
       <div class="row"><label>건물 <select id="selBld"></select></label></div>
       <div class="row"><label>월드맵 <select id="selWorld"></select></label></div>
-      <div class="row presets"><span class="note">세트:</span><button data-set="pixelcrew,v2,terrace">현행(픽셀크루·크림·단지형)</button><button data-set="villager,cottage,terrace">동숲풍</button><button data-set="lowpoly,lowpoly,diorama">디오라마</button><button data-set="rpg16,pixel,pixelrpg">레트로 픽셀</button><button data-set="clay,clay,tiltshift">클레이 미니어처</button></div>
+      <div class="row presets"><span class="note">세트:</span><button data-set="pixelcrew,v2,terrace">현행(픽셀크루·크림·단지형)</button><button data-set="villager,cottage,terrace">동숲풍</button><button data-set="voxel,lowpoly,diorama">디오라마</button><button data-set="rpg16,pixel,pixelrpg">레트로 픽셀</button><button data-set="bean,clay,tiltshift">클레이 미니어처</button></div>
       <h3 style="margin-top:10px">내보내기</h3>
       <textarea id="exportTxt" readonly></textarea>
       <div class="row"><button class="primary" id="copyBtn">선택 조합 복사</button><span class="note" id="copyMsg">Codex·기획서에 붙여넣기용 JSON + 설명</span></div>
@@ -764,7 +765,8 @@ function renderCombo() {
   comboWorld = {off, r};
 }
 function drawCombo(t) {
-  if (!comboWorld) return; const ch = CHARS.find(x => x.id === SEL.char); const wd = WORLDS.find(x => x.id === SEL.world);
+  if (!comboWorld) return; const ch = CHARS.find(x => x.id === SEL.char); const wd = WORLDS.find(x => x.id === SEL.world); const bd0 = BLDS.find(x => x.id === SEL.bld);
+  if (!ch || !wd || !bd0) { window.__errs.push('combo: 없는 스타일 id ' + [SEL.char, SEL.bld, SEL.world].join('/')); return; }
   cg.setTransform(DPR, 0, 0, DPR, 0, 0); cg.clearRect(0, 0, CWID, CHEI); cg.drawImage(comboWorld.off, 0, 0, CWID, CHEI);
   if (comboWorld.r && comboWorld.r.place) { const sc = wd.kind === 'iso' ? 0.55 : 0.5; comboWorld.r.place(cg, t, ch, {scale:sc}); comboWorld.r.place(cg, t + 0.35, ch, {scale:sc * 0.85, col:'#f472b6', col2:'#2b1f17'}); }
   cg.setTransform(DPR, 0, 0, DPR, 0, 0); cg.font = '600 11px "Noto Sans KR",sans-serif'; cg.textAlign = 'left'; const bd = BLDS.find(x => x.id === SEL.bld); const label = `${ch.name} × ${bd.name} × ${wd.name}`; const tw2 = cg.measureText(label).width + 14; cg.fillStyle = 'rgba(255,253,246,.92)'; cg.beginPath(); cg.roundRect(10, 10, tw2, 22, 11); cg.fill(); cg.strokeStyle = 'rgba(205,191,159,1)'; cg.lineWidth = 1.5; cg.stroke(); cg.fillStyle = '#4a3b2f'; cg.fillText(label, 17, 25);
@@ -775,10 +777,10 @@ function syncSelection() {
   renderCombo(); updateExport();
 }
 for (const [id, list, key] of [['#selChar', CHARS, 'char'], ['#selBld', BLDS, 'bld'], ['#selWorld', WORLDS, 'world']]) { const sel = $(id); sel.innerHTML = list.map((it, i) => `<option value="${it.id}">${String(i + 1).padStart(2, '0')} ${it.name}</option>`).join(''); sel.addEventListener('change', () => { SEL[key] = sel.value; syncSelection(); }); }
-document.querySelectorAll('.presets button').forEach(b => b.addEventListener('click', () => { const [c, bd, w] = b.dataset.set.split(','); SEL.char = c; SEL.bld = bd; SEL.world = w; syncSelection(); }));
+document.querySelectorAll('.presets button').forEach(b => b.addEventListener('click', () => { const [c, bd, w] = b.dataset.set.split(','); if (!CHARS.some(x => x.id === c) || !BLDS.some(x => x.id === bd) || !WORLDS.some(x => x.id === w)) { $('#copyMsg').textContent = '이 세트의 id가 카탈로그에 없어요: ' + b.dataset.set; return; } SEL.char = c; SEL.bld = bd; SEL.world = w; syncSelection(); }));
 function updateExport() {
-  const ch = CHARS.find(x => x.id === SEL.char), bd = BLDS.find(x => x.id === SEL.bld), wd = WORLDS.find(x => x.id === SEL.world);
-  const obj = {stylelab:'imjang-world 2026-10-11', character:{id:ch.id, name:ch.name, desc:ch.desc, tags:ch.tags}, building:{id:bd.id, name:bd.name, desc:bd.desc, tags:bd.tags, params:bd.st}, world:{id:wd.id, name:wd.name, desc:wd.desc, tags:wd.tags, kind:wd.kind}, source:'docs/analysis/imjang_world_2026-10-11/prototype/stylelab/ (src/03_chars.js, 04_blds.js, 05_worlds.js)'};
+  const ch = CHARS.find(x => x.id === SEL.char), bd = BLDS.find(x => x.id === SEL.bld), wd = WORLDS.find(x => x.id === SEL.world); if (!ch || !bd || !wd) return;
+  const obj = {stylelab:'imjang-world 2026-10-11', character:{id:ch.id, name:ch.name, desc:ch.desc, tags:ch.tags}, building:{id:bd.id, name:bd.name, desc:bd.desc, tags:bd.tags, params:bd.st}, world:{id:wd.id, name:wd.name, desc:wd.desc, tags:wd.tags, kind:wd.kind}, source:'github.com/flykimjiwon/aptHanimo prototype/stylelab/ (src/03_chars.js, 04_blds.js, 05_worlds.js)'};
   $('#exportTxt').value = `# 임장월드 스타일 선택\n- 캐릭터: ${ch.name} (${ch.id}) — ${ch.desc}\n- 건물: ${bd.name} (${bd.id}) — ${bd.desc}\n- 월드맵: ${wd.name} (${wd.id}) — ${wd.desc}\n\n` + JSON.stringify(obj, null, 1);
 }
 $('#copyBtn').addEventListener('click', () => { const ta = $('#exportTxt'); const done = () => $('#copyMsg').textContent = '복사됨. Codex·기획서에 붙여넣으세요.'; const fail = () => { ta.focus(); ta.select(); $('#copyMsg').textContent = '자동 복사가 막혀 텍스트를 선택했어요. 길게 눌러 복사하세요.'; }; try { navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(ta.value).then(done, fail) : fail(); } catch (e) { fail(); } });

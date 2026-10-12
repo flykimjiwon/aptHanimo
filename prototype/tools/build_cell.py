@@ -160,7 +160,7 @@ for e in osm:
     except: lv = 15 if t.get('building') == 'apartments' else (4 if t.get('building') in ('yes', 'retail', 'commercial') else 3)
     cid = None
     for k, cp in cpoly.items():
-        if pip(cx, cy, cp): cid = k
+        if pip(cx, cy, cp): cid = k; break  # 겹치는 landuse 폴리곤이면 먼저 정의된 단지 우선(중심점 기준, 면적 겹침은 후속)
     b = {'id': e['id'], 'label': t.get('name') or t.get('addr:housenumber') or '', 'levels': lv, 'kind': t.get('building'),
          'poly': [[round(x, 2), round(y, 2)] for x, y in poly], 'cx': round(cx, 2), 'cy': round(cy, 2), 'complex': cid}
     buildings.append(b)
@@ -222,6 +222,7 @@ for e in osm:
     if e['type'] == 'node' and t.get('railway') == 'subway_entrance':
         x, y = to_tile(e['lat'], e['lon'])
         if not inb(int(x), int(y)): continue
+        if not stations: continue  # 역이 없는 셀이면 출구도 역 귀속 불가
         best = min(stations, key=lambda s: (s['lat'] - e['lat']) ** 2 + (s['lon'] - e['lon']) ** 2)
         exits.append({'station': best['name'], 'ref': t.get('ref', '?'), 'x': round(x, 2), 'y': round(y, 2), 'lat': e['lat'], 'lon': e['lon']})
 
@@ -276,9 +277,11 @@ out = {
     'buildings': buildings, 'stations': stations, 'exits': exits, 'pois': pois, 'complexes': complexes,
     'areas': [{'kind': k, 'name': n, 'poly': [[round(x, 2), round(y, 2)] for x, y in p]} for k, n, p in areas],
 }
-json.dump(out, open(S / 'cell_data.json', 'w'), ensure_ascii=False, separators=(',', ':'))
+OUT = S.parent / 'data' / 'cell_data.json'  # build.py 가 읽는 위치(예전엔 tools/ 에 떨어져 옛 데이터로 빌드되던 문제)
+OUT.parent.mkdir(parents=True, exist_ok=True)
+json.dump(out, open(OUT, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 import collections
 print('tiles', W * H, 'kinds', collections.Counter(KIND), 'buildings', len(buildings), 'stations', len(stations), 'exits', len(exits), 'pois', len(pois), 'areas', len(areas))
 print('elev range', min(E), max(E))
 for c in complexes: print(c['id'], 'tile', c['x'], c['y'], 'buildings', c['building_count_osm'])
-print('size', (S / 'cell_data.json').stat().st_size)
+print('size', OUT.stat().st_size, '->', OUT)

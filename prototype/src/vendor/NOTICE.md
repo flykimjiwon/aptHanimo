@@ -1,5 +1,5 @@
 # vendor/pixelcrew_sprites.js
-- 출처: `~/Desktop/kimjiwon/my-projects/pixelcrew-desk/src/renderer/shared/sprites.js` (PixelCrew Desk v0.9.x, 2026-09, MIT © 2026 Jiwon Kim — 사용자 본인 저작).
+- 출처: PixelCrew Desk 저장소(작성자 본인, 비공개) `src/renderer/shared/sprites.js` (v0.9.x, 2026-09, MIT © 2026 Jiwon Kim). 2026-10-12 바이트 동일 재확인.
 - **원문 그대로 복사(수정 0)**. PixelCrew 문서 §3-5 "원본 픽셀맵 변형 금지"를 지키기 위해 조명·배치는 프로토 쪽(`src/05_dynamic.js`의 `ghostCanvas`)에서만 후처리한다.
 - 크루 명부(`crew.js`)는 색·액세서리·소품·이름만 추려 `05_dynamic.js`에 인라인(`self.PixelCrewRoster`).
 - 갱신: 원본이 바뀌면 이 파일을 다시 복사하고 `python3 assemble.py && python3 build.py`.

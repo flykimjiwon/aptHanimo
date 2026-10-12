@@ -1,5 +1,6 @@
+<meta charset="utf-8">
 <title>임장월드 신당 한바퀴</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* Layout: full-viewport canvas world. 종이 수첩 톤의 UI: 좌상단 단지 명패, 우상단 둥근 버튼·미니맵, 하단 이동수단 독, 길잡이 대화창, 서랍(데스크톱 우측 카드 / 모바일 하단 시트) */
@@ -13,7 +14,7 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#1d1915; --paper:#2a241e; --paper2:#332c25; --fg:#f1e8d8; --muted:#b3a38f; --line:#4a4035; --line2:#5c5044; --accent:#7cc98a; --accent-ink:#17251a; --accent2:#f29b7c; --signal:#f0c050; --danger:#ef7b70; --sky:#1f2a1c; --A:#7cc98a; --B:#85b6ef; --C:#e1b16a; --X:#a39a8c; --F:#b89cf7; --shadow:0 6px 18px rgba(0,0,0,.45); color-scheme:dark } }
 :root[data-theme="dark"]{ --bg:#1d1915; --paper:#2a241e; --paper2:#332c25; --fg:#f1e8d8; --muted:#b3a38f; --line:#4a4035; --line2:#5c5044; --accent:#7cc98a; --accent-ink:#17251a; --accent2:#f29b7c; --signal:#f0c050; --danger:#ef7b70; --sky:#1f2a1c; --A:#7cc98a; --B:#85b6ef; --C:#e1b16a; --X:#a39a8c; --F:#b89cf7; --shadow:0 6px 18px rgba(0,0,0,.45); color-scheme:dark }
 *{box-sizing:border-box} html,body{height:100%;margin:0;overflow:hidden}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%;touch-action:none}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
 #world{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;background:var(--bg)}
 button{font:500 14px var(--body);color:var(--fg);background:var(--paper);border:2px solid var(--line2);border-radius:14px;padding:8px 12px;cursor:pointer;min-height:40px;box-shadow:0 2px 0 var(--line2)}
 button:active{transform:translateY(1px);box-shadow:0 1px 0 var(--line2)}
@@ -23,7 +24,7 @@ button.round{width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;
 button[aria-pressed="true"]{background:var(--fg);color:var(--paper);border-color:var(--fg)}
 button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
 /* 상단: 단지 명패(좌) · 둥근 버튼 묶음(우) */
-#top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 10px) 10px 0;display:flex;gap:8px;align-items:flex-start;justify-content:space-between;pointer-events:none;z-index:5}
+#top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 10px) 10px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;justify-content:space-between;pointer-events:none;z-index:5}
 #top>*{pointer-events:auto}
 .plate{background:var(--paper);border:2px solid var(--line2);border-radius:18px;padding:6px 14px 6px 10px;display:inline-flex;gap:8px;align-items:center;box-shadow:var(--shadow);max-width:60vw}
 .plate .leaf{width:26px;height:26px;border-radius:50% 50% 50% 4px;background:var(--accent);flex:none;position:relative;transform:rotate(-20deg)}
@@ -33,7 +34,7 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
 #topRight{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 #topRight .row{display:flex;gap:6px;align-items:center}
 #topRight button{box-shadow:var(--shadow)}
-.chip{background:var(--paper);border:2px solid var(--line2);border-radius:999px;padding:0 12px;min-height:44px;font-size:13px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap;box-shadow:var(--shadow);cursor:pointer}
+.chip{background:var(--paper);border:2px solid var(--line2);border-radius:999px;padding:0 12px;min-height:44px;font-size:13px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap;max-width:48vw;overflow:hidden;box-shadow:var(--shadow);cursor:pointer}
 .chip b{font-family:var(--display);font-weight:400;font-size:15px}
 #minimap{width:150px;height:88px;border:2px solid var(--line2);border-radius:14px;background:var(--paper);touch-action:none;box-shadow:var(--shadow)}
 /* 하단: 이동수단 독 · HUD · 액션 */
@@ -52,8 +53,11 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
 #actions .lab{font-size:10px;line-height:1;margin-top:2px}
 #btnSkip{border-radius:999px;background:var(--accent2);color:#fff;border-color:transparent}
 @media (max-width:899px){ body.drawer-open #hud, body.drawer-open #actions, body.drawer-open #dock, body.drawer-open #dialog{display:none} }
+@media (min-width:900px){ body.drawer-open #actions{right:380px} } /* 서랍(360px)이 액션 버튼을 덮지 않게 */
 /* 광고 슬롯(DOM) */
-#adslot{position:fixed;left:0;right:0;bottom:0;height:calc(50px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper2);border-top:2px solid var(--line);display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;color:var(--muted);z-index:5}
+#adslot{position:fixed;left:0;right:0;bottom:0;height:calc(50px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper2);border-top:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:12px;color:var(--muted);z-index:5}
+#adslot .adline{display:flex;align-items:center;gap:8px}
+#adslot .credit{font-size:10px;line-height:1.2;max-width:96vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #adslot .lab{border:1px solid var(--line2);border-radius:4px;padding:0 5px;font-size:10px}
 /* 토스트(작은 말풍선) · 길잡이 대화창 */
 #toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 72px);background:var(--fg);color:var(--paper);padding:8px 14px;border-radius:999px;font-size:13px;z-index:9;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
@@ -87,8 +91,9 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
   #dialog .face{width:44px;height:44px} #dialog .face canvas{width:40px;height:37px}
   #dialog .txt{font-size:12.5px} #dialog .tip{display:none}
 }
+@media (max-width:899px) and (max-height:520px){ #minimap{display:none} #dialog{top:calc(env(safe-area-inset-top,0px) + 62px)} #toast{top:calc(env(safe-area-inset-top,0px) + 8px)} } /* 가로 모드 폰: 미니맵 접고 대화창을 올려 HUD와 겹치지 않게 */
 .badge{display:inline-block;font-size:10.5px;border:1px solid currentColor;border-radius:4px;padding:0 5px;margin-right:4px;line-height:16px;vertical-align:middle}
-.g-A,.g-A-est{color:var(--A)} .g-B{color:var(--B)} .g-C{color:var(--C)} .g-X,.g-unknown,.g-X→확인{color:var(--X)} .g-F,.g-concept{color:var(--F)}
+.g-A,.g-A-est,.g-official{color:var(--A)} .g-B,.g-review{color:var(--B)} .g-C,.g-estimate{color:var(--C)} .g-X,.g-unknown,.g-X→확인{color:var(--X)} .g-F,.g-concept{color:var(--F)}
 .card{border:1.5px solid var(--line);border-radius:14px;padding:8px 10px;margin:8px 0;background:var(--paper2)}
 .card h4{margin:0 0 4px;font-size:13.5px}
 .card p{margin:3px 0;font-size:12.5px}
@@ -180,11 +185,11 @@ textarea.note{width:100%;min-height:200px;font:12.5px/1.5 ui-monospace,Menlo,mon
   <div class="body" id="drawerBody"></div>
 </div>
 
-<div id="adslot"><span class="lab">광고</span><span>DOM 배너 슬롯(모의) · 캔버스 밖 · 정보는 광고 뒤에 잠기지 않음</span></div>
+<div id="adslot"><div class="adline"><span class="lab">광고</span><span>DOM 배너 슬롯(모의) · 캔버스 밖 · 정보는 광고 뒤에 잠기지 않음</span></div><div class="credit" id="credit">지도 데이터 © OpenStreetMap contributors (ODbL) · 고도 SRTM 30m(OpenTopoData) · 단지 사실 네이버부동산·호갱노노 수동 열람 요약(추정 포함)</div></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="interstitial" class="interstitial hidden"><div><span class="badge" style="color:#fff">광고</span> 셀 이동 전면 광고(모의)</div><div id="interCount">3</div><button id="interSkip" class="small">건너뛰기</button></div>
 
-<div id="modal"><div class="box" id="modalBox"></div></div>
+<div id="modal" class="hidden" role="dialog" aria-modal="true" aria-label="대화 상자"><div class="box" id="modalBox"></div></div>
 
 <script id="cell" type="application/json">/*__DATA__*/</script>
 <script>

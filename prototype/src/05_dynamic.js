@@ -222,6 +222,7 @@ function startTravel(gx, gy, target) {
   if (!path) { say(S.mode === 'stroller' ? '유모차로 갈 수 있는 경로를 데이터에서 찾지 못했어요(계단·급경사). 도보로 바꿔 볼까요?' : S.mode === 'car' ? '차로 닿는 도로 경로를 찾지 못했어요(도로 데이터 한계).' : '경로 없음: 데이터상 통행 가능 경로를 확인하지 못했어요.'); return; }
   const st = routeStats(path, S.mode);
   const seg = []; let acc = 0; for (let i = 1; i < path.length; i++) { const a = path[i - 1], b = path[i]; const diag = (a % W) !== (b % W) && ((a / W) | 0) !== ((b / W) | 0); const c = stepCost(a, b, S.mode, diag); acc += c; seg.push(acc); }
+  if (S.mode === 'car' && path.length > 1) { path.push(path[path.length - 1]); seg.push(acc + 3); } // 주차 +3분: HUD(routeStats)와 재생 시간을 맞춘다 — 마지막 타일에서 3분 정지
   S.traveling = {path, seg, t0:performance.now(), stats:st, target, mode:S.mode, from:S.lastArrive || null, maxGradeSeen:0, notified:new Set()};
   S.follow = true; document.getElementById('btnSkip').hidden = false;
   updateStats(st, 0);
@@ -240,7 +241,8 @@ function tickTravel(now) {
   // 이벤트: 급경사·계단·횡단
   const dz = E[b] - E[a]; const d = (ax !== bx && ay !== by) ? TILE_M * 1.414 : TILE_M; const grade = dz / d * 100;
   if (grade >= 9 && !t.notified.has('g' + b)) { t.notified.add('g' + b); toast(`⛰ 경사 ${Math.round(grade)}% 오르막${S.mode === 'stroller' ? ' — 유모차 밀기 힘듦' : S.mode === 'bike' ? ' — 내려서 끌기' : ''}`); }
-  if (ST[b] && K[b] !== KIND.ROAD && !t.notified.has('s' + b)) { t.notified.add('s' + b); toast('🪜 계단 구간'); }
+  if (isStairs(b) && !t.notified.has('s' + b)) { t.notified.add('s' + b); toast('🪜 계단 구간'); }
+  if (t.mode === 'car' && k === t.seg.length - 1 && a === b && !t.notified.has('park')) { t.notified.add('park'); toast('🅿️ 지하주차장 진입·주차 +3분(모델 가정)'); }
   if (R[b] >= 8 && R[a] < 8 && !t.notified.has('c' + b)) { t.notified.add('c' + b); toast(CR[b] ? '🚦 횡단보도 건너기 (+30초)' : '🚦 대로 횡단 (+30초, 횡단보도 데이터 없음)'); }
   updateStats(t.stats, elapsedMin);
 }
@@ -253,22 +255,25 @@ function finishTravel() {
 }
 function onArrive(target, mode, st) {
   let msg = `${target.name} 도착 · ${MODE_KO[mode]} ${fmtMin(st.min)}`;
-  if (target.type === 'gate' && mode === 'car') msg += ' · 지하주차장 진입 +3분(주차 ' + (cur().facts.find(f => f.k === '주차') || {v:''}).v.split(',')[0] + ')';
+  const tc = (target.complex && DATA.complexes.find(c => c.id === target.complex)) || cur(); // 도착 단지(출발 단지가 아님)
+  if (target.type === 'gate' && mode === 'car') msg += ' · 지하주차장 진입 +3분(주차 ' + ((tc.facts || []).find(f => f.k === '주차') || {v:'자료 없음'}).v.split(',')[0] + ')';
   if (target.type === 'exit' && mode === 'stroller') msg += ' · 출구 엘리베이터 유무는 데이터 미확인';
   if (target.type === 'elem') msg += ` · 횡단 ${st.cross}회` + (target.name.includes('신당') && S.complex === 'HYBER' ? ' · 배정교' : ' · 배정 여부 확인 필요');
   say(msg);
   S.events.push({arrive:target.type, poi:target.type, mode, targetId:target.id, complex:target.complex});
   evalChecklist();
-  if (target.type === 'gate' && target.complex && target.complex !== S.complex) { setComplex(target.complex, false); }
-  // 카드 노출
-  const c = cur(); const cat = {elem:'school', exit:'traffic', gate:'parking', mart:'commerce', med:'community', park:'community', play:'community'}[target.type];
-  const card = c.cards.find(cd => (cd.cat === cat || (target.type === 'gate' && cd.cat === 'slope')) && !S.cardsSeen.has(cd.id));
+  if (target.type === 'gate' && target.complex && target.complex !== S.complex) { setComplex(target.complex, false); evalChecklist(); } // 전환 뒤 새 단지 기준으로 한 번 더
+  // 카드 노출: 도착 유형 → 카테고리 후보(순서대로 미획득 첫 장). construction·regulation은 정문에서(단지 자체 쟁점)
+  const c = cur(); const cats = CARD_CATS[target.type] || [];
+  const card = (c.cards || []).find(cd => cats.includes(cd.cat) && !S.cardsSeen.has(cd.id));
   if (card) { S.cardsSeen.add(card.id); setTimeout(() => say(`🗂 카드 획득 [${card.grade}] ${card.title} — 서랍의 이슈 카드에서 출처를 볼 수 있어요.`), 2600); }
 }
+const CARD_CATS = {elem:['school'], mid:['school'], high:['school'], kinder:['school', 'community'], exit:['traffic'], gate:['parking', 'slope', 'construction', 'regulation'], mart:['commerce'], conv:['commerce'], med:['community'], park:['community'], play:['community'], lib:['community'], gym:['community']};
+const checkKey = (cid, itemId) => S.concept + ':' + cid + ':' + itemId; // 저장 v2: 컨셉별 체크
 function evalChecklist() {
   const list = CHECKLISTS[S.concept] || []; const cid = S.complex;
   for (const it of list) {
-    const key = cid + ':' + it.id; if (S.done.has(key)) continue; const c = it.c; let ok = false;
+    const key = checkKey(cid, it.id); if (S.done.has(key)) continue; const c = it.c; let ok = false;
     for (const ev of S.events) {
       if (c.arrive && ev.arrive === c.arrive && (!c.mode || ev.mode === c.mode) && (ev.complex === cid || !ev.complex)) ok = true;
       if (c.poi && ev.poi && c.poi.includes(ev.poi) && (!c.mode || ev.mode === c.mode)) ok = true;
@@ -281,6 +286,8 @@ function evalChecklist() {
 
 // ---------- UI 공통 ----------
 const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); // 데이터 문자열은 전부 이스케이프해서 innerHTML에 넣는다
+const gradeLabel = (g) => ({unknown:'미확인', F:'개념', concept:'개념'})[g] || g;
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._h); toast._h = setTimeout(() => t.classList.remove('show'), 3200); }
 const dlgFace = document.getElementById('dlgFace'), dlgCtx = dlgFace.getContext('2d');
 if (STYLE.char === 'pixelcrew') { dlgFace.width = 24; dlgFace.height = 22; dlgFace.style.imageRendering = 'pixelated'; } else { dlgFace.width = 96; dlgFace.height = 88; }

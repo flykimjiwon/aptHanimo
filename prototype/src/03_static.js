@@ -167,8 +167,10 @@ function drawBuilding(g, gl, b, cx) {
 }
 function buildStatic() {
   const w = Math.ceil((WX1 - WX0) * SS), h = Math.ceil((WY1 - WY0) * SS);
-  staticCv = document.createElement('canvas'); staticCv.width = w; staticCv.height = h; const g = staticCv.getContext('2d'); g.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS);
-  lightsCv = document.createElement('canvas'); lightsCv.width = Math.ceil((WX1 - WX0) * SL); lightsCv.height = Math.ceil((WY1 - WY0) * SL); const gl = lightsCv.getContext('2d'); gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL);
+  staticCv = document.createElement('canvas'); staticCv.width = w; staticCv.height = h; const g = staticCv.getContext('2d');
+  lightsCv = document.createElement('canvas'); lightsCv.width = Math.ceil((WX1 - WX0) * SL); lightsCv.height = Math.ceil((WY1 - WY0) * SL); const gl = lightsCv.getContext('2d');
+  if (!g || !gl) throw new Error(`정적 레이어 캔버스를 만들지 못했어요(${w}×${h}px, 메모리 부족 가능)`); // bootSafe가 받아서 고지
+  g.setTransform(SS, 0, 0, SS, -WX0 * SS, -WY0 * SS); gl.setTransform(SL, 0, 0, SL, -WX0 * SL, -WY0 * SL);
   if (TOP) { // 수채 지도 패스: 종이 결 → 블롭 타일(행 순서) → 손그림 길(이웃 연결선·지터·계단·횡단보도). 건물·나무는 아래 공통 루프(평면, 가림 목록 없음)
     g.fillStyle = 'rgba(90,70,50,.05)'; const n = Math.round((WX1 - WX0) * (WY1 - WY0) / 450); for (let i = 0; i < n; i++) g.fillRect(WX0 + hash(i, 1, 91) * (WX1 - WX0), WY0 + hash(i, 2, 92) * (WY1 - WY0), 1.2, 1.2);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) drawTile(g, x, y);
