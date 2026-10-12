@@ -2,6 +2,7 @@ import { refreshApplication } from "./application-ui";
 import { COMPLEXES, type Complex, placesFor } from "./complexes";
 import type { Layer, Mode, Party, Place } from "./data";
 import { START } from "./graph";
+import { noteDestination } from "./notebook-model";
 import { type ConnectionStatus, Presence } from "./presence";
 import type { Peer } from "./protocol";
 import type { World } from "./scene/world";
@@ -101,13 +102,42 @@ export class Controller {
     this.world?.setPlayer(this.mode, party);
     controls(this.mode, party, this.layer);
   }
-  async switchComplex(complex: Complex): Promise<void> {
+  async revisitNote(id: string): Promise<boolean> {
+    const destination = noteDestination(id);
+    if (!destination || !this.world) {
+      toast("지도를 아직 열 수 없어요. 동네를 불러온 뒤 다시 선택해 주세요.");
+      return false;
+    }
+    if (
+      destination.complex.id !== this.complex.id &&
+      !(await this.switchComplex(destination.complex, destination.place))
+    )
+      return false;
+    const place = this.places.find((item) => item.id === destination.place.id);
+    if (!place) {
+      toast("현재 지도 자료에 없는 장소예요. 수첩 기록은 그대로 보관돼요.");
+      return false;
+    }
+    if (this.layer !== place.layer) this.switchLayer(place.layer);
+    this.selectPlace(place.id);
+    this.status(`${place.short} 기록을 다시 열었어요 · 길안내를 선택해 산책을 이어가요`);
+    return true;
+  }
+  async switchComplex(complex: Complex, savedPlace?: Place): Promise<boolean> {
     const request = ++this.request;
     const loading = getElement("#canvas-loading", HTMLElement);
     loading.hidden = false;
     try {
       const spatial = await loadSpatial(complex.id);
-      if (request !== this.request) return;
+      if (request !== this.request) return false;
+      if (
+        savedPlace?.layer === "ground" &&
+        savedPlace.id !== "home" &&
+        !spatial.pois.some((poi) => poi.id === savedPlace.id)
+      ) {
+        toast("현재 지도 자료에 없는 장소예요. 수첩 기록은 그대로 보관돼요.");
+        return false;
+      }
       this.complex = complex;
       this.applySpatial(spatial);
       this.mode = "walk";
@@ -124,12 +154,14 @@ export class Controller {
       url.searchParams.set("complex", complex.id);
       history.replaceState(null, "", url);
       this.refresh();
-      getElement("#dialog", HTMLDialogElement).close();
+      if (!savedPlace) getElement("#dialog", HTMLDialogElement).close();
       this.status(`${complex.short}의 실제 지도 위에서 산책을 시작해요`);
+      return true;
     } catch (error) {
-      if (request !== this.request) return;
+      if (request !== this.request) return false;
       if (error instanceof Error) toast("공간 자료를 읽지 못했어요. 잠시 후 다시 선택해 주세요.");
       else throw error;
+      return false;
     } finally {
       if (request === this.request) loading.hidden = true;
     }

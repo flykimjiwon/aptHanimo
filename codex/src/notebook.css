@@ -1,0 +1,57 @@
+.notebook-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.notebook-top {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.notebook-filters input,
+.notebook-filters select {
+  min-height: 44px;
+}
+.notebook-view #notebook-result-count {
+  margin-bottom: 16px;
+}
+.note-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.note-actions button,
+.notebook-view button {
+  min-height: 44px;
+  min-width: 44px;
+}
+.note-actions .note-delete {
+  color: var(--error, #a34331);
+  margin-left: auto;
+}
+.saved-note .eyebrow,
+.saved-check span,
+.note-location span {
+  overflow-wrap: anywhere;
+}
+.saved-check svg {
+  flex-shrink: 0;
+}
+.note-feedback {
+  color: var(--error, #a34331);
+  margin-bottom: 16px;
+}
+.note-feedback:empty {
+  display: none;
+}
+@media (max-width: 700px) {
+  .notebook-filters {
+    grid-template-columns: 1fr;
+  }
+  .notebook-filters input,
+  .notebook-filters select,
+  #note-text {
+    font-size: 16px;
+  }
+}

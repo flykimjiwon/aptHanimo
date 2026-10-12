@@ -14,20 +14,37 @@ const schema = z
   .max(500);
 export type Note = z.infer<typeof schema>[number];
 const KEY = "hanbakwi-notes-v1";
-export function readNotes(): Note[] {
+export function readNotesState(): { readonly notes: Note[]; readonly error: string | null } {
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) return [];
+    if (raw === null) return { notes: [], error: null };
     const parsed = schema.safeParse(JSON.parse(raw));
-    return parsed.success ? parsed.data : [];
+    return parsed.success
+      ? { notes: parsed.data, error: null }
+      : { notes: [], error: "저장된 수첩 형식을 읽을 수 없어요. 기존 데이터는 덮어쓰지 않았어요." };
   } catch (error) {
-    if (error instanceof SyntaxError || error instanceof DOMException) return [];
+    if (error instanceof SyntaxError)
+      return {
+        notes: [],
+        error: "저장된 수첩이 손상되어 읽을 수 없어요. 기존 데이터는 덮어쓰지 않았어요.",
+      };
+    if (error instanceof DOMException)
+      return {
+        notes: [],
+        error:
+          "브라우저 저장 공간에 접근할 수 없어요. 브라우저의 사이트 저장 설정을 확인해 주세요.",
+      };
     throw error;
   }
 }
+export function readNotes(): Note[] {
+  return readNotesState().notes;
+}
 export function writeNotes(notes: readonly Note[]): boolean {
+  const parsed = schema.safeParse(notes);
+  if (!parsed.success || readNotesState().error) return false;
   try {
-    localStorage.setItem(KEY, JSON.stringify(notes));
+    localStorage.setItem(KEY, JSON.stringify(parsed.data));
     return true;
   } catch (error) {
     if (error instanceof DOMException) return false;

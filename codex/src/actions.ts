@@ -1,14 +1,7 @@
 import type { Complex } from "./complexes";
 import type { Layer, Place } from "./data";
-import {
-  adDialog,
-  chooseComplex,
-  helpDialog,
-  notebookDialog,
-  noteDialog,
-  placeDialog,
-  sourceDialog,
-} from "./dialogs";
+import { adDialog, chooseComplex, helpDialog, placeDialog, sourceDialog } from "./dialogs";
+import { notebookDialog, noteDialog } from "./notebook-view";
 import type { ConnectionStatus } from "./presence";
 import type { Peer } from "./protocol";
 import type { World } from "./scene/world";

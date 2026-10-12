@@ -1,7 +1,6 @@
 import { COMPLEXES, type Complex } from "./complexes";
 import { type Place, SOURCES } from "./data";
-import { readNotes } from "./storage";
-import { icon, safeText, showDialog } from "./ui";
+import { icon, showDialog } from "./ui";
 export function chooseComplex(current: Complex): void {
   showDialog(
     "오늘은 어떤 동네를 걸어볼까요?",
@@ -26,20 +25,6 @@ export function placeDialog(place: Place, complex: Complex): void {
   showDialog(
     place.name,
     `<span class="evidence-tag ${place.source === "model" ? "model" : ""}">${place.source === "model" ? "체험용 구조" : "출처 확인"}</span><p class="dialog-lead">${place.description}</p><p class="detail-distance">${icon(place.icon)} ${place.distance}</p><h3>현장에서 확인해 볼 것</h3><ul class="check-list">${place.checks.map((c) => `<li>${icon("check")}${c}</li>`).join("")}</ul><div class="dialog-actions"><button class="primary-button" data-action="save-note">${icon("bookmark")}수첩에 기록하기</button><a class="secondary-link" href="${place.source === "official" && complex.id === "haiver" ? SOURCES.official.url : complex.source}" target="_blank" rel="noreferrer">원본 정보 ${icon("arrow-up-right")}</a></div>`,
-  );
-}
-export function noteDialog(place: Place, complex: Complex): void {
-  const previous = readNotes().find((n) => n.id === `${complex.id}:${place.id}`);
-  showDialog(
-    "이곳에서 떠오른 생각",
-    `<div class="note-location">${icon("map-pin")}<span>${complex.short} / ${place.name}</span></div><form id="note-form"><label class="field-label" for="note-text">나의 임장 메모</label><textarea id="note-text" name="note" rows="5" maxlength="1500" placeholder="예: 유모차로 실제 출입구까지 걸어보고 싶다.">${safeText(previous?.text ?? "")}</textarea><h3>확인한 항목</h3><p class="fine-print">직접 확인한 항목만 체크해 주세요.</p><div class="note-checks">${place.checks.map((c, i) => `<label><input type="checkbox" name="check" value="${i}" ${previous?.checks.includes(c) ? "checked" : ""}><span>${c}</span></label>`).join("")}</div><button type="submit" class="primary-button">${icon("bookmark")}이 브라우저에 저장</button></form><p class="fine-print">메모는 이 브라우저에만 저장됩니다. 수첩에서 파일로 내려받을 수 있어요.</p>`,
-  );
-}
-export function notebookDialog(): void {
-  const notes = readNotes();
-  showDialog(
-    "나의 산책 수첩",
-    `<div class="notebook-top"><p>${notes.length}개의 장소를 담았어요</p><button class="quiet" data-action="export-notes" ${notes.length ? "" : "disabled"}>${icon("download")}내려받기</button></div>${notes.length ? notes.map((n) => `<article class="saved-note"><span class="eyebrow">${safeText(n.complex)} · ${safeText(n.date)}</span><h3>${safeText(n.place)}</h3><p class="note-copy">${safeText(n.text) || "체크한 항목을 기록했어요."}</p>${n.checks.map((c) => `<span class="saved-check">${icon("check")}${safeText(c)}</span>`).join("")}<button class="text-button" data-delete-note="${safeText(n.id)}">기록 삭제</button></article>`).join("") : `<div class="empty-notebook">${icon("book-open")}<h3>아직 비어 있는 수첩</h3><p>마음에 드는 장소를 선택하고<br>확인하고 싶은 점을 기록해 보세요.</p></div>`}`,
   );
 }
 export function helpDialog(): void {

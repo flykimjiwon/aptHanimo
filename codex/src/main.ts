@@ -1,6 +1,7 @@
 import "./style.css";
 import "./responsive.css";
 import "./game.css";
+import "./notebook.css";
 import { z } from "zod";
 import { action } from "./actions";
 import { loadBrandImages } from "./architecture/brand-images";
@@ -9,7 +10,7 @@ import { Controller } from "./controller";
 import { mapEvidence, mountGameUI, updateWorldToolControls } from "./game-ui";
 import { createMapTeleport } from "./map-teleport";
 import { parseTravelSpeed, saveTravelSpeed } from "./movement-speed";
-import { bindNotebook, deleteNote } from "./notebook";
+import { bindNotebook } from "./notebook";
 import { getElement, shell, toast } from "./ui";
 import { saveWorldStyle } from "./world-style-storage";
 import { showWorldStyleDialog } from "./world-style-ui";
@@ -84,7 +85,6 @@ document.addEventListener("click", (event) => {
     const complex = COMPLEXES.find((c) => c.id === data.complex);
     if (complex) void app.switchComplex(complex);
   }
-  if (data.deleteNote) deleteNote(data.deleteNote, app.refresh);
 });
 document.addEventListener("change", (event) => {
   if (!(event.target instanceof HTMLSelectElement) || event.target.id !== "travel-speed") return;
@@ -93,7 +93,7 @@ document.addEventListener("change", (event) => {
   if (app.world) app.world.presentation.travelSpeed.set(speed);
   else saveTravelSpeed(speed);
 });
-bindNotebook({ place: app.place, complex: () => app.complex, refresh: app.refresh });
+bindNotebook({ revisit: (id) => app.revisitNote(id), refresh: app.refresh });
 window.addEventListener("hashchange", () => app.reconnect());
 window.addEventListener("pagehide", (event) => {
   if (event.persisted) app.suspendPresence();
