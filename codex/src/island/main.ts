@@ -10,7 +10,7 @@ function element<T extends HTMLElement>(selector: string, kind: { new (): T }): 
   return node;
 }
 const app = element("#island-app", HTMLDivElement);
-app.innerHTML = `<header class="island-header"><a class="island-brand" href="/?complex=xi"><img src="/favicon.svg" alt="" width="32" height="32">한바퀴<span>단지 섬</span></a><a class="original-link" href="/?complex=xi">기존 버전 열기 <span aria-hidden="true">↗</span></a></header>
+app.innerHTML = `<header class="island-header"><a class="island-brand" href="/world.html?complex=xi"><img src="/favicon.svg" alt="" width="32" height="32">한바퀴<span>단지 섬</span></a><a class="original-link" href="/world.html?complex=xi">기존 버전 열기 <span aria-hidden="true">↗</span></a></header>
 <main><section class="island-intro" aria-labelledby="island-title"><div><p class="island-eyebrow">서울 성동구 · 하왕십리동</p><h1 id="island-title">왕십리자이<span class="island-subtitle">작은 섬으로 만나는 우리 동네</span></h1></div><div class="island-palettes" role="group" aria-label="섬 분위기">${Object.entries(
   PALETTES,
 )
@@ -229,7 +229,7 @@ async function start(): Promise<void> {
     const loading = element(".island-loading", HTMLElement);
     loading.hidden = false;
     loading.innerHTML =
-      '<strong>단지 섬을 열지 못했어요</strong><p>연결과 브라우저의 3D 지원을 확인한 뒤 다시 열어 주세요.</p><button id="island-retry">다시 시도</button><a href="/?complex=xi">기존 버전 열기</a>';
+      '<strong>단지 섬을 열지 못했어요</strong><p>연결과 브라우저의 3D 지원을 확인한 뒤 다시 열어 주세요.</p><button id="island-retry">다시 시도</button><a href="/world.html?complex=xi">기존 버전 열기</a>';
     element("#island-retry", HTMLButtonElement).addEventListener("click", () => location.reload(), {
       signal: events.signal,
     });

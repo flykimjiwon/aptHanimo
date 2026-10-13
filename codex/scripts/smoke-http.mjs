@@ -6,7 +6,7 @@ export async function verifyHttp(base, root) {
   const files = [...new Bun.Glob("**/*").scanSync({ cwd: dist, onlyFiles: true })]
     .filter((file) => !file.endsWith(".gz"))
     .sort();
-  for (const required of ["index.html", "style-lab.html", "island.html"])
+  for (const required of ["index.html", "world.html", "style-lab.html", "island.html"])
     assert(files.includes(required), `Missing build entry: ${required}; run bun run build`);
 
   let checks = 0;
@@ -68,5 +68,5 @@ export async function verifyHttp(base, root) {
     await response.arrayBuffer();
     checks++;
   }
-  return { checks, staticFiles: files.length, entries: 3 };
+  return { checks, staticFiles: files.length, entries: 4 };
 }

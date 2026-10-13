@@ -1,5 +1,7 @@
 # aptHanimo — 임장월드(가제)
 
+**2026-10-13 주력 통합판:** [한바퀴 단지 섬](codex/docs/UNIFIED_VILLAGE_2026-10-13.md). `codex/`에서 빌드·실행 후 `http://localhost:5178/`를 연다. 실제 단지 윤곽 세 곳과 귀여운 친구·표정·목적지 산책을 한 화면에 통합했다. Codex 엔진에 Claude v13의 표현·조작 규칙을 재구현했고, 이전 생활권 앱은 `/world.html`, 이전 섬은 `/island.html`, Claude 원본은 `prototype/`에 보존한다.
+
 서울 아파트 단지를 2.5D 귀여운 월드맵으로 걸어 보는 임장 웹게임 프로젝트. 2026-10-11~12, Claude Code(Fable 5.1)가 작성·제작한 기획서와 브라우저 프로토타입, 스타일 랩, 25구 단지 카탈로그를 한 폴더로 묶었다. 전부 **추정·연출**이 섞인 체험판이며 투자 판단 자료가 아니다.
 
 | 무엇 | 어디 | 비고 |
@@ -34,6 +36,6 @@ bun run smoke
 bun start
 ```
 
-브라우저: `http://localhost:5178/` · [스타일 실험실](http://localhost:5178/style-lab.html) · [왕십리자이 단지 섬](http://localhost:5178/island.html). 현재 Codex 기준은 **105테스트·9,539 assertions·21파일**, 서비스 검사는 **HTTP 54건·WebSocket 6건**이다. `smoke`는 빌드 후 자체 임시 포트에서 실행하고 종료한다.
+브라우저: [주력 통합판](http://localhost:5178/) · [기존 생활권 앱](http://localhost:5178/world.html) · [스타일 실험실](http://localhost:5178/style-lab.html) · [이전 단지 섬](http://localhost:5178/island.html). 현재 Codex 기준은 **113테스트·12,346 assertions·22파일**, 서비스 검사는 **HTTP62·WebSocket6**이다. `smoke`는 빌드 후 자체 임시 포트에서 실행하고 종료한다.
 
 [AI 인계 가이드](codex/docs/AI_HANDOFF_2026-10-12.md), [제작방법·기술스택·출처](codex/docs/Claude_V5_전체월드스타일_구현가이드.md), [QA 인덱스](codex/qa/v5/QA.md)를 참고한다. 과거 이동 수정의 81테스트·80경로·브라우저 17목적지·8화면 기록은 [당시 검증](codex/qa/v5/repair-2026-10-12.md)에 보존했다. 실기 iOS/Android와 공개 웹 서비스 배포는 미검증·미포함이다.

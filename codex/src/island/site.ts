@@ -39,6 +39,18 @@ export const HEIGHT_SCALE = 0.55;
 export const RELIEF_SCALE = 0.35;
 export const SITE_CENTER: XY = [35, -30];
 export const SITE_BOUNDS = { minX: -57, maxX: 155, minZ: -177, maxZ: 116 } as const;
+export type IslandSite = {
+  readonly ring: readonly XY[];
+  readonly center: XY;
+  readonly bounds: SpatialWorld["bounds"];
+  readonly spawn: XY;
+};
+export const XI_SITE: IslandSite = {
+  ring: SITE_RING,
+  center: SITE_CENTER,
+  bounds: SITE_BOUNDS,
+  spawn: [40, 85],
+};
 
 export function insideRing(point: XY, ring: readonly XY[] = SITE_RING): boolean {
   let inside = false;
@@ -78,7 +90,10 @@ export type IslandSegment = {
   readonly kind: string;
   readonly source: string;
 };
-export function islandPaths(world: SpatialWorld): readonly IslandSegment[] {
+export function islandPaths(
+  world: SpatialWorld,
+  site: IslandSite = XI_SITE,
+): readonly IslandSegment[] {
   const segments: IslandSegment[] = [];
   for (const path of world.paths)
     for (let i = 1; i < path.points.length; i++) {
@@ -92,7 +107,11 @@ export function islandPaths(world: SpatialWorld): readonly IslandSegment[] {
           a[0] + ((b[0] - a[0]) * (j + 1)) / steps,
           a[1] + ((b[1] - a[1]) * (j + 1)) / steps,
         ];
-        if ([from, to].every((p) => insideRing(p) && ringClearance(p) > path.width / 2 + 0.6))
+        if (
+          [from, to].every(
+            (p) => insideRing(p, site.ring) && ringClearance(p, site.ring) > path.width / 2 + 0.6,
+          )
+        )
           segments.push({ from, to, width: path.width, kind: path.kind, source: path.source });
       }
     }
@@ -106,10 +125,13 @@ export class IslandNavigation extends SpatialNavigation {
     readonly minZ: number;
     readonly maxZ: number;
   }[];
-  constructor(private readonly source: SpatialWorld) {
+  constructor(
+    private readonly source: SpatialWorld,
+    readonly site: IslandSite = XI_SITE,
+  ) {
     super({
       ...source,
-      bounds: SITE_BOUNDS,
+      bounds: site.bounds,
       buildings: source.buildings.filter((b) => b.kind === "core"),
     });
     this.obstacles = source.buildings
@@ -124,8 +146,8 @@ export class IslandNavigation extends SpatialNavigation {
   }
   override passable(point: XY, mode: Mode): boolean {
     return (
-      insideRing(point) &&
-      ringClearance(point) > 1.8 &&
+      insideRing(point, this.site.ring) &&
+      ringClearance(point, this.site.ring) > 1.8 &&
       super.passable(point, mode) &&
       !this.obstacles.some(
         (b) =>

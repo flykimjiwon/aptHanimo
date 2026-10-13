@@ -1,6 +1,7 @@
 import { OrthographicCamera, Vector3 } from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { SITE_CENTER } from "./site";
+import { siteScale } from "./atmosphere";
+import { type IslandSite, XI_SITE } from "./site";
 
 export class IslandCamera {
   private fitting = true;
@@ -10,7 +11,9 @@ export class IslandCamera {
   constructor(
     canvas: HTMLCanvasElement,
     private readonly changed: () => void,
+    private readonly site: IslandSite = XI_SITE,
   ) {
+    this.camera.far = Math.max(2000, 2000 * siteScale(site));
     this.controls = new OrbitControls(this.camera, canvas);
     this.controls.enablePan = false;
     this.controls.enableDamping = false;
@@ -26,7 +29,7 @@ export class IslandCamera {
   }
   resize(width: number, height: number): void {
     const aspect = width / height,
-      half = Math.max(170, 140 / aspect);
+      half = Math.max(170, 140 / aspect) * siteScale(this.site);
     this.aspect = aspect;
     if (this.fitting) this.camera.zoom = aspect < 1 ? 0.95 : 1.2;
     Object.assign(this.camera, {
@@ -40,15 +43,24 @@ export class IslandCamera {
   }
   overview(): void {
     this.fitting = true;
-    this.camera.position.set(SITE_CENTER[0] + 290, 285, SITE_CENTER[1] + 360);
-    this.controls.target.set(SITE_CENTER[0], 0, SITE_CENTER[1]);
+    const scale = siteScale(this.site);
+    this.camera.position.set(
+      this.site.center[0] + 290 * scale,
+      285 * scale,
+      this.site.center[1] + 360 * scale,
+    );
+    this.controls.target.set(this.site.center[0], 0, this.site.center[1]);
     this.camera.zoom = this.aspect < 1 ? 0.95 : 1.2;
     this.update();
   }
   top(): void {
     this.fitting = false;
-    this.camera.position.set(SITE_CENTER[0], 500, SITE_CENTER[1] + 0.1);
-    this.controls.target.set(SITE_CENTER[0], 0, SITE_CENTER[1]);
+    this.camera.position.set(
+      this.site.center[0],
+      500 * siteScale(this.site),
+      this.site.center[1] + 0.1,
+    );
+    this.controls.target.set(this.site.center[0], 0, this.site.center[1]);
     this.camera.zoom = 1;
     this.update();
   }
@@ -62,7 +74,10 @@ export class IslandCamera {
   }
   zoom(factor: number): void {
     this.fitting = false;
-    this.camera.zoom = Math.min(6, Math.max(0.65, this.camera.zoom * factor));
+    this.camera.zoom = Math.min(
+      this.controls.maxZoom,
+      Math.max(this.controls.minZoom, this.camera.zoom * factor),
+    );
     this.update();
   }
   focus(target: Vector3, zoom: number): void {
@@ -71,6 +86,10 @@ export class IslandCamera {
     this.controls.target.copy(target);
     this.camera.zoom = zoom;
     this.update();
+  }
+  follow(target: Vector3): void {
+    if (this.controls.target.equals(target)) return;
+    this.focus(target, this.camera.zoom);
   }
   private update(): void {
     this.camera.updateProjectionMatrix();

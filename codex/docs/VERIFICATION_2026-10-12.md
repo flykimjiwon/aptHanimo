@@ -85,7 +85,9 @@ CI는 브라우저 회귀·실기 모바일·배포를 실행하지 않는다. b
 
 구성 근거: Bun의 [HTTP 서버 설정](https://bun.sh/docs/runtime/http/server), [CI 안내](https://bun.sh/guides/runtime/cicd), GitHub의 [Actions 보안 권장사항](https://docs.github.com/en/actions/reference/security/secure-use).
 
-## 5. 이번에 확인한 결과와 한계
+## 5. 운영 보강 당시 결과와 한계
+
+2026-10-13 주력 통합 이후에는 [통합판 검증](UNIFIED_VILLAGE_2026-10-13.md)을 먼저 따른다. 네 HTML 진입점·113테스트·HTTP62/WS6이 현재 기준이며 아래 표는10/12 운영 보강의 역사 기록이다.
 
 | 표면 | 실제 결과 |
 |---|---|

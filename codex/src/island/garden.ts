@@ -10,12 +10,23 @@ import { Builder, MaterialPalette } from "../scene/materials";
 import { pointSegmentDistance } from "../scene/segment-clearance";
 import type { SpatialWorld, XY } from "../spatial/types";
 import type { IslandPalette } from "./palettes";
-import { insideRing, islandHeight, islandPaths, ringClearance, SITE_BOUNDS } from "./site";
+import {
+  type IslandSite,
+  insideRing,
+  islandHeight,
+  islandPaths,
+  ringClearance,
+  XI_SITE,
+} from "./site";
 
-export function islandGarden(world: SpatialWorld, palette: IslandPalette): Group {
+export function islandGarden(
+  world: SpatialWorld,
+  palette: IslandPalette,
+  site: IslandSite = XI_SITE,
+): Group {
   const group = new Group(),
     builder = new Builder(new MaterialPalette()),
-    segments = islandPaths(world);
+    segments = islandPaths(world, site);
   const core = world.buildings.filter((b) => b.kind === "core");
   for (const segment of segments) {
     const a = segment.from,
@@ -31,11 +42,12 @@ export function islandGarden(world: SpatialWorld, palette: IslandPalette): Group
     const v = Math.sin(x * 12.9898 + z * 78.233) * 43758.5453;
     return v - Math.floor(v);
   };
-  for (let x = SITE_BOUNDS.minX; x < SITE_BOUNDS.maxX; x += 8)
-    for (let z = SITE_BOUNDS.minZ; z < SITE_BOUNDS.maxZ; z += 8) {
+  for (let x = site.bounds.minX; x < site.bounds.maxX; x += 8)
+    for (let z = site.bounds.minZ; z < site.bounds.maxZ; z += 8) {
       const p: XY = [x + (random(x, z) - 0.5) * 5, z + (random(z, x) - 0.5) * 5];
-      if (!insideRing(p) || ringClearance(p) < 4.5 || random(x + 1, z) < 0.32) continue;
-      if (Math.hypot(p[0] - 40, p[1] - 85) < 12) continue;
+      if (!insideRing(p, site.ring) || ringClearance(p, site.ring) < 4.5 || random(x + 1, z) < 0.32)
+        continue;
+      if (Math.hypot(p[0] - site.spawn[0], p[1] - site.spawn[1]) < 12) continue;
       if (core.some((b) => insideRing(p, b.ring) || ringClearance(p, b.ring) < 4.5)) continue;
       if (segments.some((s) => pointSegmentDistance(p, s.from, s.to) < s.width / 2 + 2.5)) continue;
       trees.push({ p, scale: 0.65 + random(x, z) * 0.5 });

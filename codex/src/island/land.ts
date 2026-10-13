@@ -10,7 +10,7 @@ import {
 } from "three";
 import type { SpatialWorld, XY } from "../spatial/types";
 import type { IslandPalette } from "./palettes";
-import { islandHeight, SITE_CENTER, SITE_RING } from "./site";
+import { type IslandSite, islandHeight, XI_SITE } from "./site";
 
 export function footprintShape(ring: readonly XY[]): Shape {
   const shape = new Shape();
@@ -22,10 +22,14 @@ export function footprintShape(ring: readonly XY[]): Shape {
   return shape;
 }
 
-export function islandLand(world: SpatialWorld, palette: IslandPalette): Group {
+export function islandLand(
+  world: SpatialWorld,
+  palette: IslandPalette,
+  site: IslandSite = XI_SITE,
+): Group {
   const group = new Group();
   group.name = "geographic-island";
-  const shape = new ShapeGeometry(footprintShape(SITE_RING));
+  const shape = new ShapeGeometry(footprintShape(site.ring));
   const top = shape.toNonIndexed();
   shape.dispose();
   const raw = top.getAttribute("position"),
@@ -73,8 +77,8 @@ export function islandLand(world: SpatialWorld, palette: IslandPalette): Group {
   surface.receiveShadow = true;
   group.add(surface);
   const border: XY[] = [];
-  SITE_RING.slice(1).forEach((b, i) => {
-    const a = SITE_RING[i];
+  site.ring.slice(1).forEach((b, i) => {
+    const a = site.ring[i];
     if (!a) return;
     const count = Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 7);
     for (let j = 0; j < count; j++)
@@ -88,9 +92,9 @@ export function islandLand(world: SpatialWorld, palette: IslandPalette): Group {
   for (const layer of strata) {
     const vertices: number[] = [];
     const vertex = (p: XY, drop: number, scale: number): number[] => [
-      SITE_CENTER[0] + (p[0] - SITE_CENTER[0]) * scale,
+      site.center[0] + (p[0] - site.center[0]) * scale,
       islandHeight(world, p) - drop,
-      SITE_CENTER[1] + (p[1] - SITE_CENTER[1]) * scale,
+      site.center[1] + (p[1] - site.center[1]) * scale,
     ];
     border.forEach((a, i) => {
       const b = border[(i + 1) % border.length];

@@ -1,0 +1,167 @@
+.v-dock {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--v-gap);
+  padding: 8px;
+  border: 1px solid var(--v-line);
+  border-radius: 24px;
+  background: var(--v-paper);
+  box-shadow: var(--v-shadow);
+}
+.v-dock button {
+  border: 0;
+}
+.v-dock button[aria-pressed="true"] {
+  background: var(--v-wash);
+  color: var(--v-ink);
+}
+button.v-primary {
+  background: var(--v-green);
+  color: var(--v-paper);
+  border: 0;
+}
+body[data-theme="dusk"] button.v-primary {
+  color: #253b34;
+}
+.v-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+.v-tools label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.v-tools select {
+  max-width: 170px;
+}
+#v-pad {
+  display: grid;
+  width: max-content;
+  margin: 16px auto 0;
+  grid-template-columns: repeat(3, 48px);
+  grid-template-rows: repeat(2, 48px);
+  gap: 8px;
+}
+[data-direction="up"] {
+  grid-column: 2;
+}
+[data-direction="left"] {
+  grid-column: 1;
+}
+#v-settings {
+  border: 1px solid var(--v-line);
+  border-radius: 24px;
+  background: var(--v-paper);
+  color: var(--v-ink);
+  width: min(560px, calc(100% - 32px));
+  padding: 0;
+  max-height: 80dvh;
+  box-shadow: var(--v-shadow);
+}
+#v-settings::backdrop {
+  background: #172c2566;
+  backdrop-filter: blur(4px);
+}
+#v-settings header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid var(--v-line);
+}
+#v-settings h2 {
+  margin: 0;
+  font-size: 24px;
+}
+#v-settings > header > button {
+  width: 44px;
+  font-size: 24px;
+  padding: 0;
+}
+.v-settings-body {
+  padding: 24px;
+  overflow-y: auto;
+  min-height: 0;
+}
+#v-settings[open] {
+  display: flex;
+  flex-direction: column;
+}
+.v-settings-body > p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--v-muted);
+  word-break: keep-all;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 24px;
+  min-width: 0;
+}
+legend {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.v-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+#v-settings .v-choices button {
+  font-size: 14px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.v-bottom #v-pad button {
+  font-size: 24px;
+  padding: 0;
+  touch-action: none;
+  user-select: none;
+}
+.v-choices button[aria-pressed="true"] {
+  background: var(--v-wash);
+}
+.v-check {
+  visibility: hidden;
+}
+[aria-pressed="true"] > .v-check {
+  visibility: visible;
+}
+@media (max-width: 700px) {
+  .v-dock {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    border-radius: 24px;
+  }
+  .v-dock button {
+    padding: 8px 12px;
+    font-size: 16px;
+  }
+  .v-tools {
+    font-size: 14px;
+  }
+  #v-settings {
+    margin-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  #v-settings header,
+  .v-settings-body {
+    padding: 20px;
+  }
+  .v-choices button,
+  .v-settings-body > p {
+    font-size: 16px;
+  }
+}

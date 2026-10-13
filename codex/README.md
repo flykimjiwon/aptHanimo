@@ -1,10 +1,12 @@
 # 한바퀴 · Codex V5
 
+**현재 주력은 [통합 단지 섬](docs/UNIFIED_VILLAGE_2026-10-13.md)**이다. 기본 주소 `/`에서 세 단지·친구3질감/4귀/6포즈·목적지 이동·가림 처리·접히는 설정을 제공한다. 아래 V5 생활권·수첩·차량 기능은 `/world.html`에 보존한다.
+
 실제 서울 단지 주변을 자유롭게 걷는 브라우저 산책 프로토타입. **래미안신당하이베르·왕십리자이·라체르보푸르지오써밋** 세 단지를 구현했다. `aptHanimo/codex/`의 독립 앱이며 저장소의 `prototype/` Claude 버전은 별도 구현이다.
 
 ## 실행
 
-새 비교판: **[왕십리자이 단지 섬](http://localhost:5178/island.html)** — 실제 단지 윤곽과 7개 동을 공중 섬으로 정리한 독립 개선판. 기존 본편은 그대로 유지한다. [구현·출처·조작·105테스트 가이드](docs/ISLAND_EDITION_2026-10-12.md).
+이전 비교판: **[왕십리자이 단지 섬](http://localhost:5178/island.html)**. [당시 구현·출처·조작 가이드](docs/ISLAND_EDITION_2026-10-12.md).
 
 ```sh
 bun install --frozen-lockfile
@@ -15,9 +17,9 @@ bun start
 
 [본편](http://localhost:5178/) · [스타일 실험실](http://localhost:5178/style-lab.html). 휴대폰은 같은 Wi-Fi에서 실행 컴퓨터의 LAN IP와 `:5178`로 접속한다. `bun run dev`는 Vite UI 개발 서버이며 접속자 공유용 `/presence` WebSocket은 `bun start`가 제공한다. GitHub에 소스를 올린 것과 웹 서비스를 공개 배포한 것은 다르다.
 
-`bun run smoke`는 빌드된 세 페이지·전체 정적 파일·캐시·오류 응답과 실제 WebSocket 통신을 자체 임시 서버로 검사한다. 기존 5178 서버와 함께 실행할 수 있으며 성공·실패 후 테스트 서버를 정리한다. 현재 HTTP 54건과 WebSocket 6건을 검사하며 브라우저 렌더링 검사는 아니다. `bun run smoke --help`, [환경변수·CI·실행본 확인](docs/VERIFICATION_2026-10-12.md)을 참고한다.
+`bun run smoke`는 빌드된 네 페이지·전체 정적 파일·캐시·오류 응답과 실제 WebSocket 통신을 자체 임시 서버로 검사한다. 기존 5178 서버와 함께 실행할 수 있으며 성공·실패 후 테스트 서버를 정리한다. 현재 HTTP62·WebSocket6이며 브라우저 렌더링 검사는 아니다. `bun run smoke --help`, [환경변수·CI·실행본 확인](docs/VERIFICATION_2026-10-12.md)을 참고한다.
 
-## 현재 구현
+## 기존 생활권 앱 구현 (`/world.html`)
 
 - 실제 좌표·동 외곽선·OSM 도로·SRTM 고도를 쓰는 단지 중심 1.3km 월드 3개.
 - WASD·방향키·조이스틱·탭 길안내, 도보·유모차·자전거·자동차, 혼자·커플·가족.
@@ -49,7 +51,7 @@ bun start
 
 현재 스택은 **TypeScript·Vite·Three.js·Bun·Zod**다. Next.js(JS)·Supabase·Python으로 확장할 경계와 순서는 가이드에 명시했다. 현재 Supabase 연결은 없다.
 
-현재 자동 검사는 **105테스트·9,539 assertions·21파일**, 타입 검사·빌드와 서비스 검사 HTTP54·WebSocket6을 통과한다. Biome는 종료0이며 기존 경고26·정보59가 남아 있다. 이번 운영 보강에서 화면을 다시 검증하지 않았다.
+현재 자동 검사는 **113테스트·12,346 assertions·22파일**, 타입 검사·빌드와 서비스 검사 HTTP62·WebSocket6을 통과한다. Biome는 종료0이며 기존 경고·정보가 남아 있다. 통합판의 새 브라우저 검증은 [통합 가이드](docs/UNIFIED_VILLAGE_2026-10-13.md), 운영 보강 당시 기록은 별도 가이드를 따른다.
 
 앞선 이동 수정에서는 **81테스트·실제 데이터80경로 완주·브라우저 자동차17목적지·8화면 조건·3종 오류 재시도**를 확인했다. PC 및 휴대폰 에뮬레이션의 당시 증거는 [후속 검증 기록](qa/v5/repair-2026-10-12.md), 이후 UI 검증은 기능별 가이드를 따른다. 실제 iOS/Android 기기·모든 스타일 조합·공개 배포는 미검증이다.
 

@@ -1,21 +1,16 @@
 import {
   ACESFilmicToneMapping,
   Box3,
-  CanvasTexture,
-  Color,
-  DirectionalLight,
   Group,
-  HemisphereLight,
-  Mesh,
-  MeshBasicMaterial,
   PCFSoftShadowMap,
-  PlaneGeometry,
   Scene,
   Vector3,
   WebGLRenderer,
 } from "three";
 import { disposeGroup } from "../scene/materials";
 import type { SpatialWorld } from "../spatial/types";
+import type { IslandActor } from "./actor";
+import { IslandAtmosphere } from "./atmosphere";
 import { islandBuilding } from "./buildings";
 import { IslandCamera } from "./camera";
 import { disposeIsland } from "./dispose";
@@ -23,8 +18,14 @@ import { islandGarden } from "./garden";
 import { IslandInput } from "./input";
 import { islandLand } from "./land";
 import type { IslandPalette } from "./palettes";
-import { buildingBase, buildingCenter, HEIGHT_SCALE } from "./site";
+import { buildingBase, buildingCenter, HEIGHT_SCALE, type IslandSite, XI_SITE } from "./site";
 import { IslandWalk } from "./walk";
+
+export type IslandViewOptions = {
+  readonly labelHost: HTMLElement;
+  readonly site?: IslandSite;
+  readonly walker?: IslandActor;
+};
 
 export class IslandView {
   readonly renderer = new WebGLRenderer({
@@ -40,11 +41,19 @@ export class IslandView {
   get controls() {
     return this.rig.controls;
   }
-  readonly walker: IslandWalk;
+  readonly walker: IslandActor;
+  readonly labelHost: HTMLElement;
+  readonly site: IslandSite;
+  beforeRender: (() => void) | null = null;
+  following = false;
+  labelsVisible = true;
+  get scenery(): Group {
+    return this.land;
+  }
+  private readonly legacyWalker: boolean;
   readonly labels = new Map<string, HTMLButtonElement>();
   private land = new Group();
-  private readonly sun = new DirectionalLight("#fff5dc", 2.5);
-  private readonly hemisphere = new HemisphereLight("#fffdf3", "#a6b596", 1.6);
+  private readonly atmosphere: IslandAtmosphere;
   private readonly resize: ResizeObserver;
   private frame = 0;
   private last = 0;
@@ -56,8 +65,12 @@ export class IslandView {
   constructor(
     readonly host: HTMLElement,
     readonly world: SpatialWorld,
-    readonly labelHost: HTMLElement,
+    options: HTMLElement | IslandViewOptions,
   ) {
+    const settings = options instanceof HTMLElement ? { labelHost: options } : options;
+    this.labelHost = settings.labelHost;
+    this.site = settings.site ?? XI_SITE;
+    this.legacyWalker = !settings.walker;
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
     this.renderer.setClearColor(0, 0);
     this.renderer.toneMapping = ACESFilmicToneMapping;
@@ -66,48 +79,14 @@ export class IslandView {
     this.renderer.shadowMap.type = PCFSoftShadowMap;
     this.renderer.domElement.setAttribute(
       "aria-label",
-      "실제 왕십리자이 단지 윤곽과 7개 동으로 만든 3D 섬",
+      `실제 ${world.name} 단지 윤곽과 ${world.buildings.filter((b) => b.kind === "core").length}개 동으로 만든 3D 섬`,
     );
     this.renderer.domElement.setAttribute("role", "img");
     host.append(this.renderer.domElement);
-    this.rig = new IslandCamera(this.renderer.domElement, () => this.render());
-    this.sun.position.set(-180, 300, 160);
-    this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(1024, 1024);
-    Object.assign(this.sun.shadow.camera, {
-      left: -250,
-      right: 250,
-      top: 250,
-      bottom: -250,
-      near: 1,
-      far: 800,
-    });
-    this.sun.shadow.normalBias = 0.6;
-    this.sun.shadow.bias = -0.00008;
-    this.scene.add(this.sun, this.hemisphere);
-    const image = document.createElement("canvas");
-    image.width = 128;
-    image.height = 128;
-    const context = image.getContext("2d");
-    if (!context) throw new TypeError("Shadow canvas unavailable");
-    const fade = context.createRadialGradient(64, 64, 12, 64, 64, 64);
-    fade.addColorStop(0, "#27433732");
-    fade.addColorStop(1, "#27433700");
-    context.fillStyle = fade;
-    context.fillRect(0, 0, 128, 128);
-    const shadow = new Mesh(
-      new PlaneGeometry(340, 440),
-      new MeshBasicMaterial({
-        map: new CanvasTexture(image),
-        transparent: true,
-        depthWrite: false,
-        toneMapped: false,
-      }),
-    );
-    shadow.rotation.x = -Math.PI / 2;
-    shadow.position.set(35, -40, -30);
-    this.scene.add(shadow);
-    this.walker = new IslandWalk(world);
+    this.rig = new IslandCamera(this.renderer.domElement, () => this.render(), this.site);
+    this.atmosphere = new IslandAtmosphere(this.site);
+    this.scene.add(this.atmosphere.group);
+    this.walker = settings.walker ?? new IslandWalk(world);
     this.movement = new IslandInput(() => this.walker.active);
     this.scene.add(this.walker.group);
     for (const b of world.buildings.filter((b) => b.kind === "core")) {
@@ -117,7 +96,7 @@ export class IslandView {
       button.textContent = b.name.replace("동", "");
       button.setAttribute("aria-label", `${button.textContent} 동 살펴보기`);
       button.dataset.building = b.id;
-      labelHost.append(button);
+      this.labelHost.append(button);
       this.labels.set(b.id, button);
     }
     this.resize = new ResizeObserver(() => this.resizeCanvas());
@@ -128,26 +107,41 @@ export class IslandView {
       () => {
         this.movement.reset();
         if (document.hidden) {
+          cancelAnimationFrame(this.frame);
+          this.frame = 0;
           cancelAnimationFrame(this.walkingFrame);
           this.walkingFrame = 0;
           this.last = 0;
-        } else this.play();
+        } else {
+          this.render();
+          this.play();
+        }
+      },
+      { signal },
+    );
+    this.reduce.addEventListener(
+      "change",
+      () => {
+        this.walker.update(0, [0, 0], this.reduce.matches);
+        this.render();
+        this.play();
       },
       { signal },
     );
   }
   setPalette(palette: IslandPalette): void {
     const next = new Group();
-    next.add(islandLand(this.world, palette), islandGarden(this.world, palette));
+    next.add(
+      islandLand(this.world, palette, this.site),
+      islandGarden(this.world, palette, this.site),
+    );
     for (const b of this.world.buildings.filter((b) => b.kind === "core"))
       next.add(islandBuilding(b, this.world, palette));
     this.scene.remove(this.land);
     disposeIsland(this.land);
     this.land = next;
     this.scene.add(next);
-    this.sun.color = new Color(palette.night ? "#c0d9ff" : "#fff5dc");
-    this.sun.intensity = palette.night ? 1.5 : 2.5;
-    this.hemisphere.intensity = palette.night ? 1.1 : 1.6;
+    this.atmosphere.setPalette(palette);
     this.render();
   }
   private resizeCanvas(): void {
@@ -167,18 +161,22 @@ export class IslandView {
   input(x: number, z: number): void {
     this.movement.setTouch(x, z);
   }
+  private needsFrame(): boolean {
+    return this.walker.active || (this.walker.needsAnimation?.(this.reduce.matches) ?? false);
+  }
   play(): void {
-    if (this.walkingFrame || !this.walker.active || document.hidden || this.disposed) return;
+    if (this.walkingFrame || !this.needsFrame() || document.hidden || this.disposed) return;
     const tick = (time: number): void => {
       this.walkingFrame = 0;
-      if (!this.walker.active || document.hidden || this.disposed) {
+      if (!this.needsFrame() || document.hidden || this.disposed) {
         this.last = 0;
         return;
       }
       const delta = this.last ? Math.min((time - this.last) / 1000, 0.05) : 0;
       this.last = time;
       const direction = this.movement.direction(this.controls.getAzimuthalAngle());
-      for (let i = 0; i < 4; i++) this.walker.update(delta, direction, this.reduce.matches);
+      for (let i = 0; i < (this.legacyWalker ? 4 : 1); i++)
+        this.walker.update(delta, direction, this.reduce.matches);
       this.render();
       this.walkingFrame = requestAnimationFrame(tick);
     };
@@ -187,7 +185,11 @@ export class IslandView {
   render(): void {
     if (this.disposed || this.frame) return;
     this.frame = requestAnimationFrame(() => {
-      this.frame = 0;
+      if (this.following) {
+        const p = this.walker.position;
+        this.rig.follow(new Vector3(p.x, p.y, p.z));
+      }
+      this.beforeRender?.();
       this.renderer.render(this.scene, this.camera);
       const { width, height } = this.host.getBoundingClientRect();
       for (const b of this.world.buildings.filter((b) => b.kind === "core")) {
@@ -201,9 +203,11 @@ export class IslandView {
         if (button) {
           button.style.left = `${((p.x + 1) * width) / 2}px`;
           button.style.top = `${((1 - p.y) * height) / 2}px`;
-          button.hidden = p.z > 1 || Math.abs(p.x) > 0.95 || Math.abs(p.y) > 0.95;
+          button.hidden =
+            !this.labelsVisible || p.z > 1 || Math.abs(p.x) > 0.95 || Math.abs(p.y) > 0.95;
         }
       }
+      this.frame = 0;
     });
   }
   dispose(): void {
@@ -216,18 +220,11 @@ export class IslandView {
     this.resize.disconnect();
     this.rig.dispose();
     disposeIsland(this.land);
-    disposeGroup(this.walker.group);
-    this.scene.traverse((o) => {
-      if (o instanceof Mesh) {
-        o.geometry.dispose();
-        const materials = Array.isArray(o.material) ? o.material : [o.material];
-        materials.forEach((m) => {
-          if (m instanceof MeshBasicMaterial) m.map?.dispose();
-          m.dispose();
-        });
-      }
-    });
-    this.sun.shadow.dispose();
+    if (this.walker.dispose) this.walker.dispose();
+    else disposeGroup(this.walker.group);
+    this.atmosphere.dispose();
+    this.scene.clear();
+    this.beforeRender = null;
     this.renderer.dispose();
     this.renderer.forceContextLoss();
     this.host.replaceChildren();
