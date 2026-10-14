@@ -200,7 +200,14 @@
   overflow-wrap: anywhere;
 }
 #c-more {
-  margin: 16px 0;
+  margin: 16px 8px 16px 0;
+}
+@media (max-width: 360px) {
+  #c-panel .c-tabs button {
+    font-size: 14px;
+    padding: 4px;
+    white-space: nowrap;
+  }
 }
 #c-submit [type="submit"],
 #c-journal [type="submit"] {

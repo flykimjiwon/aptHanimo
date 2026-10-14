@@ -1,12 +1,16 @@
 import ky, { HTTPError } from "ky";
 import { z } from "zod";
-import { feedSchema, postSchema, type Receipt, receiptSchema } from "./schema";
+import { type FeedFilters, feedSchema, postSchema, type Receipt, receiptSchema } from "./schema";
 
 const client = ky.create({ timeout: 15000, retry: 0 });
-export async function feed(complex: string, before?: number) {
-  const searchParams = { complex, ...(before ? { before: String(before) } : {}) };
+export async function feed(
+  query: FeedFilters & { readonly complex: string; readonly before?: number },
+  signal: AbortSignal,
+) {
+  const { before, ...filters } = query;
+  const searchParams = { ...filters, ...(before ? { before: String(before) } : {}) };
   return feedSchema.parse(
-    await client.get("/api/community/posts", { searchParams }).json<unknown>(),
+    await client.get("/api/community/posts", { searchParams, signal }).json<unknown>(),
   );
 }
 export async function submit(form: FormData) {

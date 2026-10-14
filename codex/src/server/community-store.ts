@@ -1,7 +1,13 @@
 import { Database } from "bun:sqlite";
 import { createHash, randomBytes } from "node:crypto";
 import { z } from "zod";
-import { postSchema, type Submission } from "../community/schema";
+import {
+  DEFAULT_FILTERS,
+  type FeedFilters,
+  postSchema,
+  progressSchema,
+  type Submission,
+} from "../community/schema";
 
 const rowSchema = z.object({
   id: z.string(),
@@ -89,17 +95,42 @@ export class CommunityStore {
       post: postSchema.parse({ ...JSON.parse(row.content), ...row, photo: Boolean(row.photo) }),
     };
   }
-  feed(complex: string, before = Number.MAX_SAFE_INTEGER) {
+  feed(complex: string, before = Number.MAX_SAFE_INTEGER, filters: FeedFilters = DEFAULT_FILTERS) {
+    const scope = "status IN ('published','resolved') AND json_extract(content,'$.complex')=?";
+    const selection = `${scope} AND (?='all' OR json_extract(content,'$.kind')=?) AND (?='all' OR json_extract(content,'$.topic')=?) AND (?='all' OR status=?)`;
+    const values = [
+      complex,
+      filters.kind,
+      filters.kind,
+      filters.topic,
+      filters.topic,
+      filters.status,
+      filters.status,
+    ];
+    const total = z
+      .object({ total: z.number() })
+      .parse(
+        this.db.query(`SELECT count(*) AS total FROM posts WHERE ${selection}`).get(...values),
+      ).total;
+    const progress = progressSchema.parse(
+      this.db
+        .query(`SELECT
+      count(CASE WHEN status='published' AND json_extract(content,'$.kind')='request' THEN 1 END) AS requests,
+      count(CASE WHEN status='published' AND json_extract(content,'$.kind')='correction' THEN 1 END) AS corrections,
+      count(CASE WHEN status='resolved' THEN 1 END) AS resolved
+      FROM posts WHERE ${scope}`)
+        .get(complex),
+    );
     const rows = this.db
-      .query(
-        `SELECT ${columns} FROM posts WHERE status IN ('published','resolved') AND json_extract(content,'$.complex')=? AND seq<? ORDER BY seq DESC LIMIT 21`,
-      )
-      .all(complex, before)
+      .query(`SELECT ${columns} FROM posts WHERE ${selection} AND seq<? ORDER BY seq DESC LIMIT 21`)
+      .all(...values, before)
       .map((r) => this.decode(r));
     const visible = rows.slice(0, 20);
     return {
       posts: visible.map((r) => r.post),
       next: rows.length > 20 ? (visible.at(-1)?.seq ?? null) : null,
+      total,
+      progress,
     };
   }
   mine(id: string, token: string) {

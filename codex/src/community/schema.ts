@@ -41,9 +41,23 @@ export const postSchema = submissionSchema.omit({ consent: true }).extend({
   response: z.string().max(1000),
   photo: z.boolean(),
 });
+export const filterSchema = z.object({
+  kind: submissionSchema.shape.kind.or(z.literal("all")).default("all"),
+  topic: submissionSchema.shape.topic.or(z.literal("all")).default("all"),
+  status: z.enum(["all", "published", "resolved"]).default("all"),
+});
+export type FeedFilters = Readonly<z.infer<typeof filterSchema>>;
+export const DEFAULT_FILTERS = { kind: "all", topic: "all", status: "all" } as const;
+export const progressSchema = z.object({
+  requests: z.number().int().nonnegative(),
+  corrections: z.number().int().nonnegative(),
+  resolved: z.number().int().nonnegative(),
+});
 export const feedSchema = z.object({
   posts: z.array(postSchema).max(20),
   next: z.number().int().positive().nullable(),
+  total: z.number().int().nonnegative(),
+  progress: progressSchema,
 });
 export const receiptSchema = z.object({ id: z.uuid(), token: z.string().regex(/^[a-f0-9]{64}$/) });
 export type Submission = z.infer<typeof submissionSchema>;

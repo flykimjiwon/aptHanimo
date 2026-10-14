@@ -1,21 +1,19 @@
 import { element } from "../village/shell";
-import { errorMessage, feed, mine, report, withdraw } from "./api";
+import { errorMessage, mine, report, withdraw } from "./api";
+import { StoryFeed } from "./feed";
 import { readReceipts, saveReceipt } from "./journal";
 import { receiptSchema, STATES } from "./schema";
-import { day, esc, postCard } from "./view";
+import { day, esc } from "./view";
 
 export class Stories {
-  private next: number | null = null;
-  private busy = false;
   private revision = 0;
   private receiptOffset = 0;
-  private readonly host = element("#c-feed", HTMLElement);
-  private readonly more = element("#c-more", HTMLButtonElement);
+  private readonly feed: StoryFeed;
   constructor(
     private readonly complex: string,
     private readonly signal: AbortSignal,
   ) {
-    this.more.addEventListener("click", () => void this.load(true), { signal });
+    this.feed = new StoryFeed(complex, signal);
     element("#c-panel", HTMLDialogElement).addEventListener(
       "click",
       (event) => {
@@ -37,34 +35,9 @@ export class Stories {
       { once: true },
     );
   }
-  async load(append = false): Promise<void> {
-    if (this.busy || this.signal.aborted) return;
-    this.busy = true;
-    this.more.disabled = true;
-    const revision = this.revision;
-    if (!append) this.host.textContent = "이웃의 이야기를 불러오고 있어요.";
-    try {
-      const result = await feed(this.complex, append ? (this.next ?? undefined) : undefined);
-      if (revision !== this.revision) return;
-      if (!append) this.host.replaceChildren();
-      this.host.insertAdjacentHTML("beforeend", result.posts.map(postCard).join(""));
-      if (!this.host.children.length)
-        this.host.innerHTML =
-          '<p class="c-empty">아직 공개된 이야기가 없어요. 첫 관찰이나 사진을 나눠 주세요. 검토 대기 중인 내용은 공개 목록에 나오지 않아요.</p>';
-      this.next = result.next;
-      this.more.hidden = this.next === null;
-    } catch (error) {
-      if (!(error instanceof Error)) throw error;
-      if (revision !== this.revision) return;
-      const message =
-        '<p role="status">이야기를 불러오지 못했어요. 서버 연결을 확인해 주세요.</p><button data-retry-feed>다시 불러오기</button>';
-      if (append) this.host.insertAdjacentHTML("beforeend", message);
-      else this.host.innerHTML = message;
-    } finally {
-      this.busy = false;
-      this.more.disabled = false;
-    }
-    if (!append) await this.receipts();
+  async load(): Promise<void> {
+    if (this.signal.aborted) return;
+    await Promise.all([this.feed.load(), this.receipts()]);
   }
   private async receipts(append = false): Promise<void> {
     if (this.signal.aborted) return;

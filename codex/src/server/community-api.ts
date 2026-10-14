@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { complexSchema, submissionSchema } from "../community/schema";
+import { complexSchema, filterSchema, submissionSchema } from "../community/schema";
 import { normalizePhoto, PhotoInputError } from "./community-photo";
 import { CommunityCapacityError, type CommunityStore } from "./community-store";
 
@@ -32,8 +32,10 @@ export class CommunityApi {
         .int()
         .positive()
         .safeParse(url.searchParams.get("before") ?? Number.MAX_SAFE_INTEGER);
-      if (!complex.success || !before.success) return fail("단지를 다시 골라 주세요.", 400);
-      return json(this.store.feed(complex.data, before.data));
+      const filters = filterSchema.safeParse(Object.fromEntries(url.searchParams));
+      if (!complex.success || !before.success || !filters.success)
+        return fail("단지와 필터 조건을 다시 확인해 주세요.", 400);
+      return json(this.store.feed(complex.data, before.data, filters.data));
     }
     if (path === "/api/community/posts" && request.method === "POST") return this.submit(request);
     const match = /^\/api\/community\/(posts|photos|receipts)\/([a-f0-9-]+)(\/report)?$/.exec(path);
