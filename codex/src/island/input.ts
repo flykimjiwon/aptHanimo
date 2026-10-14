@@ -12,6 +12,8 @@ export class IslandInput {
         if (
           e.target instanceof HTMLInputElement ||
           e.target instanceof HTMLSelectElement ||
+          e.target instanceof HTMLTextAreaElement ||
+          (e.target instanceof HTMLElement && e.target.isContentEditable) ||
           e.target instanceof HTMLButtonElement
         )
           return;

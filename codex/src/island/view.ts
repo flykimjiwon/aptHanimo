@@ -14,6 +14,7 @@ import { IslandAtmosphere } from "./atmosphere";
 import { islandBuilding } from "./buildings";
 import { IslandCamera } from "./camera";
 import { disposeIsland } from "./dispose";
+import { IslandFrames } from "./frames";
 import { islandGarden } from "./garden";
 import { IslandInput } from "./input";
 import { islandLand } from "./land";
@@ -55,9 +56,7 @@ export class IslandView {
   private land = new Group();
   private readonly atmosphere: IslandAtmosphere;
   private readonly resize: ResizeObserver;
-  private frame = 0;
-  private last = 0;
-  private walkingFrame = 0;
+  private readonly frames: IslandFrames;
   private readonly events = new AbortController();
   private disposed = false;
   private readonly reduce = matchMedia("(prefers-reduced-motion: reduce)");
@@ -83,6 +82,16 @@ export class IslandView {
     );
     this.renderer.domElement.setAttribute("role", "img");
     host.append(this.renderer.domElement);
+    this.frames = new IslandFrames({
+      animated: () =>
+        this.walker.active || (this.walker.needsAnimation?.(this.reduce.matches) ?? false),
+      update: (delta) => {
+        const direction = this.movement.direction(this.controls.getAzimuthalAngle());
+        for (let i = 0; i < (this.legacyWalker ? 4 : 1); i++)
+          this.walker.update(delta, direction, this.reduce.matches);
+      },
+      draw: () => this.draw(),
+    });
     this.rig = new IslandCamera(this.renderer.domElement, () => this.render(), this.site);
     this.atmosphere = new IslandAtmosphere(this.site);
     this.scene.add(this.atmosphere.group);
@@ -101,24 +110,8 @@ export class IslandView {
     }
     this.resize = new ResizeObserver(() => this.resizeCanvas());
     this.resize.observe(host);
+    this.frames.observe(host, () => this.movement.reset());
     const signal = this.events.signal;
-    document.addEventListener(
-      "visibilitychange",
-      () => {
-        this.movement.reset();
-        if (document.hidden) {
-          cancelAnimationFrame(this.frame);
-          this.frame = 0;
-          cancelAnimationFrame(this.walkingFrame);
-          this.walkingFrame = 0;
-          this.last = 0;
-        } else {
-          this.render();
-          this.play();
-        }
-      },
-      { signal },
-    );
     this.reduce.addEventListener(
       "change",
       () => {
@@ -161,60 +154,40 @@ export class IslandView {
   input(x: number, z: number): void {
     this.movement.setTouch(x, z);
   }
-  private needsFrame(): boolean {
-    return this.walker.active || (this.walker.needsAnimation?.(this.reduce.matches) ?? false);
-  }
   play(): void {
-    if (this.walkingFrame || !this.needsFrame() || document.hidden || this.disposed) return;
-    const tick = (time: number): void => {
-      this.walkingFrame = 0;
-      if (!this.needsFrame() || document.hidden || this.disposed) {
-        this.last = 0;
-        return;
-      }
-      const delta = this.last ? Math.min((time - this.last) / 1000, 0.05) : 0;
-      this.last = time;
-      const direction = this.movement.direction(this.controls.getAzimuthalAngle());
-      for (let i = 0; i < (this.legacyWalker ? 4 : 1); i++)
-        this.walker.update(delta, direction, this.reduce.matches);
-      this.render();
-      this.walkingFrame = requestAnimationFrame(tick);
-    };
-    this.walkingFrame = requestAnimationFrame(tick);
+    this.frames.play();
   }
   render(): void {
-    if (this.disposed || this.frame) return;
-    this.frame = requestAnimationFrame(() => {
-      if (this.following) {
-        const p = this.walker.position;
-        this.rig.follow(new Vector3(p.x, p.y, p.z));
+    this.frames.render();
+  }
+  private draw(): void {
+    if (this.following) {
+      const p = this.walker.position;
+      this.rig.follow(new Vector3(p.x, p.y, p.z));
+    }
+    this.beforeRender?.();
+    this.renderer.render(this.scene, this.camera);
+    const { width, height } = this.host.getBoundingClientRect();
+    for (const b of this.world.buildings.filter((b) => b.kind === "core")) {
+      const c = buildingCenter(b),
+        p = new Vector3(
+          c[0],
+          buildingBase(this.world, b) + b.height * HEIGHT_SCALE + 5,
+          c[1],
+        ).project(this.camera),
+        button = this.labels.get(b.id);
+      if (button) {
+        button.style.left = `${((p.x + 1) * width) / 2}px`;
+        button.style.top = `${((1 - p.y) * height) / 2}px`;
+        button.hidden =
+          !this.labelsVisible || p.z > 1 || Math.abs(p.x) > 0.95 || Math.abs(p.y) > 0.95;
       }
-      this.beforeRender?.();
-      this.renderer.render(this.scene, this.camera);
-      const { width, height } = this.host.getBoundingClientRect();
-      for (const b of this.world.buildings.filter((b) => b.kind === "core")) {
-        const c = buildingCenter(b),
-          p = new Vector3(
-            c[0],
-            buildingBase(this.world, b) + b.height * HEIGHT_SCALE + 5,
-            c[1],
-          ).project(this.camera),
-          button = this.labels.get(b.id);
-        if (button) {
-          button.style.left = `${((p.x + 1) * width) / 2}px`;
-          button.style.top = `${((1 - p.y) * height) / 2}px`;
-          button.hidden =
-            !this.labelsVisible || p.z > 1 || Math.abs(p.x) > 0.95 || Math.abs(p.y) > 0.95;
-        }
-      }
-      this.frame = 0;
-    });
+    }
   }
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
-    cancelAnimationFrame(this.frame);
-    cancelAnimationFrame(this.walkingFrame);
+    this.frames.dispose();
     this.events.abort();
     this.movement.dispose();
     this.resize.disconnect();
