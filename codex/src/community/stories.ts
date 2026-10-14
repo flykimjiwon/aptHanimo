@@ -13,7 +13,7 @@ export class Stories {
   private readonly more = element("#c-more", HTMLButtonElement);
   constructor(
     private readonly complex: string,
-    signal: AbortSignal,
+    private readonly signal: AbortSignal,
   ) {
     this.more.addEventListener("click", () => void this.load(true), { signal });
     element("#c-panel", HTMLDialogElement).addEventListener(
@@ -25,23 +25,7 @@ export class Stories {
         if (button?.dataset.withdraw) void this.withdrawPost(button, button.dataset.withdraw);
         if (button?.hasAttribute("data-retry-feed")) void this.load();
         if (button?.id === "c-receipts-more") void this.receipts(true);
-        if (button?.id === "c-restore") {
-          const field = element("#c-receipt-restore", HTMLTextAreaElement);
-          let restored = false;
-          try {
-            const result = receiptSchema.safeParse(JSON.parse(field.value));
-            restored = result.success && saveReceipt(result.data);
-          } catch (error) {
-            if (!(error instanceof Error)) throw error;
-          }
-          element("#c-restore-status", HTMLElement).textContent = restored
-            ? "접수증을 복원했어요."
-            : "접수증 형식과 브라우저 저장 공간을 확인해 주세요.";
-          if (restored) {
-            field.value = "";
-            void this.receipts();
-          }
-        }
+        if (button?.id === "c-restore") void this.restoreReceipt(button);
       },
       { signal },
     );
@@ -54,7 +38,7 @@ export class Stories {
     );
   }
   async load(append = false): Promise<void> {
-    if (this.busy) return;
+    if (this.busy || this.signal.aborted) return;
     this.busy = true;
     this.more.disabled = true;
     const revision = this.revision;
@@ -83,6 +67,7 @@ export class Stories {
     if (!append) await this.receipts();
   }
   private async receipts(append = false): Promise<void> {
+    if (this.signal.aborted) return;
     const host = element("#c-receipts", HTMLElement),
       revision = this.revision;
     const more = element("#c-receipts-more", HTMLButtonElement);
@@ -117,6 +102,33 @@ export class Stories {
       host.innerHTML = "<p>이 단지에서 확인할 수 있는 접수증이 없어요.</p>";
     if (results.some((r) => r.status === "rejected"))
       host.insertAdjacentHTML("beforeend", "<p>일부 접수증은 철회되었거나 연결할 수 없어요.</p>");
+  }
+  private async restoreReceipt(button: HTMLButtonElement): Promise<void> {
+    const field = element("#c-receipt-restore", HTMLTextAreaElement);
+    const feedback = element("#c-restore-status", HTMLElement);
+    button.disabled = true;
+    try {
+      const result = receiptSchema.safeParse(JSON.parse(field.value));
+      if (!result.success) {
+        feedback.textContent = "접수증 JSON 형식을 확인해 주세요.";
+        return;
+      }
+      await mine(result.data);
+      if (!saveReceipt(result.data)) {
+        feedback.textContent = "브라우저 저장 공간을 확인해 주세요. 기존 접수증은 그대로예요.";
+        return;
+      }
+      feedback.textContent = "서버에서 확인한 접수증을 복원했어요.";
+      field.value = "";
+      await this.receipts();
+    } catch (error) {
+      feedback.textContent =
+        error instanceof SyntaxError
+          ? "접수증 JSON 형식을 확인해 주세요."
+          : await errorMessage(error);
+    } finally {
+      button.disabled = false;
+    }
   }
   private async reportPost(button: HTMLButtonElement, id: string): Promise<void> {
     const reason = window.prompt(

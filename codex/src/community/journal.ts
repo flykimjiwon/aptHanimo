@@ -67,7 +67,6 @@ export function saveReceipt(receipt: Receipt): boolean {
       .max(5000)
       .parse(JSON.parse(localStorage.getItem(receiptsKey) ?? "[]"));
     const next = [...previous.filter((r) => r.id !== receipt.id), receipt];
-    if (previous.some((r) => r.id === receipt.id && r.token !== receipt.token)) return false;
     if (next.length > 5000) return false;
     localStorage.setItem(receiptsKey, JSON.stringify(next));
     return true;
