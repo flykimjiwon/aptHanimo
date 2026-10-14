@@ -1,5 +1,6 @@
 @import "./controls.css";
 @import "./stage.css";
+@import "./mobile.css";
 :root {
   font-family: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
   font-synthesis: none;
@@ -82,6 +83,10 @@ a {
   color: inherit;
 }
 .v-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--v-sky);
   display: flex;
   align-items: center;
   gap: 16px;

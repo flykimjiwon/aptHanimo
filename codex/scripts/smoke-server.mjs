@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { verifyHttp } from "./smoke-http.mjs";
 import { verifyPresence } from "./smoke-presence.mjs";
@@ -56,7 +59,13 @@ async function main() {
 
   await using child = Bun.spawn([process.execPath, "server.ts"], {
     cwd: root,
-    env: { ...process.env, HANBAKWI_PORT: "0", HANBAKWI_HOSTNAME: "127.0.0.1" },
+    env: {
+      ...process.env,
+      HANBAKWI_PORT: "0",
+      HANBAKWI_HOSTNAME: "127.0.0.1",
+      HANBAKWI_DATA_DIR: mkdtempSync(join(tmpdir(), "hanbakwi-smoke-")),
+      HANBAKWI_PUBLIC_ORIGIN: "",
+    },
     stdin: "ignore",
     stdout: "pipe",
     stderr: "pipe",

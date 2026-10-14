@@ -1,4 +1,6 @@
 import { Vector3 } from "three";
+import { markExplored } from "../community/journal";
+import { complexSchema } from "../community/schema";
 import { PALETTES } from "../island/palettes";
 import { buildingCenter } from "../island/site";
 import { IslandView } from "../island/view";
@@ -19,6 +21,7 @@ export class VillageSession {
   private readonly occlusion = new BuildingOcclusion();
   private routeVersion = -1;
   private state = "";
+  private following = false;
   private readonly marker = element("#v-friend", HTMLButtonElement);
   private readonly status = element("#v-status", HTMLElement);
   constructor(
@@ -124,6 +127,12 @@ export class VillageSession {
     this.status.textContent = "건물 번호를 눌러 살펴보고, 빈 공간을 누르면 친구가 걸어가요.";
   }
   selectBuilding(id: string): void {
+    if (!id) {
+      element("#v-approach", HTMLButtonElement).hidden = true;
+      for (const button of this.view.labels.values()) button.setAttribute("aria-pressed", "false");
+      this.overview();
+      return;
+    }
     if (!this.world.buildings.some((b) => b.id === id && b.kind === "core")) return;
     this.pause();
     this.view.following = false;
@@ -133,6 +142,7 @@ export class VillageSession {
     for (const [key, button] of this.view.labels)
       button.setAttribute("aria-pressed", String(key === id));
     const name = this.world.buildings.find((b) => b.id === id)?.name;
+    markExplored(complexSchema.parse(this.world.id), "building");
     this.status.textContent = `${name} 위치를 보고 있어요. 주변 빈 공간으로 걸어갈 수도 있어요.`;
   }
   approach(): void {
@@ -190,6 +200,8 @@ export class VillageSession {
     const state = `${this.actor.state}:${this.actor.pose}`;
     if (state !== this.state) {
       this.state = state;
+      if (this.actor.state === "arrived")
+        markExplored(complexSchema.parse(this.world.id), "arrival");
       const messages = {
         idle: "바닥을 누르면 그곳으로 걸어가요.",
         moving: "산책 중이에요. 언제든 멈추거나 다른 곳을 골라도 좋아요.",
@@ -201,13 +213,18 @@ export class VillageSession {
       document.querySelectorAll<HTMLButtonElement>("[data-pose]").forEach((b) => {
         b.setAttribute("aria-pressed", String(b.dataset.pose === this.actor.pose));
       });
+      const walk = element('[data-action="walk"]', HTMLButtonElement);
+      walk.setAttribute("aria-pressed", String(this.actor.active));
+      walk.textContent = this.actor.active ? "잠시 멈추기" : "산책 시작";
+      element(".v-stage", HTMLElement).dataset.state = this.actor.state;
     }
-    const walk = element('[data-action="walk"]', HTMLButtonElement);
-    walk.setAttribute("aria-pressed", String(this.actor.active));
-    walk.textContent = this.actor.active ? "잠시 멈추기" : "산책 시작";
-    const follow = element('.v-dock [data-action="follow"]', HTMLButtonElement);
-    follow.setAttribute("aria-pressed", String(this.view.following));
-    element(".v-stage", HTMLElement).dataset.state = this.actor.state;
+    if (this.following !== this.view.following) {
+      this.following = this.view.following;
+      element('.v-dock [data-action="follow"]', HTMLButtonElement).setAttribute(
+        "aria-pressed",
+        String(this.following),
+      );
+    }
   }
   dispose(): void {
     this.events.abort();

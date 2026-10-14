@@ -9,6 +9,10 @@ dist/
 *.zip
 *.zip.sha256
 .omo/
+.community/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 .debug-journal.md
 WORKPLAN.md
 research/spatial/raw/

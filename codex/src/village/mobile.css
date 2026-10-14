@@ -1,0 +1,157 @@
+.v-play {
+  display: grid;
+}
+.v-neighborhood {
+  max-width: 900px;
+  margin: 16px auto 24px;
+  padding: 24px;
+  text-align: center;
+  border-top: 1px solid var(--v-line);
+}
+.v-neighborhood > div > p {
+  line-height: 1.65;
+  word-break: keep-all;
+}
+.v-neighborhood > div + div {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+#v-stamp-count {
+  margin-left: 4px;
+  font-size: 14px;
+  color: var(--v-muted);
+}
+.v-scroll-hint {
+  text-align: center;
+  color: var(--v-muted);
+  font-size: 14px;
+  margin: 0;
+  padding: 8px 16px;
+}
+.v-stage #v-pad {
+  position: absolute;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: 16px;
+  margin: 0;
+  z-index: 3;
+}
+#v-pad button {
+  font-size: 24px;
+  padding: 0;
+  touch-action: none;
+  user-select: none;
+  box-shadow: var(--v-shadow);
+}
+#v-pad [data-action="controls"] {
+  grid-column: 3;
+  grid-row: 1;
+}
+@media (max-width: 700px) {
+  #app .v-header {
+    gap: 8px;
+  }
+  #app .v-header > button {
+    margin-left: 0;
+  }
+  #app .v-intro {
+    padding: 12px 16px 0;
+    gap: 8px;
+  }
+  #app .v-intro .v-eyebrow {
+    display: none;
+  }
+  #app .v-intro h1 {
+    font-size: 20px;
+  }
+  #app .v-stage {
+    height: clamp(240px, calc(100svh - 336px), 560px);
+    min-height: 240px;
+  }
+  #app .v-bottom {
+    padding: 0 12px 8px;
+  }
+  #app #v-status {
+    font-size: 15px;
+    min-height: 48px;
+    margin-bottom: 8px;
+  }
+  #app .v-dock {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    border-radius: 16px;
+  }
+  #app .v-dock button {
+    padding: 4px;
+    font-size: 14px;
+    word-break: keep-all;
+  }
+  #app .v-tools {
+    margin-top: 8px;
+    gap: 8px;
+  }
+  #app .v-tools select {
+    font-size: 16px;
+    max-width: 120px;
+  }
+  #app .v-tools label {
+    gap: 4px;
+  }
+  #app .v-camera {
+    right: max(12px, env(safe-area-inset-right));
+    gap: 4px;
+  }
+  #app .v-stage:has(#v-pad:not([hidden])) .v-camera {
+    flex-direction: column;
+  }
+}
+@media (orientation: landscape) and (max-height: 540px) and (min-width: 701px) {
+  #app .v-header {
+    height: 52px;
+  }
+  #app .v-intro {
+    padding: 8px 24px;
+  }
+  #app .v-intro .v-eyebrow {
+    display: none;
+  }
+  #app .v-intro h1 {
+    font-size: 20px;
+  }
+  #app .v-complex {
+    display: flex;
+    align-items: center;
+  }
+  #app .v-play {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    align-items: center;
+  }
+  #app .v-stage {
+    height: max(240px, calc(100svh - 112px));
+    min-height: 240px;
+  }
+  #app .v-bottom {
+    padding: 8px 16px;
+  }
+  #app .v-dock {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 4px;
+    padding: 4px;
+  }
+  #app .v-dock button {
+    padding: 8px;
+    font-size: 14px;
+  }
+  #app #v-status {
+    margin-bottom: 8px;
+  }
+  #app .v-camera {
+    flex-direction: column;
+    right: 16px;
+    bottom: 16px;
+  }
+}

@@ -1,11 +1,19 @@
 import "./village.css";
+import { markExplored } from "../community/journal";
 import { PALETTES } from "../island/palettes";
 import { loadSpatial } from "../spatial/load";
+import { bindNeighborhood } from "./neighborhood";
 import { poseSchema, preferenceSchema, preferenceUrl, readPreferences } from "./options";
+import { bindPad } from "./pad";
 import { VillageSession } from "./session";
 import { element, villageShell } from "./shell";
 
 villageShell();
+element(".v-stage", HTMLElement).append(element("#v-pad", HTMLElement));
+const play = document.createElement("div");
+play.className = "v-play";
+element(".v-stage", HTMLElement).before(play);
+play.append(element(".v-stage", HTMLElement), element(".v-bottom", HTMLElement));
 let preferences = readPreferences(new URL(location.href));
 let session: VillageSession | null = null,
   revision = 0;
@@ -14,6 +22,8 @@ const events = new AbortController(),
 const dialog = element("#v-settings", HTMLDialogElement),
   loading = element("#v-loading", HTMLElement);
 const signal = events.signal;
+const refreshNeighborhood = bindNeighborhood(() => session, signal);
+bindPad(() => session, signal);
 function sync(): void {
   document.body.dataset.theme = preferences.theme;
   document.documentElement.style.setProperty("--v-sky", PALETTES[preferences.theme].sky);
@@ -30,6 +40,7 @@ async function openComplex(): Promise<void> {
   element(".v-stage", HTMLElement).dataset.ready = "false";
   session?.dispose();
   session = null;
+  refreshNeighborhood();
   element("#v-approach", HTMLButtonElement).hidden = true;
   element(".v-bottom", HTMLElement).inert = true;
   element(".v-camera", HTMLElement).inert = true;
@@ -40,6 +51,7 @@ async function openComplex(): Promise<void> {
     const world = await loadSpatial(preferences.complex);
     if (current !== revision || signal.aborted) return;
     session = new VillageSession(world, preferences);
+    refreshNeighborhood();
     element("#v-title", HTMLElement).textContent = world.name;
     document.title = `${world.name} · 한바퀴`;
     loading.hidden = true;
@@ -84,6 +96,7 @@ app.addEventListener(
         sync();
         if (field === "theme") session?.setPalette(preferences);
         else session?.setBuddy(preferences);
+        if (field !== "theme") markExplored(preferences.complex, "buddy");
         return;
       }
     }
@@ -105,6 +118,9 @@ app.addEventListener(
         dialog.showModal();
         break;
       case "close-settings":
+        dialog.close();
+        break;
+      case "show-friend":
         dialog.close();
         session?.follow();
         break;
@@ -135,7 +151,14 @@ app.addEventListener(
       case "controls": {
         const pad = element("#v-pad", HTMLElement);
         pad.hidden = !pad.hidden;
-        button.setAttribute("aria-expanded", String(!pad.hidden));
+        document.querySelectorAll('[data-action="controls"]').forEach((b) => {
+          b.setAttribute("aria-expanded", String(!pad.hidden));
+        });
+        if (pad.hidden) session?.input([0, 0]);
+        else {
+          session?.follow();
+          element(".v-stage", HTMLElement).scrollIntoView({ block: "nearest" });
+        }
         break;
       }
     }
@@ -153,22 +176,6 @@ dialog.addEventListener(
   },
   { signal },
 );
-for (const button of document.querySelectorAll<HTMLButtonElement>("[data-direction]")) {
-  const directions = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] } as const;
-  button.addEventListener(
-    "pointerdown",
-    (e) => {
-      const id = button.dataset.direction;
-      if (id === "up" || id === "down" || id === "left" || id === "right") {
-        button.setPointerCapture(e.pointerId);
-        session?.input(directions[id]);
-      }
-    },
-    { signal },
-  );
-  for (const name of ["pointerup", "pointercancel", "lostpointercapture"] as const)
-    button.addEventListener(name, () => session?.input([0, 0]), { signal });
-}
 window.addEventListener(
   "pagehide",
   () => {

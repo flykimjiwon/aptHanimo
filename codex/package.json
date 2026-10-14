@@ -8,12 +8,14 @@
     "build": "tsc --noEmit && vite build && bun scripts/compress.mjs",
     "start": "bun server.ts",
     "check": "tsc --noEmit",
-    "lint": "biome check src server.ts scripts/smoke-*.mjs",
-    "smoke": "bun scripts/smoke-server.mjs"
+    "lint": "biome check src server.ts scripts/smoke-*.mjs scripts/community-moderate.ts",
+    "smoke": "bun scripts/smoke-server.mjs",
+    "community:moderate": "bun scripts/community-moderate.ts"
   },
   "dependencies": {
     "ky": "^2.2.0",
     "lucide": "^0.468.0",
+    "sharp": "^0.35.5",
     "three": "^0.180.0",
     "zod": "^4.1.0"
   },

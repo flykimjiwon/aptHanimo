@@ -2,10 +2,13 @@ import { resolve, sep } from "node:path";
 import type { ServerWebSocket } from "bun";
 import { z } from "zod";
 import { incomingSchema, type Peer } from "./src/protocol";
+import { CommunityApi } from "./src/server/community-api";
+import { communityOrigin, openCommunityStore } from "./src/server/community-runtime";
 
 type Session = { id: string; room: string; ip: string; last: number; peer: Peer };
 const sessions = new Map<string, ServerWebSocket<Session>>();
 const root = resolve(import.meta.dir, "dist");
+const community = new CommunityApi(openCommunityStore(), communityOrigin());
 const configuration = z
   .object({
     port: z
@@ -26,8 +29,21 @@ const server = Bun.serve<Session>({
   hostname: configuration.hostname,
   port: configuration.port,
   development: false,
+  maxRequestBodySize: 7 * 1024 * 1024,
   async fetch(request, server) {
     const url = new URL(request.url);
+    if (url.pathname.startsWith("/api/community/")) {
+      try {
+        return await community.handle(request, server.requestIP(request)?.address ?? "unknown");
+      } catch (error) {
+        if (!(error instanceof Error)) throw error;
+        console.error("Community request failed", error.name);
+        return Response.json(
+          { message: "서버에 연결하지 못했어요. 작성한 내용을 보관하고 잠시 뒤 다시 보내 주세요." },
+          { status: 500, headers: { "Cache-Control": "no-store" } },
+        );
+      }
+    }
     if (url.pathname === "/presence") {
       const origin = request.headers.get("origin");
       if (origin && (!URL.canParse(origin) || new URL(origin).host !== url.host))
