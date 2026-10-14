@@ -1,5 +1,7 @@
 # aptHanimo — 임장월드(가제)
 
+**2026-10-14 통합 정본:** [현재 기술스택·Codex 기반 통합](docs/TECH_STACK_AND_INTEGRATION_2026-10-14.md) · [두 AI 프로토타입 보존 목록](docs/PROTOTYPE_ARCHIVE_2026-10-14.md) · [오픈소스 65개 조사](docs/OPEN_SOURCE_RESEARCH_2026-10-14.md). 이후 개발은 Codex 주력에서 함께 진행하며 아래 최초 기획과 레인 설명은 제작 이력으로 유지한다.
+
 **2026-10-14 후속:** [주민 이야기 탐색·개선 모아보기](codex/docs/COMMUNITY_DISCOVERY_2026-10-14.md) — 사진 요청·개선 제안·반영 완료 바로가기, 종류/주제/상태 필터와 실제 공개 건수. 오래된 글까지 서버에서 찾아준다.
 
 **2026-10-14:** 주력에 [모바일 조작·주민 의견/사진 제보·현장 수첩](codex/docs/COMMUNITY_MOBILE_2026-10-14.md)을 연결했다. 같은 Bun 서버의 SQLite에 접수하고 검토 후 공개하며, 수정 반영·신고·작성자 철회까지 제공한다. 실제 공개 배포와 로그인/실거주 인증은 후속 단계다.
@@ -11,7 +13,7 @@
 | 무엇 | 어디 | 비고 |
 |---|---|---|
 | **AI 인계(입구)** | `AI_HANDOFF.md` | 두 레인(Codex `codex/` · Claude `prototype/`) 합본: 지도·경계·상태·백로그·인수 문구. 레인 정본은 `codex/docs/AI_HANDOFF_2026-10-12.md`, `prototype/AI_HANDOFF_2026-10-12.md` |
-| 통합 기획서(정본, PRD+빌드 스펙) | `IMJANG_WORLD_MASTER_2026-10-11.md` → `index.html`(`build_html.py`) | 결정 D-01~D-22·미결 D-U1~14(§19), 요구사항 ID(§16)·티켓(§17), 부록 D 프로토 이력 |
+| 통합 기획서(역사적 PRD+빌드 스펙) | `IMJANG_WORLD_MASTER_2026-10-11.md` → `index.html`(`build_html.py`) | 결정 D-01~D-22·미결 D-U1~14(§19), 요구사항 ID(§16)·티켓(§17), 부록 D 프로토 이력 |
 | 초안 v0.2 | `IMJANG_WORLD_PRD_2026-10-11.md` | 이력 |
 | 외부 기획서 2본(텍스트) | `sources/` | 종합 대상 |
 | 프로토타입(단일 HTML, 의존성 0) | `prototype/dev.html`(더블클릭) · `prototype/index.html`(아티팩트용) | 정본은 `prototype/src/` → `assemble.py` → `build.py`. 제작 노트 `prototype/PROTOTYPE_NOTES.md`, Codex 구조 가이드 `prototype/CODEX_PROTOTYPE_GUIDE_2026-10-11.md`(`guide.html`) |
@@ -40,6 +42,6 @@ bun run smoke
 bun start
 ```
 
-브라우저: [주력 통합판](http://localhost:5178/) · [기존 생활권 앱](http://localhost:5178/world.html) · [스타일 실험실](http://localhost:5178/style-lab.html) · [이전 단지 섬](http://localhost:5178/island.html). 현재 Codex 기준은 **113테스트·12,346 assertions·22파일**, 서비스 검사는 **HTTP62·WebSocket6**이다. `smoke`는 빌드 후 자체 임시 포트에서 실행하고 종료한다.
+브라우저: [주력 통합판](http://localhost:5178/) · [기존 생활권 앱](http://localhost:5178/world.html) · [스타일 실험실](http://localhost:5178/style-lab.html) · [이전 단지 섬](http://localhost:5178/island.html). 2026-10-14 코드 기준은 **150테스트·12,492 assertions·26파일**, 서비스 검사는 **HTTP64·WebSocket6**이다. `smoke`는 빌드 후 자체 임시 포트에서 실행하고 종료한다.
 
 [AI 인계 가이드](codex/docs/AI_HANDOFF_2026-10-12.md), [제작방법·기술스택·출처](codex/docs/Claude_V5_전체월드스타일_구현가이드.md), [QA 인덱스](codex/qa/v5/QA.md)를 참고한다. 과거 이동 수정의 81테스트·80경로·브라우저 17목적지·8화면 기록은 [당시 검증](codex/qa/v5/repair-2026-10-12.md)에 보존했다. 실기 iOS/Android와 공개 웹 서비스 배포는 미검증·미포함이다.
