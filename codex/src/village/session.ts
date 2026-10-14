@@ -118,6 +118,7 @@ export class VillageSession {
     const p = this.actor.position;
     this.view.rig.focus(new Vector3(p.x, p.y, p.z), 20);
     this.view.render();
+    this.marker.textContent = "친구";
     this.status.textContent = "친구를 따라가요. 바닥을 눌러 목적지를 정하거나 직접 걸어보세요.";
   }
   overview(top = false): void {
@@ -187,16 +188,16 @@ export class VillageSession {
       this.routeVersion = this.actor.routeVersion;
       this.route.show(this.actor.route.length ? [[p.x, p.z], ...this.actor.route] : []);
     }
-    const screen = center
-        .clone()
-        .add(new Vector3(0, 5, 0))
-        .project(this.view.camera),
-      rect = this.view.host.getBoundingClientRect();
-    this.marker.hidden =
-      !this.view.following || Math.abs(screen.x) > 0.9 || Math.abs(screen.y) > 0.9 || screen.z > 1;
-    this.marker.style.left = `${((screen.x + 1) / 2) * rect.width}px`;
-    this.marker.style.top = `${((1 - screen.y) / 2) * rect.height}px`;
-    this.marker.textContent = this.view.following ? "친구" : "친구 찾기";
+    if (this.view.following) {
+      const screen = center
+          .clone()
+          .add(new Vector3(0, 5, 0))
+          .project(this.view.camera),
+        size = this.view.viewport;
+      this.marker.hidden = Math.abs(screen.x) > 0.9 || Math.abs(screen.y) > 0.9 || screen.z > 1;
+      this.marker.style.left = `${((screen.x + 1) / 2) * size.x}px`;
+      this.marker.style.top = `${((1 - screen.y) / 2) * size.y}px`;
+    } else if (!this.marker.hidden) this.marker.hidden = true;
     const state = `${this.actor.state}:${this.actor.pose}`;
     if (state !== this.state) {
       this.state = state;

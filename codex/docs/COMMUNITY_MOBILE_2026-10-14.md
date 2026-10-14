@@ -61,6 +61,7 @@ bun run community:moderate backup /private/backups/new-community.sqlite
 - 사진 처리 동시2개, 접속 IP당 쓰기30회/시간, 게시물5,000개, 저장 사진 합계128MiB. 한도 도달은503으로 명시. 한도는 소규모 파일 기반 운영 기준이며 대규모 부하 검증 결과가 아니다.
 - 피드는20건씩, 사진은 지연 로드. 커뮤니티 화면은 첫 진입 때 별도 번들을 로드. 반복 폴링 없음.
 - 지도는 정지·화면 밖에서 렌더링하지 않는다. 산책 갱신은60Hz 이내; 탭/뷰포트 복귀 때 지난 시간을 한꺼번에 적용하지 않는다. 기존 섬에도 같은 스케줄러를 적용한다.
+- 동 번호의 위치는 카메라·확대·화면 크기·라벨 표시 상태가 바뀔 때만 계산한다. 전체 보기 산책에서 움직이지 않는 라벨을 매 프레임 다시 배치하지 않으며, 친구 표시도 따라가기 중에만 갱신한다.
 
 구현 참고: [Bun SQLite](https://bun.sh/docs/runtime/sqlite), [sharp 입력 제한](https://sharp.pixelplumbing.com/api-constructor/), [sharp 출력·메타데이터](https://sharp.pixelplumbing.com/api-output/). 실제 구현·검증 수치는 이 저장소 코드와 개인 메타 검수 보고를 기준으로 한다.
 

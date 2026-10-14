@@ -2,8 +2,10 @@ import {
   ACESFilmicToneMapping,
   Box3,
   Group,
+  Matrix4,
   PCFSoftShadowMap,
   Scene,
+  Vector2,
   Vector3,
   WebGLRenderer,
 } from "three";
@@ -48,6 +50,10 @@ export class IslandView {
   beforeRender: (() => void) | null = null;
   following = false;
   labelsVisible = true;
+  readonly viewport = new Vector2();
+  private readonly labelCamera = new Matrix4();
+  private readonly labelProjection = new Matrix4();
+  private labelVisibility: boolean | null = null;
   get scenery(): Group {
     return this.land;
   }
@@ -140,6 +146,8 @@ export class IslandView {
   private resizeCanvas(): void {
     const { width, height } = this.host.getBoundingClientRect();
     if (!width || !height) return;
+    this.viewport.set(width, height);
+    this.labelVisibility = null;
     this.renderer.setSize(width, height, false);
     this.rig.resize(width, height);
   }
@@ -167,7 +175,20 @@ export class IslandView {
     }
     this.beforeRender?.();
     this.renderer.render(this.scene, this.camera);
-    const { width, height } = this.host.getBoundingClientRect();
+    if (
+      this.labelVisibility === this.labelsVisible &&
+      this.labelCamera.equals(this.camera.matrixWorld) &&
+      this.labelProjection.equals(this.camera.projectionMatrix)
+    )
+      return;
+    this.labelVisibility = this.labelsVisible;
+    this.labelCamera.copy(this.camera.matrixWorld);
+    this.labelProjection.copy(this.camera.projectionMatrix);
+    if (!this.labelsVisible) {
+      for (const button of this.labels.values()) button.hidden = true;
+      return;
+    }
+    const { x: width, y: height } = this.viewport;
     for (const b of this.world.buildings.filter((b) => b.kind === "core")) {
       const c = buildingCenter(b),
         p = new Vector3(
