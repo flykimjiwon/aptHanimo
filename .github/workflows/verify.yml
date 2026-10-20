@@ -1,10 +1,8 @@
 name: Verify
 
+# 실행 정책(2026-10-20): 요청할 때만 실행한다 — `gh workflow run <이 파일>` 또는 Actions 탭 "Run workflow".
+# main push·PR·예약 자동 실행은 두지 않는다(비공개 저장소 Actions 무료 분 월 2,000분 보호 · 모든 저장소 공통). 다시 켜려면 사용자 확인.
 on:
-  push:
-    branches:
-      - main
-  pull_request:
   workflow_dispatch:
 
 permissions:
